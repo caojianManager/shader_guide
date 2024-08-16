@@ -1,4 +1,4 @@
-Shader"OccaSoftware/UltimateLitShader"
+Shader"CJ_URP/PBR/UltimateLitShader"
 {
     Properties
     {
@@ -284,5 +284,5 @@ Shader"OccaSoftware/UltimateLitShader"
         }
         
     }
-    CustomEditor "OccaSoftware.UltimateLitShader.Editor.LitMaterialEditorGUI"
+    CustomEditor "UltimateLitShader.Editor.LitMaterialEditorGUI"
 }
