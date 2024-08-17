@@ -4,7 +4,7 @@ using UnityEditor.Rendering;
 using UnityEngine.Rendering;
 using System;
 
-namespace OccaSoftware.UltimateLitShader.Editor
+namespace UltimateLitShader.Editor
 {
     public class LitMaterialEditorGUI : ShaderGUI
     {
@@ -136,11 +136,7 @@ namespace OccaSoftware.UltimateLitShader.Editor
             DrawSurfaceInputs2();
             DrawSubsurfaceInputs();
             DrawAdvancedOptions();
-
-            if (EditorGUILayout.LinkButton("Docs"))
-            {
-                Application.OpenURL("https://docs.occasoftware.com/ultimate-lit-shader");
-            }
+            
 
             bool IsTransparent() => _Surface.floatValue > 0.0f ? true : false;
             bool AlphaClipEnabled() => _AlphaClipEnabled.floatValue > 0.0f ? true : false;
