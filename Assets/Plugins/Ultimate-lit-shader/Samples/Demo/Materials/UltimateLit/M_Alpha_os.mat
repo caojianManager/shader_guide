@@ -22,6 +22,8 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: M_Alpha_os
   m_Shader: {fileID: 4800000, guid: 6d7dbbdf9194b6745ae79aaf2f3c053c, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
   - _SURFACE_TYPE_TRANSPARENT
   m_InvalidKeywords:
@@ -41,6 +43,7 @@ Material:
     RenderType: Transparent
   disabledShaderPasses:
   - DepthOnly
+  m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
@@ -80,6 +83,10 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _EmissionMap2:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _GrassCoverageTexture:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -96,15 +103,27 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _HeightMap2:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _MainTex:
         m_Texture: {fileID: 2800000, guid: c6500f29cecb0b2478cefcdb0ce7af8f, type: 3}
         m_Scale: {x: 4, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MainTex2:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetalnessMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MetalnessMap2:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
@@ -116,6 +135,10 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _NormalMap2:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _NormalTex:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -124,11 +147,19 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _OcclusionMap2:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _ParallaxMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _RoughnessMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _RoughnessMap2:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
@@ -192,15 +223,29 @@ Material:
     - _GrassDirectionStrength: 0.2
     - _GrassInteractivityCutAmount: 0.7
     - _HasEmissionMap: 0
+    - _HasEmissionMap2: 0
     - _HasHeightMap: 0
+    - _HasHeightMap2: 0
+    - _HasMetalnessMap: 0
+    - _HasMetalnessMap2: 0
     - _HasNormalMap: 0
+    - _HasNormalMap2: 0
+    - _HasRoughnessMap: 0
+    - _HasRoughnessMap2: 0
+    - _HasSubsurfaceMap: 0
     - _HeightStrength: 1
+    - _HeightStrength2: 0.02
     - _MaximumDistance: 100
     - _MaximumHeight: 0.5
     - _Metallic: 0
     - _Metalness: 0
+    - _Metalness2: 0
+    - _MetalnessMapExposure: 0
+    - _MetalnessMapExposure2: 0
     - _NormalStrength: 1
+    - _NormalStrength2: 1
     - _OcclusionStrength: 1
+    - _OcclusionStrength2: 1
     - _Parallax: 0.005
     - _QueueOffset: 0
     - _ReceiveAmbientLightingEnabled: 1
@@ -209,6 +254,9 @@ Material:
     - _ReceiveShadows: 1
     - _ReceiveShadowsEnabled: 1
     - _Roughness: 1
+    - _Roughness2: 0.5
+    - _RoughnessMapExposure: 0
+    - _RoughnessMapExposure2: 0
     - _ShapeNoiseScale: 1
     - _ShapeNoiseStrength: 1
     - _ShellCount: 16
@@ -219,14 +267,18 @@ Material:
     - _Specular: 0.5
     - _SpecularHighlights: 1
     - _Specularity: 0.5
+    - _Specularity2: 0.5
     - _SrcBlend: 5
+    - _SubsurfaceAmbient: 0.2
     - _SubsurfaceDistortion: 0
+    - _SubsurfaceEnabled: 0
     - _SubsurfaceFalloff: 2
     - _SubsurfaceThickness: 0.1
     - _Surface: 1
     - _SurfaceNormalExclusionEnabled: 1
     - _SurfaceNormalPower: 1
     - _TextureSamplingMethod: 0
+    - _UseVertexColors: 0
     - _WindMainStrength: 1
     - _WindPulseFrequency: 1
     - _WindPulseStrength: 1
@@ -239,8 +291,10 @@ Material:
     - _ZWrite: 0
     m_Colors:
     - _BaseColor: {r: 0.8490566, g: 0.8490566, b: 0.8490566, a: 0.2}
+    - _BaseColor2: {r: 0.5, g: 0.5, b: 0.5, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _Emission: {r: 0, g: 0, b: 0, a: 1}
+    - _Emission2: {r: 0, g: 0, b: 0, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _GrassTintColor: {r: 1, g: 1, b: 1, a: 1}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
