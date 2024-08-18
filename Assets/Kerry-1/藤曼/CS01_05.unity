@@ -760,6 +760,10 @@ PrefabInstance:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: 5184fed44b626df4d983c3d82f29a442, type: 2}
+    - target: {fileID: 2300000, guid: e805185557a75e844ae157af986bcd23, type: 3}
+      propertyPath: m_SelectedEditorRenderState
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 9500000, guid: e805185557a75e844ae157af986bcd23, type: 3}
       propertyPath: m_Controller
       value: 
@@ -857,13 +861,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 968047054}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.7530746, y: -0.4850337, z: 0.40164214, w: 0.19053766}
+  m_LocalRotation: {x: 0.68466777, y: -0.45114955, z: 0.50957614, w: 0.26081863}
   m_LocalPosition: {x: 0, y: 3, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 42.578003, y: -214.786, z: -128.35}
+  m_LocalEulerAnglesHint: {x: 54.779, y: -233.307, z: -142.391}
 --- !u!114 &968047057
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -986,9 +990,13 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 100002, guid: e02df09c5d868304d8034bd28c9bf70f, type: 3}
+    - target: {fileID: 100000, guid: e02df09c5d868304d8034bd28c9bf70f, type: 3}
       propertyPath: m_IsActive
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 100002, guid: e02df09c5d868304d8034bd28c9bf70f, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 400002, guid: e02df09c5d868304d8034bd28c9bf70f, type: 3}
       propertyPath: m_RootOrder
@@ -1210,7 +1218,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 100000, guid: e805185557a75e844ae157af986bcd23, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: e805185557a75e844ae157af986bcd23, type: 3}
       propertyPath: m_RootOrder

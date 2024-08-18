@@ -6,7 +6,7 @@ Shader "Unlit/VineURP"
 		_VineBaseColor("Vice_BaseColor", 2D) = "white" {}
 		_VineNormalMap("Vice_NormalMap", 2D) = "bump" {}
 		_VineRoughness("Vice_Roughness", 2D) = "white" {}
-		_Grow1("Grow", Range( -2 , 2)) = 0
+		_Grow("Grow", Range( -2 , 2)) = 0
 		_GrouMin1("GrouMin", Range( 0 , 1)) = 0
 		_GrowMax1("GrowMax", Range( 0 , 1.5)) = 0.9176471
 		_EndMin1("EndMin", Range( 0 , 1)) = 0
@@ -33,6 +33,7 @@ Shader "Unlit/VineURP"
         	
         	#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
 			#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/SurfaceInput.hlsl"
+        	#include "Assets/Shaders/URP/Library/SamplePBR.hlsl"
         	
             CBUFFER_START(UnityPerMaterial)
                 float _GrouMin1;
@@ -51,47 +52,29 @@ Shader "Unlit/VineURP"
         	SAMPLER(sampler_VineNormalMap);
         	TEXTURE2D(_VineRoughness);
         	SAMPLER(sampler_VineRoughness);
-
-	        struct  Atrributes
-	        {
-		        float4 positionOS : POSITION;
-	        	float2 uv : TEXCOORD0;
-	        };
-
-	        struct Varyings
-	        {
-	        	float4 positionCS : SV_POSITION;
-		        float2 uv : TEXCOORD0;
-	        	float3 positionWS : TEXCOORD1;
-	        };
-
-        	Varyings Vertex(Atrributes IN)
-			{
-        		Varyings OUT;
-        		float growValue = smoothstep( _GrouMin1 , _GrowMax1 ,(IN.uv.xy.y - _Grow));
-            	float endValue = smoothstep(_EndMin1, _EndMax1 , IN.uv.xy.y);
-				float weightValue = max(growValue, endValue);
-
-        		VertexPositionInputs position_inputs = GetVertexPositionInputs(IN.positionOS);
-        		OUT.positionCS = position_inputs.positionCS;
-        		OUT.positionWS = position_inputs.positionWS;
-        		OUT.uv = IN.uv;
-        		return OUT;
-			}
         	
+        	Varyings Vertex(Attributes IN)
+			{
+        		float temp_output_68_0 = ( IN.uv.xy.y - _Grow);
+				float smoothstepResult74 = smoothstep( _GrouMin1 , _GrowMax1 , temp_output_68_0);
+				float smoothstepResult73 = smoothstep( _EndMin1 , _EndMax1 , IN.uv.xy.y);
+				float3 ase_vertexNormal = IN.normalOS.xyz;
+				IN.positionOS.xyz += ( ( max( smoothstepResult74 , smoothstepResult73 ) * ( ase_vertexNormal * 0.01 * _Offset ) ) + ( ase_vertexNormal * _Scale ) );
+				IN.positionOS.w = 1;
+        		return Vert(IN);
+			}
 
             half4 Fragment(Varyings IN) : SV_Target
 			{
 				half4 baseMap = SampleAlbedoAlpha(IN.uv,_VineBaseColor,sampler_VineBaseColor);
-				half3 normalMap = SampleNormal(IN.uv,_VineNormalMap,sampler_VineNormalMap);
-				half4 normalColor = half4(normalMap, 1);
-				return baseMap + normalColor;
+				float growClip = (IN.uv.y - _Grow);
+				clip(( 1.0 - growClip) - _Cutoff);
+				return baseMap;
 			}
         	
         	ENDHLSL
         }
 
     }
-//	 CustomEditor "UltimateLitShader.Editor.LitMaterialEditorGUI"
 
 }
