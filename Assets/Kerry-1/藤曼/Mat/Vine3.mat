@@ -8,16 +8,19 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Vine3
-  m_Shader: {fileID: 4800000, guid: 47e108a4f0044734e9b422fcd78a98f2, type: 3}
+  m_Shader: {fileID: 4800000, guid: 6d7dbbdf9194b6745ae79aaf2f3c053c, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
-  m_InvalidKeywords: []
+  m_InvalidKeywords:
+  - _ReceiveFogEnabled
+  - _ReceiveShadowsEnabled
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: -1
-  stringTagMap: {}
+  m_CustomRenderQueue: 2000
+  stringTagMap:
+    RenderType: Opaque
   disabledShaderPasses: []
   m_LockedProperties: 
   m_SavedProperties:
@@ -35,6 +38,54 @@ Material:
         m_Texture: {fileID: 2800000, guid: 79722df8209c0d8419cec564ccf46330, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _EmissionMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _EmissionMap2:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _HeightMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _HeightMap2:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MainTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MainTex2:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MetalnessMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MetalnessMap2:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _NormalMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _NormalMap2:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _OcclusionMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _OcclusionMap2:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _Plane_BaseColor:
         m_Texture: {fileID: 2800000, guid: c8461f3ab2ff47c489e4aeaf88a5e05d, type: 3}
         m_Scale: {x: 1, y: 1}
@@ -47,6 +98,14 @@ Material:
         m_Texture: {fileID: 2800000, guid: 5b69da41deae6fc468efafdbfb3d62ac, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _RoughnessMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _RoughnessMap2:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _SGT_Grass_3_Albedo2:
         m_Texture: {fileID: 2800000, guid: c8461f3ab2ff47c489e4aeaf88a5e05d, type: 3}
         m_Scale: {x: 1, y: 1}
@@ -57,6 +116,10 @@ Material:
         m_Offset: {x: 0, y: 0}
     - _SGT_Grass_3_normal:
         m_Texture: {fileID: 2800000, guid: c886840aa65cea14ab7494ed2314b46f, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _SubsurfaceThicknessMap:
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Vice_BaseColor:
@@ -81,7 +144,12 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
+    - _AlphaClip: 0
+    - _AlphaClipEnabled: 0
+    - _Blend: 0
+    - _Culling: 2
     - _Cutoff: 0.5
+    - _DstBlend: 0
     - _EndControlMax: 1.5
     - _EndControlMin: 1
     - _EndMax1: 1.386
@@ -90,11 +158,56 @@ Material:
     - _GrouMin1: 0.295
     - _Grow1: 1.7
     - _GrowMax1: 0.683
+    - _HasEmissionMap: 0
+    - _HasEmissionMap2: 0
+    - _HasHeightMap: 0
+    - _HasHeightMap2: 0
+    - _HasMetalnessMap: 0
+    - _HasMetalnessMap2: 0
+    - _HasNormalMap: 0
+    - _HasNormalMap2: 0
+    - _HasRoughnessMap: 0
+    - _HasRoughnessMap2: 0
+    - _HasSubsurfaceMap: 0
+    - _HeightStrength: 0.02
+    - _HeightStrength2: 0.02
+    - _Metalness: 0
+    - _Metalness2: 0
+    - _MetalnessMapExposure: 0
+    - _MetalnessMapExposure2: 0
+    - _NormalStrength: 1
+    - _NormalStrength2: 1
+    - _OcclusionStrength: 1
+    - _OcclusionStrength2: 1
     - _Offset: -18
+    - _ReceiveFogEnabled: 1
+    - _ReceiveShadowsEnabled: 1
+    - _Roughness: 0.5
+    - _Roughness2: 0.5
+    - _RoughnessMapExposure: 0
+    - _RoughnessMapExposure2: 0
     - _Scale: 0.05
+    - _SortPriority: 0
+    - _Specularity: 0.5
+    - _Specularity2: 0.5
+    - _SrcBlend: 1
+    - _SubsurfaceAmbient: 0.2
+    - _SubsurfaceDistortion: 0.3
+    - _SubsurfaceEnabled: 0
+    - _SubsurfaceFalloff: 2
+    - _SubsurfaceThickness: 0.8
+    - _Surface: 0
     - _Tilling: 20
     - _TubeControl: 1.91
     - _TubeWidth: 0.3
+    - _UseVertexColors: 0
+    - _ZTest: 4
+    - _ZWrite: 1
     - __dirty: 0
-    m_Colors: []
+    m_Colors:
+    - _BaseColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+    - _BaseColor2: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+    - _Emission: {r: 0, g: 0, b: 0, a: 1}
+    - _Emission2: {r: 0, g: 0, b: 0, a: 1}
+    - _SubsurfaceColor: {r: 1, g: 1, b: 1, a: 1}
   m_BuildTextureStacks: []

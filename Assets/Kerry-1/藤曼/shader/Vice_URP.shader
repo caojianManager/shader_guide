@@ -14,7 +14,7 @@ Shader "Unlit/VineURP"
 		_EndMax1("EndMax", Range( 0 , 1.5)) = 0
 		_Offset("Offset", Float) = 0
 		_Scale("Scale", Float) = 0
-		[HideInInspector] _texcoord( "", 2D ) = "white" {}
+		[HideInInspector] _Default( "", 2D ) = "white" {}
 		[HideInInspector] __dirty( "", Int ) = 1
     }
     
@@ -33,7 +33,6 @@ Shader "Unlit/VineURP"
             #pragma fragment Fragment
         	
         	#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
-			#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/SurfaceInput.hlsl"
         	#include "Assets/Shaders/URP/Library/SamplePBR.hlsl"
         	
             CBUFFER_START(UnityPerMaterial)
@@ -70,34 +69,16 @@ Shader "Unlit/VineURP"
 
             half4 Fragment(Varyings IN) : SV_Target
 			{
-
-				float2 uv = TRANSFORM_TEX(IN.uv, _VineBaseColor).xy;
+				
 				
 				MaterialInputData inputData;
+				InitMaterialInputData(inputData);
 				inputData.baseMap = _VineBaseColor;
-				inputData.baseColor = float4(1, 1, 1, 1); // Set base color
-				inputData.normalMap = _VineNormalMap;
-				inputData.normalStrength = 1.0; // Set default normal strength
-				inputData.roughnessMap = _VineRoughness;
-				inputData.roughness = 1.0; // Set default roughness
-				inputData.roughnessMapExposure = 1.0; // Set default exposure
-				inputData.hasRoughnessMap = 1; // Indicate presence of roughness map
-				inputData.metalnessMap =_defaultTex; // or some valid texture if available
-				inputData.metalness = 0.0; // Set default metalness
-				inputData.metalnessMapExposure = 1.0; // Set default exposure
-				inputData.hasMetalnessMap = 0; // Indicate absence of metalness map
-				inputData.emissionMap = _defaultTex; // Initialize accordingly
-				inputData.emission = float3(0, 0, 0); // Set default emission
-				inputData.hasEmissionMap = 0; // Indicate absence of emission map
-				inputData.occlusionMap = _defaultTex; // Initialize accordingly
-				inputData.occlusion = 2.0; // Set default occlusion
-				inputData.specularity = 0.5; // Set default specularity
+				inputData.baseMap_ST = _VineBaseColor_ST;
 				inputData.samplerState = sampler_VineBaseColor; //
 				
-				MaterialData material_data;
-				InitializeMaterialData(sampler_VineBaseColor,uv,inputData,material_data);
 
-				float col = Frag(IN,material_data);
+				float col = Frag(IN,inputData);
 				float growClip = (IN.uv.y - _Grow);
 				clip(( 1.0 - growClip) - _Cutoff);
 				return col;
