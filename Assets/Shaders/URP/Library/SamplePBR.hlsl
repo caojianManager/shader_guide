@@ -68,34 +68,34 @@ float dot01(float3 a, float3 b)
 // {
 //     return dot(c, float3(0.2126, 0.7152, 0.0722));
 // }
-//
-// ///////////////////////////////////////////////////////////////////////////////
-// //                      Structs                                              //
-// ///////////////////////////////////////////////////////////////////////////////
-//
-// struct LightInputs
-// {
-//     float NoL;
-//     float NoH;
-//     float VoH;
-//     float VoL;
-//     float LoH;
-// };
-//
-// LightInputs GetLightInputs(float3 normalWS, float3 viewDirectionWS, float3 lightDirection)
-// {
-//     LightInputs inputs;
-//
-//     float3 H = normalize(lightDirection + viewDirectionWS);
-//     inputs.NoL = dot01(normalWS, lightDirection);
-//     inputs.NoH = dot01(normalWS, H);
-//     inputs.VoH = dot01(viewDirectionWS, H);
-//     inputs.VoL = dot01(viewDirectionWS, lightDirection);
-//     inputs.LoH = dot01(lightDirection, H);
-//
-//     return inputs;
-// }
-//
+
+///////////////////////////////////////////////////////////////////////////////
+//                      Structs                                              //
+///////////////////////////////////////////////////////////////////////////////
+
+struct LightInputs
+{
+    float NoL;
+    float NoH;
+    float VoH;
+    float VoL;
+    float LoH;
+};
+
+LightInputs GetLightInputs(float3 normalWS, float3 viewDirectionWS, float3 lightDirection)
+{
+    LightInputs inputs;
+
+    float3 H = normalize(lightDirection + viewDirectionWS);
+    inputs.NoL = dot01(normalWS, lightDirection);
+    inputs.NoH = dot01(normalWS, H);
+    inputs.VoH = dot01(viewDirectionWS, H);
+    inputs.VoL = dot01(viewDirectionWS, lightDirection);
+    inputs.LoH = dot01(lightDirection, H);
+
+    return inputs;
+}
+
 // //BRDF - 双向反射分布函数
 struct BRDF
 {
@@ -187,31 +187,31 @@ float3 Fresnel(float3 f0, float cosTheta, float roughness)
     return f0 + (max(1.0 - roughness, f0) - f0) * SchlickFresnel(cosTheta);
 }
 
-// float FD90(float roughness, float LoH)
-// {
-//     return 0.5 + (2.0 * roughness * LoH * LoH);
-// }
-//
-// float3 GetDiffuse(float3 baseColor, float perceptualRoughness, float LoH, float NoL, float NoV)
-// {
-//     return (baseColor / PI) * (1.0 + (FD90(perceptualRoughness, LoH) - 1.0) * SchlickFresnel(NoL)) * (1.0 + (FD90(perceptualRoughness, LoH) - 1.0) * SchlickFresnel(NoV));
-// }
-//
-// float3 NDF(float3 f0, float perceptualRoughness, float NoH)
-// {
-//     float a2 = perceptualRoughness * perceptualRoughness;
-//     float NoH2 = NoH * NoH;
-//     float c = (NoH2 * (a2 - 1.0)) + 1.0;
-//     return max(f0 / (PI * c * c), 1e-7);
-// }
-//
-// float GSF(float NoL, float NoV, float perceptualRoughness)
-// {
-//     float a = perceptualRoughness * 0.5;
-//     float l = NoL / (NoL * (1 - a) + a);
-//     float v = NoV / (NoV * (1 - a) + a);
-//     return max(l * v, 1e-7);
-// }
+float FD90(float roughness, float LoH)
+{
+    return 0.5 + (2.0 * roughness * LoH * LoH);
+}
+
+float3 GetDiffuse(float3 baseColor, float perceptualRoughness, float LoH, float NoL, float NoV)
+{
+    return (baseColor / PI) * (1.0 + (FD90(perceptualRoughness, LoH) - 1.0) * SchlickFresnel(NoL)) * (1.0 + (FD90(perceptualRoughness, LoH) - 1.0) * SchlickFresnel(NoV));
+}
+
+float3 NDF(float3 f0, float perceptualRoughness, float NoH)
+{
+    float a2 = perceptualRoughness * perceptualRoughness;
+    float NoH2 = NoH * NoH;
+    float c = (NoH2 * (a2 - 1.0)) + 1.0;
+    return max(f0 / (PI * c * c), 1e-7);
+}
+
+float GSF(float NoL, float NoV, float perceptualRoughness)
+{
+    float a = perceptualRoughness * 0.5;
+    float l = NoL / (NoL * (1 - a) + a);
+    float v = NoV / (NoV * (1 - a) + a);
+    return max(l * v, 1e-7);
+}
 
 struct OcclusionData
 {
@@ -238,81 +238,82 @@ void ApplyDirectOcclusion(OcclusionData occlusionData, inout BRDF brdf)
     brdf.specular *= occlusionData.direct;
 }
 
-// void EvaluateLighting(float3 albedo, float specularity, float perceptualRoughness, float metalness, float subsurfaceThickness, float3 f0, float NoV, float3 normalWS, float3 viewDirectionWS, Light light, inout BRDF brdf)
-// {
-//     LightInputs inputs = GetLightInputs(normalWS, viewDirectionWS, light.direction);
-//     float3 diffuse = GetDiffuse(albedo, perceptualRoughness, inputs.LoH, inputs.NoL, NoV);
-//
-//     
-//     float3 ndf = NDF(f0, perceptualRoughness, inputs.NoH);
-//     float3 fresnel = Fresnel(f0, inputs.VoH, perceptualRoughness);
-//     float gsf = GSF(inputs.NoL, NoV, perceptualRoughness);
-//     float3 specular = (fresnel * ndf * gsf) / ((4.0 * inputs.NoL * NoV) + 1e-7);
-//
-//     specular = clamp(specular, 0, 10.0);
-//     diffuse = lerp(diffuse, 0.0, metalness);
-//     float3 lighting = inputs.NoL * light.color * light.shadowAttenuation * light.distanceAttenuation * PI;
-//     brdf.diffuse += diffuse * lighting;
-//     brdf.specular += specular * lighting * inputs.NoL * albedo;
-//
-//     // Subsurface
-//     [branch]
-//     // if(_SubsurfaceEnabled == 1)
-//     // {
-//     //     float3 halfDirectionWS = normalize(-light.direction + normalWS * _SubsurfaceDistortion);
-//     //     float3 lightColor = light.color * light.distanceAttenuation;
-//     //     float subsurfaceAmount = pow(dot01(viewDirectionWS, halfDirectionWS), _SubsurfaceFalloff) + _SubsurfaceAmbient;
-//     //     float3 subsurface = subsurfaceAmount * (1.0 - subsurfaceThickness) * _SubsurfaceColor;
-//     //     brdf.subsurface += subsurface * lightColor * albedo;
-//     // }
-// }
-//
-// void GetAdditionalLightData(float3 albedo, float specularity, float perceptualRoughness, float metalness, float subsurfaceThickness, float3 f0, float NoV, float2 normalizedScreenSpaceUV, float3 positionWS, float3 normalWS, float3 viewDirectionWS, inout BRDF brdf)
-// {
-//     #if defined(_ADDITIONAL_LIGHTS)
-//     uint count = GetAdditionalLightsCount();
-//     uint meshRenderingLayers = GetMeshRenderingLayer();
-//     
-// #if USE_FORWARD_PLUS
-//
-//     ClusterIterator clusterIterator = ClusterInit(normalizedScreenSpaceUV, positionWS, 0);
-//     uint lightIndex = 0;
-//     [loop] while (ClusterNext(clusterIterator, lightIndex)) 
-//     {
-//         lightIndex += URP_FP_DIRECTIONAL_LIGHTS_COUNT;
-//         FORWARD_PLUS_SUBTRACTIVE_LIGHT_CHECK
-//
-//         Light light = GetAdditionalLight(lightIndex, positionWS, half4(1,1,1,1));
-//     /*
-//         #if defined(_LIGHT_LAYERS)
-//         if (IsMatchingLightLayer(light.layerMask, meshRenderingLayers))
-//         #endif
-//         {
-//             EvaluateLighting(albedo, specularity, perceptualRoughness, metalness, subsurfaceThickness, f0, NoV, normalWS, viewDirectionWS, light, brdf);
-//         }
-//     */
-//     }
-//     #else
-//
-//
-//     for(uint lightIndex = 0; lightIndex < count; lightIndex++)
-//     {
-//         Light light = GetAdditionalLight(lightIndex, positionWS, half4(1,1,1,1));
-//
-//         #if defined(_LIGHT_LAYERS)
-//         if (IsMatchingLightLayer(light.layerMask, meshRenderingLayers))
-//         #endif
-//         {
-//             EvaluateLighting(albedo, specularity, perceptualRoughness, metalness, subsurfaceThickness, f0, NoV, normalWS, viewDirectionWS, light, brdf);
-//         }
-//     }
-//
-//
-//     #endif
-//
-//     #endif
-// }
-//
+void EvaluateLighting(float3 albedo, float specularity, float perceptualRoughness, float metalness, float subsurfaceThickness, float3 f0, float NoV, float3 normalWS, float3 viewDirectionWS, Light light, inout BRDF brdf)
+{
+    LightInputs inputs = GetLightInputs(normalWS, viewDirectionWS, light.direction);
+    float3 diffuse = GetDiffuse(albedo, perceptualRoughness, inputs.LoH, inputs.NoL, NoV);
+
+    
+    float3 ndf = NDF(f0, perceptualRoughness, inputs.NoH);
+    float3 fresnel = Fresnel(f0, inputs.VoH, perceptualRoughness);
+    float gsf = GSF(inputs.NoL, NoV, perceptualRoughness);
+    float3 specular = (fresnel * ndf * gsf) / ((4.0 * inputs.NoL * NoV) + 1e-7);
+
+    specular = clamp(specular, 0, 10.0);
+    diffuse = lerp(diffuse, 0.0, metalness);
+    float3 lighting = inputs.NoL * light.color * light.shadowAttenuation * light.distanceAttenuation * PI;
+    brdf.diffuse += diffuse * lighting;
+    brdf.specular += specular * lighting * inputs.NoL * albedo;
+
+    // Subsurface
+    // [branch]
+    // if(_SubsurfaceEnabled == 1)
+    // {
+    //     float3 halfDirectionWS = normalize(-light.direction + normalWS * _SubsurfaceDistortion);
+    //     float3 lightColor = light.color * light.distanceAttenuation;
+    //     float subsurfaceAmount = pow(dot01(viewDirectionWS, halfDirectionWS), _SubsurfaceFalloff) + _SubsurfaceAmbient;
+    //     float3 subsurface = subsurfaceAmount * (1.0 - subsurfaceThickness) * _SubsurfaceColor;
+    //     brdf.subsurface += subsurface * lightColor * albedo;
+    // }
+}
+
+
+void GetAdditionalLightData(float3 albedo, float specularity, float perceptualRoughness, float metalness, float subsurfaceThickness, float3 f0, float NoV, float2 normalizedScreenSpaceUV, float3 positionWS, float3 normalWS, float3 viewDirectionWS, inout BRDF brdf)
+{
+    #if defined(_ADDITIONAL_LIGHTS)
+    uint count = GetAdditionalLightsCount();
+    uint meshRenderingLayers = GetMeshRenderingLayer();
+    
+#if USE_FORWARD_PLUS
+
+    ClusterIterator clusterIterator = ClusterInit(normalizedScreenSpaceUV, positionWS, 0);
+    uint lightIndex = 0;
+    [loop] while (ClusterNext(clusterIterator, lightIndex)) 
+    {
+        lightIndex += URP_FP_DIRECTIONAL_LIGHTS_COUNT;
+        FORWARD_PLUS_SUBTRACTIVE_LIGHT_CHECK
+
+        Light light = GetAdditionalLight(lightIndex, positionWS, half4(1,1,1,1));
+    /*
+        #if defined(_LIGHT_LAYERS)
+        if (IsMatchingLightLayer(light.layerMask, meshRenderingLayers))
+        #endif
+        {
+            EvaluateLighting(albedo, specularity, perceptualRoughness, metalness, subsurfaceThickness, f0, NoV, normalWS, viewDirectionWS, light, brdf);
+        }
+    */
+    }
+    #else
+
+
+    for(uint lightIndex = 0; lightIndex < count; lightIndex++)
+    {
+        Light light = GetAdditionalLight(lightIndex, positionWS, half4(1,1,1,1));
+
+        #if defined(_LIGHT_LAYERS)
+        if (IsMatchingLightLayer(light.layerMask, meshRenderingLayers))
+        #endif
+        {
+            EvaluateLighting(albedo, specularity, perceptualRoughness, metalness, subsurfaceThickness, f0, NoV, normalWS, viewDirectionWS, light, brdf);
+        }
+    }
+
+
+    #endif
+
+    #endif
+}
+
 float3 GetReflection(float3 viewDirectionWS, float3 normalWS, float3 positionWS,  float roughness, float2 normalizedScreenSpaceUV)
 {
     #define LOD_COUNT 6 // It appears that reflection probes have up to 6 mipmaps.
@@ -443,6 +444,7 @@ void ApplyHeightmap(float height, float3 viewDirectionTS, float scale, inout flo
 struct MaterialInputData
 {
     Texture2D baseMap;
+    float4 baseMap_ST;
     float4 baseColor;
 
     Texture2D normalMap;
@@ -517,7 +519,7 @@ void InitializeMaterialData(SamplerState samplerMainTex,float2 uv, MaterialInput
     m.emission = i.emission;
     if(i.hasEmissionMap) // todo:fix
     {
-        m.emission *= SAMPLE_TEXTURE2D(_EmissionMap, samplerMainTex, uv).rgb;
+        // m.emission *= SAMPLE_TEXTURE2D(_EmissionMap, samplerMainTex, uv).rgb;
     }
     
     
@@ -562,7 +564,7 @@ float4 weightedSum(float4 a, float4 b, float2 f)
     return a * f.x + b * f.y;
 }
 
-float4 Frag(Varyings IN, MaterialData mat) 
+float4 Frag(Varyings IN, MaterialData mat,MaterialInputData mat_input_data) 
 {
     UNITY_SETUP_INSTANCE_ID(IN);  // --- 仅当要在片元着色器中访问任何实例化属性时才需要
     UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(IN);
@@ -571,18 +573,10 @@ float4 Frag(Varyings IN, MaterialData mat)
         LODFadeCrossFade(IN.positionHCS);
     #endif
     
-    // Ref: https://highpriority.com/shaders-advanced-two-way-height-blending/ ?
-    // https://www.gamedeveloper.com/programming/advanced-terrain-texture-splatting ?
-    // https://www.youtube.com/watch?v=YH1zm-Xm-Do ?
-
-
-    // float2 uv1 = TRANSFORM_TEX(IN.uv, _MainTex).xy;
-    // float2 uv2 = TRANSFORM_TEX(IN.uv, _MainTex2).xy;
-    
-
-    
+    float2 uv = TRANSFORM_TEX(IN.uv, mat_input_data.baseMap).xy;
     float2 blendFactors = float2(1,0);
-    
+
+    blendFactors = GetBlendFactors(0.5, IN.color.r, 0.5, 1.0 - IN.color.r);
     // if(_UseVertexColors)
     // {
     //     blendFactors = GetBlendFactors(h1, IN.color.r, h2, 1.0 - IN.color.r);
@@ -591,7 +585,7 @@ float4 Frag(Varyings IN, MaterialData mat)
     // float height = weightedSum(h1, h2, blendFactors);
     // float heightScale = weightedSum(_HeightStrength, _HeightStrength2, blendFactors);
 
-    // ApplyHeightmap(height, IN.viewDirectionTS, heightScale, uv1);
+    ApplyHeightmap(0.5, IN.viewDirectionTS, 1, uv);
     // ApplyHeightmap(height, IN.viewDirectionTS, heightScale, uv2);
 
     ///////////////
@@ -642,7 +636,7 @@ float4 Frag(Varyings IN, MaterialData mat)
     float specularity = mat.specularity;
 
 
-
+    float subsurfaceThickness = 1;
     // Subsurface
     // float subsurfaceThickness = _SubsurfaceThickness;
     // if(_HasSubsurfaceMap == 1)
@@ -683,8 +677,8 @@ float4 Frag(Varyings IN, MaterialData mat)
 
     float3 f0 = F0(albedo, specularity, metalness);
     
-    // EvaluateLighting(albedo, specularity, perceptualRoughness, metalness, subsurfaceThickness, f0, NoV, IN.normalWS, IN.viewDirectionWS, mainLight, brdf);
-    // GetAdditionalLightData(albedo, specularity, perceptualRoughness, metalness, subsurfaceThickness, f0, NoV, normalizedScreenSpaceUV, IN.positionWS, IN.normalWS, IN.viewDirectionWS, brdf);
+    EvaluateLighting(albedo, specularity, perceptualRoughness, metalness, subsurfaceThickness, f0, NoV, IN.normalWS, IN.viewDirectionWS, mainLight, brdf);
+    GetAdditionalLightData(albedo, specularity, perceptualRoughness, metalness, subsurfaceThickness, f0, NoV, normalizedScreenSpaceUV, IN.positionWS, IN.normalWS, IN.viewDirectionWS, brdf);
 
     
     // IBL
@@ -716,11 +710,11 @@ float4 Frag(Varyings IN, MaterialData mat)
     float3 color = (brdf.diffuse + brdf.specular);
     
     // Subsurface Lighting
-    color += brdf.subsurface;
+    // color += brdf.subsurface;
     
 
     // Emission
-    color += emission;
+    // color += emission;
     
     // Mix Fog
     // if (_ReceiveFogEnabled == 1)

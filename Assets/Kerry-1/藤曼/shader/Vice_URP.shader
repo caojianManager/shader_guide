@@ -33,7 +33,6 @@ Shader "Unlit/VineURP"
             #pragma fragment Fragment
         	
         	#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
-			#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/SurfaceInput.hlsl"
         	#include "Assets/Shaders/URP/Library/SamplePBR.hlsl"
         	
             CBUFFER_START(UnityPerMaterial)
@@ -75,6 +74,7 @@ Shader "Unlit/VineURP"
 				
 				MaterialInputData inputData;
 				inputData.baseMap = _VineBaseColor;
+				inputData.baseMap_ST = _VineBaseColor_ST;
 				inputData.baseColor = float4(1, 1, 1, 1); // Set base color
 				inputData.normalMap = _VineNormalMap;
 				inputData.normalStrength = 1.0; // Set default normal strength
@@ -97,7 +97,7 @@ Shader "Unlit/VineURP"
 				MaterialData material_data;
 				InitializeMaterialData(sampler_VineBaseColor,uv,inputData,material_data);
 
-				float col = Frag(IN,material_data);
+				float col = Frag(IN,material_data,inputData);
 				float growClip = (IN.uv.y - _Grow);
 				clip(( 1.0 - growClip) - _Cutoff);
 				return col;
