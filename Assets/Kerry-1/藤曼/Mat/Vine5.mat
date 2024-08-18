@@ -8,7 +8,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Vine5
-  m_Shader: {fileID: 4800000, guid: 6d7dbbdf9194b6745ae79aaf2f3c053c, type: 3}
+  m_Shader: {fileID: 4800000, guid: fa55d913b84a61f4799dec82675cd139, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -20,9 +20,8 @@ Material:
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: 2000
-  stringTagMap:
-    RenderType: Opaque
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
   disabledShaderPasses: []
   m_LockedProperties: 
   m_SavedProperties:
@@ -136,6 +135,18 @@ Material:
         m_Texture: {fileID: 2800000, guid: 79722df8209c0d8419cec564ccf46330, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _VineBaseColor:
+        m_Texture: {fileID: 2800000, guid: af42bface2e2f5a4cbff1e6bada59ab0, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _VineNormalMap:
+        m_Texture: {fileID: 2800000, guid: 8e0b8dd8a1fb4cd4784b58ca8409871e, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _VineRoughness:
+        m_Texture: {fileID: 2800000, guid: 79722df8209c0d8419cec564ccf46330, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _planeBaseColor:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -186,7 +197,7 @@ Material:
     - _Float0: 0.05
     - _GrouMin1: 0.6
     - _Grow: 0.53
-    - _Grow1: -0.09
+    - _Grow1: 0.47
     - _GrowMax: 1.421
     - _GrowMax1: 1.499
     - _GrowMin: 0.689

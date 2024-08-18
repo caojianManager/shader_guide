@@ -87,8 +87,8 @@ Material:
     - _EndMax1: 1.388
     - _EndMin1: 0.591
     - _Float0: 0.05
-    - _GrouMin1: 0.088
-    - _Grow1: 1.4
+    - _GrouMin1: 0
+    - _Grow1: 1.59
     - _GrowMax1: 0.875
     - _Offset: -13.2
     - _Scale: 0.02
