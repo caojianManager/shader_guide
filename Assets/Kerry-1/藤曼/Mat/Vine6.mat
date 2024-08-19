@@ -8,22 +8,20 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Vine6
-  m_Shader: {fileID: 4800000, guid: fa55d913b84a61f4799dec82675cd139, type: 3}
+  m_Shader: {fileID: 4800000, guid: 6d7dbbdf9194b6745ae79aaf2f3c053c, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
   m_InvalidKeywords:
   - _HasNormalMap
   - _HasRoughnessMap
-  - _ReceiveFogEnabled
-  - _SURFACE_TYPE_TRANSPARENT
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: -1
-  stringTagMap: {}
-  disabledShaderPasses:
-  - DepthOnly
+  m_CustomRenderQueue: 2000
+  stringTagMap:
+    RenderType: Opaque
+  disabledShaderPasses: []
   m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
@@ -181,9 +179,9 @@ Material:
     - _AlphaClip: 0
     - _AlphaClipEnabled: 0
     - _Blend: 0
-    - _Culling: 2
+    - _Culling: 0
     - _Cutoff: 0.5
-    - _DstBlend: 10
+    - _DstBlend: 0
     - _EndControlMax: 1.35
     - _EndControlMin: 0.63
     - _EndMax1: 1.386
@@ -208,7 +206,7 @@ Material:
     - _HeightStrength: 0.02
     - _HeightStrength2: 0.02
     - _Metalness: 0
-    - _Metalness2: 0
+    - _Metalness2: 0.233
     - _MetalnessMapExposure: 0
     - _MetalnessMapExposure2: 0
     - _NormalStrength: 1
@@ -216,34 +214,35 @@ Material:
     - _OcclusionStrength: 1
     - _OcclusionStrength2: 1
     - _Offset: 1
-    - _ReceiveFogEnabled: 1
+    - _ReceiveFogEnabled: 0
     - _ReceiveShadowsEnabled: 0
     - _Roughness: 0.5
-    - _Roughness2: 0.5
-    - _RoughnessMapExposure: 0
+    - _Roughness2: 1
+    - _RoughnessMapExposure: -1
     - _RoughnessMapExposure2: 0
     - _Scale: 0.01
     - _SortPriority: 0
-    - _Specularity: 0.5
+    - _Specularity: 1
     - _Specularity2: 0.5
-    - _SrcBlend: 5
+    - _SrcBlend: 1
     - _SubsurfaceAmbient: 0.2
     - _SubsurfaceDistortion: 0.3
     - _SubsurfaceEnabled: 0
     - _SubsurfaceFalloff: 2
     - _SubsurfaceThickness: 0.8
-    - _Surface: 1
+    - _Surface: 0
     - _Tilling: 20
     - _TubeControl: 1.7
     - _TubeWidth: 0.34
     - _UseVertexColors: 0
     - _ZTest: 4
-    - _ZWrite: 0
+    - _ZWrite: 1
     - __dirty: 0
     m_Colors:
     - _BaseColor: {r: 1, g: 1, b: 1, a: 0}
     - _BaseColor2: {r: 0.5, g: 0.5, b: 0.5, a: 1}
     - _Emission: {r: 0, g: 0, b: 0, a: 1}
-    - _Emission2: {r: 0, g: 0, b: 0, a: 1}
+    - _Emission2: {r: 1, g: 1, b: 1, a: 1}
     - _SubsurfaceColor: {r: 1, g: 1, b: 1, a: 1}
+    - _defaultColor: {r: 1, g: 1, b: 1, a: 1}
   m_BuildTextureStacks: []

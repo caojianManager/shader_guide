@@ -493,13 +493,13 @@ void InitMaterialInputData(out MaterialInputData inputData)
 {
     inputData.baseMap = _DefaultTex;
     inputData.baseMap_ST = float4(1,1,0,0);
-    inputData.baseColor = float4(1, 1, 1, 1); 
+    inputData.baseColor = float4(255, 255, 255, 1); //默认白色
     inputData.normalMap = _DefaultTex;
     inputData.normalStrength = 1.0;
     inputData.heightMap = _DefaultTex;
     inputData.hasHeightMap = 0;
     inputData.roughnessMap = _DefaultTex;
-    inputData.roughness = 1.0; 
+    inputData.roughness = -1.0; 
     inputData.roughnessMapExposure = 1.0; 
     inputData.hasRoughnessMap = 1; 
     inputData.metalnessMap =_DefaultTex;
@@ -511,7 +511,7 @@ void InitMaterialInputData(out MaterialInputData inputData)
     inputData.hasEmissionMap = 0; 
     inputData.occlusionMap = _DefaultTex;
     inputData.occlusion = 2.0;
-    inputData.specularity = 0.5;
+    inputData.specularity = 1.0;
     inputData.samplerState = sampler_DefaultTex;
 }
 
@@ -545,9 +545,9 @@ void InitializeMaterialData(float2 uv, MaterialInputData i, out MaterialData m)
     
     // Emission
     m.emission = i.emission;
-    if(i.hasEmissionMap) // todo:fix
+    if(i.hasEmissionMap) 
     {
-        // m.emission *= SAMPLE_TEXTURE2D(_EmissionMap, samplerMainTex, uv).rgb;
+        m.emission *= SAMPLE_TEXTURE2D(i.emissionMap, i.samplerState, uv).rgb;
     }
     
     // Occlusion
@@ -592,15 +592,16 @@ float4 weightedSum(float4 a, float4 b, float2 f)
 
 float4 Frag(Varyings IN,MaterialInputData matInputData) 
 {
+    
     UNITY_SETUP_INSTANCE_ID(IN);  // --- 仅当要在片元着色器中访问任何实例化属性时才需要
     UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(IN);
     
     #ifdef LOD_FADE_CROSSFADE
         LODFadeCrossFade(IN.positionHCS);
     #endif
-    
-    float2 uv = TRANSFORM_TEX(IN.uv, matInputData.baseMap).xy;
 
+    float2 uv = TRANSFORM_TEX(IN.uv, matInputData.baseMap).xy;
+   
     float height = 0.5;
     if(matInputData.hasHeightMap)
     {
@@ -608,8 +609,8 @@ float4 Frag(Varyings IN,MaterialInputData matInputData)
     }
     
     float2 blendFactors = float2(1,0);
+    // blendFactors = GetBlendFactors(0.5, IN.color.r, 0.5, 1.0 - IN.color.r);
 
-    blendFactors = GetBlendFactors(0.5, IN.color.r, 0.5, 1.0 - IN.color.r);
     // if(_UseVertexColors)
     // {
     //     blendFactors = GetBlendFactors(h1, IN.color.r, h2, 1.0 - IN.color.r);
@@ -654,14 +655,14 @@ float4 Frag(Varyings IN,MaterialInputData matInputData)
     float4 shadowMask = SAMPLE_SHADOWMASK(IN.staticLightmapUV);
     GetMainLightData(IN.positionWS, shadowMask, mainLight);
     
-    
-    
     // Albedo
     float3 albedo = mat.albedoAlpha.rgb;
 
     float3 emission = mat.emission;
     // Occlusion
     float occlusion = mat.occlusion;
+
+    return float4(albedo,1.0f);
     
     // Roughness
     float perceptualRoughness = mat.perceptualRoughness;
@@ -688,13 +689,13 @@ float4 Frag(Varyings IN,MaterialInputData matInputData)
     //     mainLight.shadowAttenuation = 1;
     // }
 
+    // mainLight.shadowAttenuation = 1;
+
     float3 lightingModel;
     float NoV, NoL, NoH, VoH, VoL, LoH;
 
     NoV = dot01(IN.normalWS, IN.viewDirectionWS);
     
-    
-
     
     ///////////////////////////////
     //   CALCULATE COLOR         //
@@ -715,7 +716,7 @@ float4 Frag(Varyings IN,MaterialInputData matInputData)
     
     EvaluateLighting(albedo, specularity, perceptualRoughness, metalness, subsurfaceThickness, f0, NoV, IN.normalWS, IN.viewDirectionWS, mainLight, brdf);
     GetAdditionalLightData(albedo, specularity, perceptualRoughness, metalness, subsurfaceThickness, f0, NoV, normalizedScreenSpaceUV, IN.positionWS, IN.normalWS, IN.viewDirectionWS, brdf);
-
+    
     
     // IBL
     LightInputs lightInputs = GetLightInputs(IN.normalWS, IN.viewDirectionWS, mainLight.direction);
@@ -740,17 +741,17 @@ float4 Frag(Varyings IN,MaterialInputData matInputData)
     float3 indirectDiffuse = bakedGI * albedo * lerp(1, 0, metalness);
     
     brdf.specular += indirectSpecular * occlusionData.indirect * occlusion * lerp(1.0, albedo, metalness * (1.0 - fresnel)) * lerp(fresnel, 1.0, metalness);
-    brdf.diffuse += indirectDiffuse * occlusionData.indirect * occlusion;
+    // brdf.diffuse += indirectDiffuse * occlusionData.indirect * occlusion;
 
     //最终输出的颜色 漫反射 + 镜面反射
     float3 color = (brdf.diffuse + brdf.specular);
     
     // Subsurface Lighting
-    color += brdf.subsurface;
+    // color += brdf.subsurface;
     
 
     // Emission
-    color += emission;
+    // color += emission;
     
     // Mix Fog
     // if (_ReceiveFogEnabled == 1)

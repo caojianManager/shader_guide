@@ -203,85 +203,85 @@ Shader"CJ_URP/PBR/UltimateLitShader"
             ENDHLSL
         }
         
-        Pass
-        {
-            Name "ShadowCaster"
-            
-            Tags {"LightMode" = "ShadowCaster"}
-            Cull [_Culling]
-            ZWrite On
-            ZTest LEqual
-            ZClip Off
-            
-            
-            HLSLPROGRAM
-
-            #pragma shader_feature_local_fragment _ALPHATEST_ON
-            #pragma multi_compile_instancing
-            #pragma multi_compile _ DOTS_INSTANCING_ON
-            #pragma multi_compile_fragment _ LOD_FADE_CROSSFADE
-            
-            #pragma vertex Vert
-            #pragma fragment FragmentDepthOnly
-            #define CAST_SHADOWS_PASS
-            #pragma multi_compile_vertex _ _CASTING_PUNCTUAL_LIGHT_SHADOW
-            
-            #include "UltimateLitPass.hlsl"
-            
-
-            ENDHLSL
-        }
-        
-        Pass
-        {
-            Name "DepthOnly"
-            
-            Tags {"LightMode" = "DepthOnly"}
-            Cull [_Culling]
-            ZWrite On
-            ZTest LEqual
-            ZClip Off
-            
-            
-            HLSLPROGRAM
-
-            #pragma shader_feature_local_fragment _ALPHATEST_ON
-            #pragma multi_compile_instancing
-            #pragma multi_compile _ DOTS_INSTANCING_ON
-            #pragma multi_compile_fragment _ LOD_FADE_CROSSFADE
-            
-            #pragma vertex Vert
-            #pragma fragment FragmentDepthOnly
-            
-            #include "UltimateLitPass.hlsl"
-            
-            ENDHLSL
-        }
-        
-        Pass
-        {
-            Name "DepthNormalsOnly"
-            
-            Tags {"LightMode" = "DepthNormalsOnly"}
-            Cull [_Culling]
-            ZWrite On
-            ZTest LEqual
-            ZClip Off
-            
-            HLSLPROGRAM
-
-            #pragma shader_feature_local_fragment _ALPHATEST_ON
-            #pragma multi_compile_instancing
-            #pragma multi_compile _ DOTS_INSTANCING_ON
-            #pragma multi_compile_fragment _ LOD_FADE_CROSSFADE
-            
-            #pragma vertex Vert
-            #pragma fragment FragmentDepthNormalsOnly
-            
-            #include "UltimateLitPass.hlsl"
-            
-            ENDHLSL
-        }
+//        Pass
+//        {
+//            Name "ShadowCaster"
+//            
+//            Tags {"LightMode" = "ShadowCaster"}
+//            Cull [_Culling]
+//            ZWrite On
+//            ZTest LEqual
+//            ZClip Off
+//            
+//            
+//            HLSLPROGRAM
+//
+//            #pragma shader_feature_local_fragment _ALPHATEST_ON
+//            #pragma multi_compile_instancing
+//            #pragma multi_compile _ DOTS_INSTANCING_ON
+//            #pragma multi_compile_fragment _ LOD_FADE_CROSSFADE
+//            
+//            #pragma vertex Vert
+//            #pragma fragment FragmentDepthOnly
+//            #define CAST_SHADOWS_PASS
+//            #pragma multi_compile_vertex _ _CASTING_PUNCTUAL_LIGHT_SHADOW
+//            
+//            #include "UltimateLitPass.hlsl"
+//            
+//
+//            ENDHLSL
+//        }
+//        
+//        Pass
+//        {
+//            Name "DepthOnly"
+//            
+//            Tags {"LightMode" = "DepthOnly"}
+//            Cull [_Culling]
+//            ZWrite On
+//            ZTest LEqual
+//            ZClip Off
+//            
+//            
+//            HLSLPROGRAM
+//
+//            #pragma shader_feature_local_fragment _ALPHATEST_ON
+//            #pragma multi_compile_instancing
+//            #pragma multi_compile _ DOTS_INSTANCING_ON
+//            #pragma multi_compile_fragment _ LOD_FADE_CROSSFADE
+//            
+//            #pragma vertex Vert
+//            #pragma fragment FragmentDepthOnly
+//            
+//            #include "UltimateLitPass.hlsl"
+//            
+//            ENDHLSL
+//        }
+//        
+//        Pass
+//        {
+//            Name "DepthNormalsOnly"
+//            
+//            Tags {"LightMode" = "DepthNormalsOnly"}
+//            Cull [_Culling]
+//            ZWrite On
+//            ZTest LEqual
+//            ZClip Off
+//            
+//            HLSLPROGRAM
+//
+//            #pragma shader_feature_local_fragment _ALPHATEST_ON
+//            #pragma multi_compile_instancing
+//            #pragma multi_compile _ DOTS_INSTANCING_ON
+//            #pragma multi_compile_fragment _ LOD_FADE_CROSSFADE
+//            
+//            #pragma vertex Vert
+//            #pragma fragment FragmentDepthNormalsOnly
+//            
+//            #include "UltimateLitPass.hlsl"
+//            
+//            ENDHLSL
+//        }
         
     }
     CustomEditor "UltimateLitShader.Editor.LitMaterialEditorGUI"

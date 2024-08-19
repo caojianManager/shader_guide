@@ -374,15 +374,15 @@ void EvaluateLighting(float3 albedo, float specularity, float perceptualRoughnes
     brdf.specular += specular * lighting * inputs.NoL * albedo;
 
     // Subsurface
-    [branch]
-    if(_SubsurfaceEnabled == 1)
-    {
-        float3 halfDirectionWS = normalize(-light.direction + normalWS * _SubsurfaceDistortion);
-        float3 lightColor = light.color * light.distanceAttenuation;
-        float subsurfaceAmount = pow(dot01(viewDirectionWS, halfDirectionWS), _SubsurfaceFalloff) + _SubsurfaceAmbient;
-        float3 subsurface = subsurfaceAmount * (1.0 - subsurfaceThickness) * _SubsurfaceColor;
-        brdf.subsurface += subsurface * lightColor * albedo;
-    }
+    // [branch]
+    // if(_SubsurfaceEnabled == 1)
+    // {
+    //     float3 halfDirectionWS = normalize(-light.direction + normalWS * _SubsurfaceDistortion);
+    //     float3 lightColor = light.color * light.distanceAttenuation;
+    //     float subsurfaceAmount = pow(dot01(viewDirectionWS, halfDirectionWS), _SubsurfaceFalloff) + _SubsurfaceAmbient;
+    //     float3 subsurface = subsurfaceAmount * (1.0 - subsurfaceThickness) * _SubsurfaceColor;
+    //     brdf.subsurface += subsurface * lightColor * albedo;
+    // }
 }
 
 void GetAdditionalLightData(float3 albedo, float specularity, float perceptualRoughness, float metalness, float subsurfaceThickness, float3 f0, float NoV, float2 normalizedScreenSpaceUV, float3 positionWS, float3 normalWS, float3 viewDirectionWS, inout BRDF brdf)
