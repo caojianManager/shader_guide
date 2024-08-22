@@ -506,7 +506,7 @@ void InitMaterialInputData(out MaterialInputData inputData)
     inputData.metalnessMapExposure = 1.0; 
     inputData.hasMetalnessMap = 0; 
     inputData.emissionMap = _DefaultTex; 
-    inputData.emission = float3(0, 0, 0);
+    inputData.emission = float3(1.0, 1.0, 1.0);
     inputData.hasEmissionMap = 0; 
     inputData.occlusionMap = _DefaultTex;
     inputData.occlusion = 1.0;
