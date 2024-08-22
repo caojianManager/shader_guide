@@ -16,38 +16,38 @@
 #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/SpaceTransforms.hlsl"
 #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Shadows.hlsl"
 // See ShaderVariablesFunctions.hlsl in com.unity.render-pipelines.universal/ShaderLibrary/ShaderVariablesFunctions.hlsl
-//
-// #if defined(LOD_FADE_CROSSFADE)
-//     #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/LODCrossFade.hlsl"
-// #endif
-//
-//
-// ///////////////////////////////////////////////////////////////////////////////
-// //                      Helper Functions                                     //
-// ///////////////////////////////////////////////////////////////////////////////
-//
-// half InverseLerp(half a, half b, half v)
-// {
-//     return (v - a) / (b - a);
-// }
-//
-// half RemapUnclamped(half iMin, half iMax, half oMin, half oMax, half v)
-// {
-//     half t = InverseLerp(iMin, iMax, v);
-//     return lerp(oMin, oMax, t);
-// }
-//
-// half Remap(half iMin, half iMax, half oMin, half oMax, half v)
-// {
-//     v = clamp(v, iMin, iMax);
-//     return RemapUnclamped(iMin, iMax, oMin, oMax, v);
-// }
-//
-// float CheapSqrt(float a)
-// {
-//     return 1.0 - ((1.0 - a) * (1.0 - a));
-// }
-//
+
+#if defined(LOD_FADE_CROSSFADE)
+    #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/LODCrossFade.hlsl"
+#endif
+
+
+///////////////////////////////////////////////////////////////////////////////
+//                      Helper Functions                                     //
+///////////////////////////////////////////////////////////////////////////////
+
+half InverseLerp(half a, half b, half v)
+{
+    return (v - a) / (b - a);
+}
+
+half RemapUnclamped(half iMin, half iMax, half oMin, half oMax, half v)
+{
+    half t = InverseLerp(iMin, iMax, v);
+    return lerp(oMin, oMax, t);
+}
+
+half Remap(half iMin, half iMax, half oMin, half oMax, half v)
+{
+    v = clamp(v, iMin, iMax);
+    return RemapUnclamped(iMin, iMax, oMin, oMax, v);
+}
+
+float CheapSqrt(float a)
+{
+    return 1.0 - ((1.0 - a) * (1.0 - a));
+}
+
 
 /**
  *saturate 函数---saturate(x)的作用是如果x取值小于0，则返回值为0。如果x取值大于1，则返回值为1。若x在0到1之间，则直接返回x的值。
@@ -63,11 +63,10 @@ float dot01(float3 a, float3 b)
     return saturate(dot(a, b));
 }
 
-//
-// float luminance(float3 c)
-// {
-//     return dot(c, float3(0.2126, 0.7152, 0.0722));
-// }
+float luminance(float3 c)
+{
+    return dot(c, float3(0.2126, 0.7152, 0.0722));
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 //                      Structs                                              //
@@ -493,15 +492,15 @@ void InitMaterialInputData(out MaterialInputData inputData)
 {
     inputData.baseMap = _DefaultTex;
     inputData.baseMap_ST = float4(1,1,0,0);
-    inputData.baseColor = float4(255, 255, 255, 1); //默认白色
+    inputData.baseColor = float4(1, 1, 1, 1); //默认白色
     inputData.normalMap = _DefaultTex;
     inputData.normalStrength = 1.0;
     inputData.heightMap = _DefaultTex;
     inputData.hasHeightMap = 0;
     inputData.roughnessMap = _DefaultTex;
-    inputData.roughness = -1.0; 
+    inputData.roughness = 0.5; 
     inputData.roughnessMapExposure = 1.0; 
-    inputData.hasRoughnessMap = 1; 
+    inputData.hasRoughnessMap = 0; 
     inputData.metalnessMap =_DefaultTex;
     inputData.metalness = 0.0; 
     inputData.metalnessMapExposure = 1.0; 
@@ -510,10 +509,11 @@ void InitMaterialInputData(out MaterialInputData inputData)
     inputData.emission = float3(0, 0, 0);
     inputData.hasEmissionMap = 0; 
     inputData.occlusionMap = _DefaultTex;
-    inputData.occlusion = 2.0;
+    inputData.occlusion = 1.0;
     inputData.specularity = 1.0;
     inputData.samplerState = sampler_DefaultTex;
 }
+
 
 void InitializeMaterialData(float2 uv, MaterialInputData i, out MaterialData m)
 {
@@ -661,8 +661,6 @@ float4 Frag(Varyings IN,MaterialInputData matInputData)
     float3 emission = mat.emission;
     // Occlusion
     float occlusion = mat.occlusion;
-
-    return float4(albedo,1.0f);
     
     // Roughness
     float perceptualRoughness = mat.perceptualRoughness;
@@ -741,17 +739,16 @@ float4 Frag(Varyings IN,MaterialInputData matInputData)
     float3 indirectDiffuse = bakedGI * albedo * lerp(1, 0, metalness);
     
     brdf.specular += indirectSpecular * occlusionData.indirect * occlusion * lerp(1.0, albedo, metalness * (1.0 - fresnel)) * lerp(fresnel, 1.0, metalness);
-    // brdf.diffuse += indirectDiffuse * occlusionData.indirect * occlusion;
-
+    brdf.diffuse += indirectDiffuse * occlusionData.indirect * occlusion;
     //最终输出的颜色 漫反射 + 镜面反射
     float3 color = (brdf.diffuse + brdf.specular);
     
     // Subsurface Lighting
-    // color += brdf.subsurface;
+    color += brdf.subsurface;
     
 
     // Emission
-    // color += emission;
+    color += emission;
     
     // Mix Fog
     // if (_ReceiveFogEnabled == 1)

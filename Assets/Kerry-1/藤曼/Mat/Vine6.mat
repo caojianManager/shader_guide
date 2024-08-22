@@ -217,7 +217,7 @@ Material:
     - _ReceiveFogEnabled: 0
     - _ReceiveShadowsEnabled: 0
     - _Roughness: 0.5
-    - _Roughness2: 1
+    - _Roughness2: 0.573
     - _RoughnessMapExposure: -1
     - _RoughnessMapExposure2: 0
     - _Scale: 0.01

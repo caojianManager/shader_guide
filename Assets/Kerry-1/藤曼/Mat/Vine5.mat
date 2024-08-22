@@ -52,6 +52,14 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _DefaultTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DefaultText:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _EmissionMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -230,12 +238,12 @@ Material:
     - _EndMax: 1
     - _EndMax1: 1.5
     - _EndMin: 0.5
-    - _EndMin1: 0.437
+    - _EndMin1: 0.336
     - _Expand: -0.62
     - _Float0: 0.05
     - _GlossinessSource: 0
-    - _GrouMin1: 1
-    - _Grow: 0.3
+    - _GrouMin1: 0.413
+    - _Grow: -0.15
     - _Grow1: 1.24
     - _GrowMax: 1.421
     - _GrowMax1: 1.5

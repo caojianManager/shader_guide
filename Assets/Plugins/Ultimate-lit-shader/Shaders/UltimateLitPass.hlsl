@@ -310,6 +310,7 @@ float FD90(float roughness, float LoH)
     return 0.5 + (2.0 * roughness * LoH * LoH);
 }
 
+//BRDF - 迪士尼-->漫反射模型公式
 float3 GetDiffuse(float3 baseColor, float perceptualRoughness, float LoH, float NoL, float NoV)
 {
     return (baseColor / PI) * (1.0 + (FD90(perceptualRoughness, LoH) - 1.0) * SchlickFresnel(NoL)) * (1.0 + (FD90(perceptualRoughness, LoH) - 1.0) * SchlickFresnel(NoV));
@@ -374,15 +375,15 @@ void EvaluateLighting(float3 albedo, float specularity, float perceptualRoughnes
     brdf.specular += specular * lighting * inputs.NoL * albedo;
 
     // Subsurface
-    // [branch]
-    // if(_SubsurfaceEnabled == 1)
-    // {
-    //     float3 halfDirectionWS = normalize(-light.direction + normalWS * _SubsurfaceDistortion);
-    //     float3 lightColor = light.color * light.distanceAttenuation;
-    //     float subsurfaceAmount = pow(dot01(viewDirectionWS, halfDirectionWS), _SubsurfaceFalloff) + _SubsurfaceAmbient;
-    //     float3 subsurface = subsurfaceAmount * (1.0 - subsurfaceThickness) * _SubsurfaceColor;
-    //     brdf.subsurface += subsurface * lightColor * albedo;
-    // }
+    [branch]
+    if(_SubsurfaceEnabled == 1)
+    {
+        float3 halfDirectionWS = normalize(-light.direction + normalWS * _SubsurfaceDistortion);
+        float3 lightColor = light.color * light.distanceAttenuation;
+        float subsurfaceAmount = pow(dot01(viewDirectionWS, halfDirectionWS), _SubsurfaceFalloff) + _SubsurfaceAmbient;
+        float3 subsurface = subsurfaceAmount * (1.0 - subsurfaceThickness) * _SubsurfaceColor;
+        brdf.subsurface += subsurface * lightColor * albedo;
+    }
 }
 
 void GetAdditionalLightData(float3 albedo, float specularity, float perceptualRoughness, float metalness, float subsurfaceThickness, float3 f0, float NoV, float2 normalizedScreenSpaceUV, float3 positionWS, float3 normalWS, float3 viewDirectionWS, inout BRDF brdf)
@@ -615,10 +616,10 @@ void InitializeMaterialData(float2 uv, MaterialInputData i, out MaterialData m)
 
     // Roughness
     float roughness = i.roughness;
-    if(i.hasRoughnessMap)
-    {
-        roughness = saturate(SAMPLE_TEXTURE2D(i.roughnessMap, sampler_MainTex, uv).r + i.roughnessMapExposure);
-    }
+    // if(i.hasRoughnessMap)
+    // {
+    //     roughness = saturate(SAMPLE_TEXTURE2D(i.roughnessMap, sampler_MainTex, uv).r + i.roughnessMapExposure);
+    // }
     m.perceptualRoughness = roughness * roughness;
 
 
@@ -912,9 +913,9 @@ float4 Frag(Varyings IN) : SV_Target
     
     brdf.specular += indirectSpecular * occlusionData.indirect * occlusion * lerp(1.0, albedo, metalness * (1.0 - fresnel)) * lerp(fresnel, 1.0, metalness);
     brdf.diffuse += indirectDiffuse * occlusionData.indirect * occlusion;
-    
+
     float3 color = (brdf.diffuse + brdf.specular);
-    
+   
 
     // Subsurface Lighting
     color += brdf.subsurface;

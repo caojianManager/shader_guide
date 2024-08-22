@@ -13,7 +13,8 @@ Shader "Unlit/VineURP"
 		_EndMax1("EndMax", Range( 0 , 1.5)) = 0
 		_Offset("Offset", Float) = 0
 		_Scale("Scale", Float) = 0
-    }
+    	[HideInspector]_DefaultTex("DefaultTex", 2D) = "white" {}
+    }	
     
     SubShader
     {
@@ -86,9 +87,7 @@ Shader "Unlit/VineURP"
         		float4 _VineBaseColor_ST;
         		float4 _defaultColor;
             CBUFFER_END
-
-        	TEXTURE2D(_defaultTex);
-        	SAMPLER(sampler_defaultTex);
+            
         	TEXTURE2D(_VineBaseColor);
         	SAMPLER(sampler_VineBaseColor);
         	TEXTURE2D(_VineNormalMap);
@@ -115,7 +114,6 @@ Shader "Unlit/VineURP"
 				inputData.samplerState = sampler_VineBaseColor; //
 				inputData.baseMap_ST = _VineBaseColor_ST;
 				inputData.normalMap = _VineNormalMap;
-			
 				float4 col = Frag(IN,inputData);
 				float growClip = (IN.uv.y - _Grow);
 				clip(( 1.0 - growClip) - _Cutoff);
