@@ -295,11 +295,15 @@ float SchlickFresnel(float input)
 
 float3 F0(float3 albedo, float specularity, float metalness)
 {
+    
     float3 f0 = specularity.xxx;
     return f0;
+
+    //下面这种计算方式 -- 对于金属来讲，Albedo就是FO的颜色，对于塑料来讲 FO就是Specular的颜色
     return lerp(f0, albedo, metalness);
 }
 
+//F项菲涅尔项(Specular F) : Schlick Frenel ---->F为菲涅尔反射系数
 float3 Fresnel(float3 f0, float cosTheta, float roughness)
 {
     return f0 + (max(1.0 - roughness, f0) - f0) * SchlickFresnel(cosTheta);
@@ -316,6 +320,7 @@ float3 GetDiffuse(float3 baseColor, float perceptualRoughness, float LoH, float 
     return (baseColor / PI) * (1.0 + (FD90(perceptualRoughness, LoH) - 1.0) * SchlickFresnel(NoL)) * (1.0 + (FD90(perceptualRoughness, LoH) - 1.0) * SchlickFresnel(NoV));
 }
 
+//法线分布项D(Specular D): GTR  --->D为微平面分布函数
 float3 NDF(float3 f0, float perceptualRoughness, float NoH)
 {
     float a2 = perceptualRoughness * perceptualRoughness;
@@ -324,6 +329,7 @@ float3 NDF(float3 f0, float perceptualRoughness, float NoH)
     return max(f0 / (PI * c * c), 1e-7);
 }
 
+//几何项(Specualr G): Smith - GGX --->G为几何衰减/阴影项(shadowing factor)
 float GSF(float NoL, float NoV, float perceptualRoughness)
 {
     float a = perceptualRoughness * 0.5;
@@ -360,16 +366,18 @@ void ApplyDirectOcclusion(OcclusionData occlusionData, inout BRDF brdf)
 void EvaluateLighting(float3 albedo, float specularity, float perceptualRoughness, float metalness, float subsurfaceThickness, float3 f0, float NoV, float3 normalWS, float3 viewDirectionWS, Light light, inout BRDF brdf)
 {
     LightInputs inputs = GetLightInputs(normalWS, viewDirectionWS, light.direction);
+    //漫反射
     float3 diffuse = GetDiffuse(albedo, perceptualRoughness, inputs.LoH, inputs.NoL, NoV);
-
-    
-    float3 ndf = NDF(f0, perceptualRoughness, inputs.NoH);
-    float3 fresnel = Fresnel(f0, inputs.VoH, perceptualRoughness);
-    float gsf = GSF(inputs.NoL, NoV, perceptualRoughness);
-    float3 specular = (fresnel * ndf * gsf) / ((4.0 * inputs.NoL * NoV) + 1e-7);
+    //镜面反射
+    float3 ndf = NDF(f0, perceptualRoughness, inputs.NoH); //D项
+    float3 fresnel = Fresnel(f0, inputs.VoH, perceptualRoughness);//F项
+    float gsf = GSF(inputs.NoL, NoV, perceptualRoughness);//G项
+    float3 specular = (fresnel * ndf * gsf) / ((4.0 * inputs.NoL * NoV) + 1e-7); //镜面反射方程
 
     specular = clamp(specular, 0, 10.0);
-    diffuse = lerp(diffuse, 0.0, metalness);
+    diffuse = lerp(diffuse, 0.0, metalness);  //漫反射 -->金属为0，非金属为diffuse;
+
+    //最终 漫反射和镜面反射加上环境光照。
     float3 lighting = inputs.NoL * light.color * light.shadowAttenuation * light.distanceAttenuation * PI;
     brdf.diffuse += diffuse * lighting;
     brdf.specular += specular * lighting * inputs.NoL * albedo;
