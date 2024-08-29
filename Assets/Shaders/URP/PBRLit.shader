@@ -15,8 +15,8 @@ Shader "CALF/PBRLit"
         _DetailMapColor("Detail Map Color",Color) = (1,1,1,1)
         _DetailNormalMap("Detail NormalMap",2D) = "white" {}
         _DetailScale("Detail Scale",Range(0,2)) = 1.0
-        
-        [HideInInspector] _DefaultTex("DefaultTex",2D) = "white" {}
+        //Other Properties
+        [Toggle(_ReceiveFogEnabled)] _ReceiveFogEnabled ("Receive Fog", Float) = 1
     }
     SubShader
     {
@@ -28,6 +28,8 @@ Shader "CALF/PBRLit"
             HLSLPROGRAM
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
             #include "Assets/Shaders/URP/Library/SurfacePBR_URP.hlsl"
+
+            #pragma multi_compile_fog
             
             #pragma vertex vert;
             #pragma fragment frag;
@@ -50,6 +52,7 @@ Shader "CALF/PBRLit"
                 float _DetailScale;
                 float _HasMRAMap;
                 float _EnableDetailMap;
+                float _ReceiveFogEnabled;
                 float4 _BaseColor;
                 float4 _DetailMapColor;
                 float4 _DetailMap_ST;
@@ -94,8 +97,7 @@ Shader "CALF/PBRLit"
                 detailNormalTS = normalize(detailNormalTS);
                 float3 blendNormalTS = lerp(normalTS, BlendNormalRNM(normalTS, detailNormalTS),1);
                 mat.normalTS = _EnableDetailMap ? blendNormalTS : normalTS;
-                
-                float4 col = Frag(IN, mat);
+                float4 col = Frag(IN, mat,_ReceiveFogEnabled);
                 return col;
             }
             

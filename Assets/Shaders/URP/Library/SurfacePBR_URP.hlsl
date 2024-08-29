@@ -517,7 +517,7 @@ float2 GetBlendFactors(float height1, float a1, float height2, float a2)
     return float2(b1 * b3, b2 * b3);
 }
 
-float4 Frag(Varyings IN,MaterialData mat) 
+float4 Frag(Varyings IN,MaterialData mat,float IsRecivedFog = 0) 
 {
     
     UNITY_SETUP_INSTANCE_ID(IN);  // --- 仅当要在片元着色器中访问任何实例化属性时才需要
@@ -650,11 +650,11 @@ float4 Frag(Varyings IN,MaterialData mat)
     color += emission;
     
     // Mix Fog
-    // if (_ReceiveFogEnabled == 1)
-    // {
-    //     float fogFactor = InitializeInputDataFog(float4(IN.positionWS, 1), 0);
-    //     color = MixFog(color, fogFactor);
-    // }
+    if (IsRecivedFog == 1)
+    {
+        float fogFactor = InitializeInputDataFog(float4(IN.positionWS, 1), 0);
+        color = MixFog(color, fogFactor);
+    }
     
     return float4(color, mat.albedoAlpha.a);
 }

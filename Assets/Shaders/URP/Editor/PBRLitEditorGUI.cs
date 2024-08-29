@@ -8,8 +8,8 @@ namespace URPShader
     public class PBRLitEditorGUI : ShaderGUI
     {
         bool showSurfaceOptions = true;
-        
         bool showDetailsOptions = true;
+        bool showAdvancedOptions = true;
 
         private MaterialEditor matEditor;
         private Material mat;
@@ -31,10 +31,12 @@ namespace URPShader
             MaterialProperty _DetailNormalMap = FindProperty("_DetailNormalMap", properties);
             MaterialProperty _DetailMapColor = FindProperty("_DetailMapColor", properties);
             MaterialProperty _DetailScale = FindProperty("_DetailScale", properties);
+            MaterialProperty _ReceiveFogEnabled = FindProperty("_ReceiveFogEnabled", properties);
             
             DrawMraOptions();
             DrawSurfaceOptions();
             DrawDetailsOptions();
+            DrawAdvancedOptions();
 
             void DrawMraOptions()
             {
@@ -70,6 +72,19 @@ namespace URPShader
                 }
 
                 matEditor.TextureScaleOffsetProperty(_BaseMap);
+                EditorGUILayout.EndFoldoutHeaderGroup();
+            }
+            
+            void DrawAdvancedOptions()
+            {
+                showAdvancedOptions = EditorGUILayout.BeginFoldoutHeaderGroup(showAdvancedOptions, "Advanced Options");
+                if (showAdvancedOptions)
+                {
+                    EditorGUI.indentLevel++;
+                    materialEditor.ShaderProperty(_ReceiveFogEnabled, new GUIContent("Receive Fog"));
+                    EditorGUI.indentLevel--;
+                    EditorGUILayout.Space();
+                }
                 EditorGUILayout.EndFoldoutHeaderGroup();
             }
             
