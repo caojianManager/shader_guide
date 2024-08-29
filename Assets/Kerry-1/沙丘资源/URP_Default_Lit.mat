@@ -198,7 +198,7 @@ Material:
     - _RoughnessMapExposure: 0
     - _RoughnessMapExposure2: 0
     - _Shininess: 0
-    - _Smoothness: 0.317
+    - _Smoothness: 0
     - _SmoothnessSource: 0
     - _SmoothnessTextureChannel: 0
     - _SortPriority: 0
