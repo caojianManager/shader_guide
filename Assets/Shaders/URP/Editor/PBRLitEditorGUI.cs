@@ -26,6 +26,7 @@ namespace URPShader
             MaterialProperty _BaseMap = FindProperty("_BaseMap", properties);
             MaterialProperty _BaseColor = FindProperty("_BaseColor", properties);
             MaterialProperty _NormalMap = FindProperty("_NormalMap", properties);
+            MaterialProperty _EnableDetailMap = FindProperty("_EnableDetailMap", properties);
             MaterialProperty _DetailMap = FindProperty("_DetailMap", properties);
             MaterialProperty _DetailNormalMap = FindProperty("_DetailNormalMap", properties);
             MaterialProperty _DetailMapColor = FindProperty("_DetailMapColor", properties);
@@ -37,10 +38,14 @@ namespace URPShader
 
             void DrawMraOptions()
             {
+                EditorGUI.BeginChangeCheck();
                 materialEditor.TexturePropertySingleLine(
                     new GUIContent("MRA Map"),
                     _MRAMap);
-                _HasMRAMap.floatValue = (_HasMRAMap.textureValue == null ? 0: 1);
+                if(EditorGUI.EndChangeCheck())
+                {
+                    _HasMRAMap.floatValue = (_MRAMap.textureValue == null ? 0: 1);
+                }
             }
             
             void DrawSurfaceOptions()
@@ -106,6 +111,7 @@ namespace URPShader
                 showDetailsOptions = EditorGUILayout.BeginFoldoutHeaderGroup(showDetailsOptions, "Detail Options");
                 if (showDetailsOptions)
                 {
+                    DrawToggleProperty(_EnableDetailMap, new GUIContent("Enabled"));
                     TexturePropertyWithColor(
                         new GUIContent(
                             "Base Color",
@@ -125,6 +131,18 @@ namespace URPShader
                 }
                 matEditor.TextureScaleOffsetProperty(_DetailMap);
                 EditorGUILayout.EndFoldoutHeaderGroup();
+            }
+            
+            void DrawToggleProperty(MaterialProperty p, GUIContent c)
+            {
+                EditorGUI.BeginChangeCheck();
+                EditorGUI.showMixedValue = p.hasMixedValue;
+                bool v = EditorGUILayout.Toggle(c, p.floatValue == 1.0f);
+                if (EditorGUI.EndChangeCheck())
+                {
+                    p.floatValue = v ? 1.0f : 0.0f;
+                }
+                EditorGUI.showMixedValue = false;
             }
         }
 

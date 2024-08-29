@@ -4,12 +4,13 @@ Shader "CALF/PBRLit"
     {
         //MRA贴图 r-金属度,g-粗糙度,b-ao
         _MRAMap("MRA Map",2D) = "white" {}
-        _HasMRAMap("Has MRA Map",Float) = 0
+        [Toggle(_HasMRAMap)] _HasMRAMap("Has MRA Map",Float) = 0
         //基础贴图
         _BaseMap("BaseMap",2D) = "white" {}
         _BaseColor("BaseColor",Color) = (1,1,1,1)
         _NormalMap("NormalMap",2D) = "white" {}
         //细节贴图
+        _EnableDetailMap("Enable Detail Map",Float) = 0
         _DetailMap("Detail Map",2D) = "white" {}
         _DetailMapColor("Detail Map Color",Color) = (1,1,1,1)
         _DetailNormalMap("Detail NormalMap",2D) = "white" {}
@@ -48,12 +49,12 @@ Shader "CALF/PBRLit"
             CBUFFER_START(UnityMatVar)
                 float _DetailScale;
                 float _HasMRAMap;
+                float _EnableDetailMap;
                 float4 _BaseColor;
                 float4 _DetailMapColor;
                 float4 _DetailMap_ST;
                 float4 _BaseMap_ST;
             CBUFFER_END
-
 
             Varyings vert(Attributes IN)
             {
@@ -74,16 +75,12 @@ Shader "CALF/PBRLit"
                 float4 detailNormal = SAMPLE_TEXTURE2D(_DetailNormalMap, sampler_DetailMap, IN.uv1);
                 detailMap =  half(2.0) * detailMap * _DetailScale - _DetailScale + half(1.0);
 
-                float metalV = GetMetalness();
-                if(_HasMRAMap)
-                {
-                    metalV = 1.0;
-                }
+                float metalV = _HasMRAMap ? mraMap.r : 0.0;
                 float ao = _HasMRAMap ? mraMap.b : 1.0;
                 float roughness = _HasMRAMap ? mraMap.g : 1.0;
                 
                 MaterialData mat;
-                mat.albedoAlpha = baseMap * detailMap;
+                mat.albedoAlpha = _EnableDetailMap ? baseMap * detailMap : baseMap;
                 mat.metalness = metalV;
                 mat.emission = GetEmission();
                 mat.occlusion = ao;
@@ -96,7 +93,7 @@ Shader "CALF/PBRLit"
                 detailNormalTS = float3(detailNormalTS.rg * GetNormalStrength(), lerp(1, detailNormalTS.b, saturate(GetNormalStrength())));
                 detailNormalTS = normalize(detailNormalTS);
                 float3 blendNormalTS = lerp(normalTS, BlendNormalRNM(normalTS, detailNormalTS),1);
-                mat.normalTS = blendNormalTS;
+                mat.normalTS = _EnableDetailMap ? blendNormalTS : normalTS;
                 
                 float4 col = Frag(IN, mat);
                 return col;
