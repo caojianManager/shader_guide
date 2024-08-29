@@ -2,7 +2,6 @@ Shader"CJ_URP/PBR/UltimateLitShader"
 {
     Properties
     {
-
         //////////////////////////////////////
         //  Shared Material Settings        //
         //////////////////////////////////////

@@ -9,6 +9,7 @@ Shader "CALF/PBRLit"
         _BaseMap("BaseMap",2D) = "white" {}
         _BaseColor("BaseColor",Color) = (1,1,1,1)
         _NormalMap("NormalMap",2D) = "white" {}
+        _Roughness("Roughness",Range(0,1)) = 0.0
         //细节贴图
         _EnableDetailMap("Enable Detail Map",Float) = 0
         _DetailMap("Detail Map",2D) = "white" {}
@@ -46,6 +47,11 @@ Shader "CALF/PBRLit"
             #pragma multi_compile _ DIRLIGHTMAP_COMBINED
             #pragma multi_compile _ LIGHTMAP_ON
             #pragma multi_compile _ DYNAMICLIGHTMAP_ON
+
+            // Instancing
+            #pragma multi_compile_instancing
+            #pragma instancing_options renderinglayer
+            #pragma multi_compile _ DOTS_INSTANCING_ON
             
             #pragma vertex vert;
             #pragma fragment frag;
@@ -67,6 +73,7 @@ Shader "CALF/PBRLit"
             CBUFFER_START(UnityMatVar)
                 float _DetailScale;
                 float _HasMRAMap;
+                float _Roughness;
                 float _EnableDetailMap;
                 float _ReceiveFogEnabled;
                 float _ReceiveShadowsEnabled;
@@ -95,9 +102,9 @@ Shader "CALF/PBRLit"
                 float4 detailNormal = SAMPLE_TEXTURE2D(_DetailNormalMap, sampler_DetailMap, IN.uv.zw);
                 detailMap =  half(2.0) * detailMap * _DetailScale - _DetailScale + half(1.0);
 
-                float metalV = _HasMRAMap ? mraMap.r : 0.0;
+                float metalV = _HasMRAMap ? saturate(mraMap.r): 0.0;
                 float ao = _HasMRAMap ? mraMap.b : 1.0;
-                float roughness = _HasMRAMap ? mraMap.g : 1.0;
+                float roughness = _HasMRAMap ? saturate(mraMap.g + _Roughness) : _Roughness;
                 
                 MaterialData mat;
                 mat.albedoAlpha = _EnableDetailMap ? baseMap * detailMap : baseMap;
