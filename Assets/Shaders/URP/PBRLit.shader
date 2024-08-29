@@ -17,6 +17,7 @@ Shader "CALF/PBRLit"
         _DetailScale("Detail Scale",Range(0,2)) = 1.0
         //Other Properties
         [Toggle(_ReceiveFogEnabled)] _ReceiveFogEnabled ("Receive Fog", Float) = 1
+        [Toggle(_ReceiveShadowsEnabled)] _ReceiveShadowsEnabled ("Receive Shadow", Float) = 1
     }
     SubShader
     {
@@ -24,12 +25,27 @@ Shader "CALF/PBRLit"
 
         Pass
         {
-            Tags{"LightMode" = "UniversalForward"}
+            Tags {"LightMode" = "UniversalForwardOnly"}
+
             HLSLPROGRAM
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
             #include "Assets/Shaders/URP/Library/SurfacePBR_URP.hlsl"
 
+            // Fog, Decals, SSAO
             #pragma multi_compile_fog
+            
+            // Lighting
+            #pragma multi_compile _ _MAIN_LIGHT_SHADOWS _MAIN_LIGHT_SHADOWS_CASCADE _MAIN_LIGHT_SHADOWS_SCREEN
+            #pragma multi_compile _ _ADDITIONAL_LIGHTS_VERTEX _ADDITIONAL_LIGHTS
+            #pragma multi_compile _ _ADDITIONAL_LIGHT_SHADOWS
+            #pragma multi_compile _ _SHADOWS_SOFT
+            
+            // Lightmapping
+            #pragma multi_compile _ LIGHTMAP_SHADOW_MIXING
+            #pragma multi_compile _ SHADOWS_SHADOWMASK
+            #pragma multi_compile _ DIRLIGHTMAP_COMBINED
+            #pragma multi_compile _ LIGHTMAP_ON
+            #pragma multi_compile _ DYNAMICLIGHTMAP_ON
             
             #pragma vertex vert;
             #pragma fragment frag;
@@ -53,6 +69,7 @@ Shader "CALF/PBRLit"
                 float _HasMRAMap;
                 float _EnableDetailMap;
                 float _ReceiveFogEnabled;
+                float _ReceiveShadowsEnabled;
                 float4 _BaseColor;
                 float4 _DetailMapColor;
                 float4 _DetailMap_ST;
@@ -64,8 +81,8 @@ Shader "CALF/PBRLit"
                 //r-金属 g-粗糙 b-ao
                 Varyings OUT = Vert(IN);
                 OUT.color = float4(0.5,0.5,0.5,1);
-                OUT.uv = IN.uv * _BaseMap_ST.xy + _BaseMap_ST.zw;
-                OUT.uv1 = IN.uv * _DetailMap_ST.xy + _DetailMap_ST.zw;
+                OUT.uv.xy = IN.uv * _BaseMap_ST.xy + _BaseMap_ST.zw;
+                OUT.uv.zw = IN.uv * _DetailMap_ST.xy + _DetailMap_ST.zw;
                 return OUT;
             }
 
@@ -74,8 +91,8 @@ Shader "CALF/PBRLit"
                 float4 mraMap = SAMPLE_TEXTURE2D(_MRAMap, sampler_MRAMap,IN.uv);
                 float4 baseMap = SAMPLE_TEXTURE2D(_BaseMap,sampler_BaseMap, IN.uv) * _BaseColor;
                 float4 normalMap = SAMPLE_TEXTURE2D(_NormalMap,sampler_NormalMap,IN.uv);
-                float4 detailMap = SAMPLE_TEXTURE2D(_DetailMap, sampler_DetailMap,IN.uv1) * _DetailMapColor;
-                float4 detailNormal = SAMPLE_TEXTURE2D(_DetailNormalMap, sampler_DetailMap, IN.uv1);
+                float4 detailMap = SAMPLE_TEXTURE2D(_DetailMap, sampler_DetailMap,IN.uv.zw) * _DetailMapColor;
+                float4 detailNormal = SAMPLE_TEXTURE2D(_DetailNormalMap, sampler_DetailMap, IN.uv.zw);
                 detailMap =  half(2.0) * detailMap * _DetailScale - _DetailScale + half(1.0);
 
                 float metalV = _HasMRAMap ? mraMap.r : 0.0;
@@ -97,10 +114,37 @@ Shader "CALF/PBRLit"
                 detailNormalTS = normalize(detailNormalTS);
                 float3 blendNormalTS = lerp(normalTS, BlendNormalRNM(normalTS, detailNormalTS),1);
                 mat.normalTS = _EnableDetailMap ? blendNormalTS : normalTS;
-                float4 col = Frag(IN, mat,_ReceiveFogEnabled);
+                float4 col = Frag(IN, mat,_ReceiveFogEnabled,_ReceiveShadowsEnabled);
                 return col;
             }
             
+            ENDHLSL
+        }
+
+        Pass
+        {
+            Name "PBRLit_ShadowCaster"
+            
+            Tags {"LightMode" = "ShadowCaster"}
+            ZWrite On
+            ZTest LEqual
+            ZClip Off
+            
+            
+            HLSLPROGRAM
+
+            #pragma shader_feature_local_fragment _ALPHATEST_ON
+            #pragma multi_compile_instancing
+            #pragma multi_compile _ DOTS_INSTANCING_ON
+            #pragma multi_compile_fragment _ LOD_FADE_CROSSFADE
+            
+            #pragma vertex Vert
+            #pragma fragment FragmentDepthOnly
+            #define CAST_SHADOWS_PASS
+            #pragma multi_compile_vertex _ _CASTING_PUNCTUAL_LIGHT_SHADOW
+            
+            #include "Assets/Shaders/URP/Library/SurfacePBR_URP.hlsl"
+
             ENDHLSL
         }
     }

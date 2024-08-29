@@ -32,6 +32,7 @@ Material:
   - _MASKMAP
   - _NORMALMAP
   - _PIXEL_DISPLACEMENT_LOCK_OBJECT_SCALE
+  - _ReceiveFogEnabled
   - _VERTEX_DISPLACEMENT_LOCK_OBJECT_SCALE
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
@@ -242,6 +243,7 @@ Material:
     - _RainNormalScale: 1
     - _RainSize: 1
     - _RainWetnessFactor: 1
+    - _ReceiveFogEnabled: 1
     - _ReceiveShadows: 1
     - _RefractionEnable: 0
     - _RefractionShadowAttenuation: 1

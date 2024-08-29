@@ -32,6 +32,7 @@ namespace URPShader
             MaterialProperty _DetailMapColor = FindProperty("_DetailMapColor", properties);
             MaterialProperty _DetailScale = FindProperty("_DetailScale", properties);
             MaterialProperty _ReceiveFogEnabled = FindProperty("_ReceiveFogEnabled", properties);
+            MaterialProperty _ReceiveShadowsEnabled = FindProperty("_ReceiveShadowsEnabled", properties);
             
             DrawMraOptions();
             DrawSurfaceOptions();
@@ -82,6 +83,7 @@ namespace URPShader
                 {
                     EditorGUI.indentLevel++;
                     materialEditor.ShaderProperty(_ReceiveFogEnabled, new GUIContent("Receive Fog"));
+                    materialEditor.ShaderProperty(_ReceiveShadowsEnabled, new GUIContent("Receive Shadow"));
                     EditorGUI.indentLevel--;
                     EditorGUILayout.Space();
                 }

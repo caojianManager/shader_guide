@@ -349,22 +349,22 @@ struct Attributes
     float3 normalOS           : NORMAL;
     float4 tangentOS          : TANGENT;
     float3 color              : COLOR;
-    float2 uv                 : TEXCOORD0;
-    float2 uv1                : TEXCOORD1;
+    float4 uv                 : TEXCOORD0;
+    float2 staticLightmapUV   : TEXCOORD1;
+    float2 dynamicLightmapUV  : TEXCOORD2;
     UNITY_VERTEX_INPUT_INSTANCE_ID
 };
 
 struct Varyings
 {
     float4 positionHCS     : SV_POSITION;
-    float2 uv              : TEXCOORD0;
-    float2 uv1             : TEXCOORD1;
-    float3 positionWS      : TEXCOORD2;
-    float3 normalWS        : TEXCOORD3;
-    float3 viewDirectionWS : TEXCOORD4;
-    float4 tangentWS       : TEXCOORD5;
-    float3 viewDirectionTS : TEXCOORD6;
-    float3 color           : TEXCOORD7;
+    float4 uv              : TEXCOORD0;
+    float3 positionWS      : TEXCOORD1;
+    float3 normalWS        : TEXCOORD2;
+    float3 viewDirectionWS : TEXCOORD3;
+    float4 tangentWS       : TEXCOORD4;
+    float3 viewDirectionTS : TEXCOORD5;
+    float3 color           : TEXCOORD6;
 
     DECLARE_LIGHTMAP_OR_SH(staticLightmapUV, vertexSH, 8);
 #ifdef DYNAMICLIGHTMAP_ON
@@ -391,7 +391,6 @@ Varyings Vert(Attributes IN)
     OUT.normalWS = normalize(OUT.normalWS);
     OUT.positionHCS = GetClipSpacePosition(OUT.positionWS, OUT.normalWS);
     OUT.uv = IN.uv;
-    OUT.uv1 = IN.uv1;
     OUT.viewDirectionWS = (GetWorldSpaceViewDir(OUT.positionWS));
 
     OUT.tangentWS = float4(TransformObjectToWorldDir(IN.tangentOS.xyz), IN.tangentOS.w);
@@ -517,7 +516,7 @@ float2 GetBlendFactors(float height1, float a1, float height2, float a2)
     return float2(b1 * b3, b2 * b3);
 }
 
-float4 Frag(Varyings IN,MaterialData mat,float IsRecivedFog = 0) 
+float4 Frag(Varyings IN,MaterialData mat,float IsRecivedFog = 0,float IsRecivedShadow = 0) 
 {
     
     UNITY_SETUP_INSTANCE_ID(IN);  // --- 仅当要在片元着色器中访问任何实例化属性时才需要
@@ -578,16 +577,13 @@ float4 Frag(Varyings IN,MaterialData mat,float IsRecivedFog = 0)
     // {
     //     subsurfaceThickness *= SAMPLE_TEXTURE2D(_SubsurfaceThicknessMap, sampler_SubsurfaceThicknessMap, IN.uv).r;
     // }
-    //
-    //
-    //
-    // // Lighting
-    // if (_ReceiveShadowsEnabled == 0)
-    // {
-    //     mainLight.shadowAttenuation = 1;
-    // }
 
-    // mainLight.shadowAttenuation = 1;
+    
+    // Lighting--固定接受阴影
+    if(IsRecivedShadow == 0)
+    {
+        mainLight.shadowAttenuation = 1;
+    }
 
     float3 lightingModel;
     float NoV, NoL, NoH, VoH, VoL, LoH;

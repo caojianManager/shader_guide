@@ -30,6 +30,7 @@ Material:
   - _HasNormalMap
   - _HasSubsurfaceMap
   - _NORMALMAP
+  - _ReceiveShadowsEnabled
   - _UseVertexColors
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
@@ -203,7 +204,7 @@ Material:
     - _QueueOffset: 0
     - _ReceiveFogEnabled: 0
     - _ReceiveShadows: 1
-    - _ReceiveShadowsEnabled: 0
+    - _ReceiveShadowsEnabled: 1
     - _Roughness: 0.606
     - _Roughness2: 0.284
     - _RoughnessMapExposure: 0
@@ -212,7 +213,7 @@ Material:
     - _Smoothness: 0.5
     - _SmoothnessSource: 0
     - _SmoothnessTextureChannel: 0
-    - _SortPriority: 0
+    - _SortPriority: 50
     - _SpecSource: 0
     - _SpecularHighlights: 1
     - _Specularity: 0.5
