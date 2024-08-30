@@ -809,7 +809,7 @@ float4 Frag(Varyings IN) : SV_Target
     ///////////////////////////////
     //   Alpha Clipping          //
     ///////////////////////////////
-     
+    // return float4(m.albedoAlpha.a,m.albedoAlpha.a,m.albedoAlpha.a,1.0);
     AlphaDiscard(m.albedoAlpha.a, _AlphaClip);
     
     

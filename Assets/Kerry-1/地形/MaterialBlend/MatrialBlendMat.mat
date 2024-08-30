@@ -8,7 +8,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: MatrialBlendMat
-  m_Shader: {fileID: 4800000, guid: e4989bbbbe4e93546bdb0f43e96e9696, type: 3}
+  m_Shader: {fileID: 4800000, guid: ccb430354a413804b9fedeec56d27b8e, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -73,6 +73,10 @@ Material:
         m_Texture: {fileID: 2800000, guid: 980b695f963d7c8459bb68f1629ab8f0, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _Layer1_BaseMap:
+        m_Texture: {fileID: 2800000, guid: 980b695f963d7c8459bb68f1629ab8f0, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _Layer1_HRA:
         m_Texture: {fileID: 2800000, guid: 0bc83a0095e29674a936bddc1dea3e0c, type: 3}
         m_Scale: {x: 1, y: 1}
@@ -86,6 +90,10 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Layer2_BaseColor:
+        m_Texture: {fileID: 2800000, guid: defb24939e3c9704c87bd05036142653, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Layer2_BaseMap:
         m_Texture: {fileID: 2800000, guid: defb24939e3c9704c87bd05036142653, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
@@ -105,6 +113,10 @@ Material:
         m_Texture: {fileID: 2800000, guid: cfee46c3d6826c14f82768194180b065, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _Layer3_BaseMap:
+        m_Texture: {fileID: 2800000, guid: cfee46c3d6826c14f82768194180b065, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _Layer3_HRA:
         m_Texture: {fileID: 2800000, guid: b2c98b5bc31bb6a49901fb7eb2032853, type: 3}
         m_Scale: {x: 1, y: 1}
@@ -114,6 +126,10 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Layer4_BaseColor:
+        m_Texture: {fileID: 2800000, guid: 697863854e775134bacc9a7ae6cbb554, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Layer4_BaseMap:
         m_Texture: {fileID: 2800000, guid: 697863854e775134bacc9a7ae6cbb554, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
@@ -199,7 +215,7 @@ Material:
     - _AlphaClipEnabled: 0
     - _AlphaToMask: 0
     - _Blend: 0
-    - _BlendContrast: 0.605
+    - _BlendContrast: 0.34
     - _BlendModePreserveSpecular: 1
     - _BumpScale: 1
     - _ClearCoatMask: 0
@@ -230,15 +246,19 @@ Material:
     - _HeightStrength: 0.02
     - _HeightStrength2: 0.02
     - _Layer1_BlendContrast: 1
+    - _Layer1_Enable: 0
     - _Layer1_HeightContrast: 0.271
-    - _Layer1_Tilling: 2
+    - _Layer1_Tilling: -5.88
     - _Layer2_BlendContrast: 2
+    - _Layer2_Enable: 0
     - _Layer2_HeightContrast: 0.541
     - _Layer2_Tilling: 2
     - _Layer3_BlendContrast: 2
-    - _Layer3_HeightContrast: 0
+    - _Layer3_Enable: 0
+    - _Layer3_HeightContrast: 0.438
     - _Layer3_Tilling: 2
-    - _Layer4_HeightContrast: 0
+    - _Layer4_Enable: 0
+    - _Layer4_HeightContrast: 0.389
     - _Layer4_Tilling: 2
     - _Layer_HeightContrast: 0.371
     - _Metallic: 0
@@ -285,6 +305,10 @@ Material:
     - _Emission: {r: 0, g: 0, b: 0, a: 1}
     - _Emission2: {r: 0, g: 0, b: 0, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+    - _Layer1_BaseColor: {r: 1, g: 1, b: 1, a: 1}
+    - _Layer2_BaseColor: {r: 1, g: 1, b: 1, a: 1}
+    - _Layer3_BaseColor: {r: 1, g: 1, b: 1, a: 1}
+    - _Layer4_BaseColor: {r: 1, g: 1, b: 1, a: 1}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
     - _Specular: {r: 1, g: 1, b: 1, a: 1}
     - _SubsurfaceColor: {r: 1, g: 1, b: 1, a: 1}

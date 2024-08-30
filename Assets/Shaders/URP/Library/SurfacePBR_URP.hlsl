@@ -516,9 +516,8 @@ float2 GetBlendFactors(float height1, float a1, float height2, float a2)
     return float2(b1 * b3, b2 * b3);
 }
 
-float4 Frag(Varyings IN,MaterialData mat,float IsRecivedFog = 0,float IsRecivedShadow = 0) 
+float4 Frag(Varyings IN,MaterialData mat,float IsRecivedFog = 0,float IsRecivedShadow = 0,float alphaClip = 0.0) 
 {
-    
     UNITY_SETUP_INSTANCE_ID(IN);  // --- 仅当要在片元着色器中访问任何实例化属性时才需要
     UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(IN);
     
@@ -529,8 +528,8 @@ float4 Frag(Varyings IN,MaterialData mat,float IsRecivedFog = 0,float IsRecivedS
     ///////////////////////////////
     //   Alpha Clipping          //
     ///////////////////////////////
-     
-    // AlphaDiscard(m.albedoAlpha.a, _AlphaClip);
+
+    AlphaDiscard(mat.albedoAlpha.a, alphaClip);
     
     
     ///////////////////////////////
@@ -644,6 +643,7 @@ float4 Frag(Varyings IN,MaterialData mat,float IsRecivedFog = 0,float IsRecivedS
 
     // Emission
     color += emission;
+   
     
     // Mix Fog
     if (IsRecivedFog == 1)

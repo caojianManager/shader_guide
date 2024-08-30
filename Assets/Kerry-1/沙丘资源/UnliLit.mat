@@ -24,18 +24,18 @@ Material:
   m_Shader: {fileID: 4800000, guid: 6d7dbbdf9194b6745ae79aaf2f3c053c, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
-  m_ValidKeywords: []
+  m_ValidKeywords:
+  - _ALPHATEST_ON
   m_InvalidKeywords:
+  - _AlphaClipEnabled
   - _DETAIL_SCALED
   - _HasNormalMap
   - _HasSubsurfaceMap
   - _NORMALMAP
-  - _ReceiveShadowsEnabled
-  - _UseVertexColors
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: 2000
+  m_CustomRenderQueue: 2450
   stringTagMap:
     RenderType: Opaque
   disabledShaderPasses: []
@@ -157,10 +157,10 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _AlphaClip: 0
-    - _AlphaClipEnabled: 0
+    - _AlphaClip: 0.19
+    - _AlphaClipEnabled: 1
     - _AlphaToMask: 0
-    - _Blend: 0
+    - _Blend: 2
     - _BlendModePreserveSpecular: 1
     - _BumpScale: 1
     - _ClearCoatMask: 0
@@ -204,9 +204,9 @@ Material:
     - _QueueOffset: 0
     - _ReceiveFogEnabled: 0
     - _ReceiveShadows: 1
-    - _ReceiveShadowsEnabled: 1
-    - _Roughness: 0.606
-    - _Roughness2: 0.284
+    - _ReceiveShadowsEnabled: 0
+    - _Roughness: 0
+    - _Roughness2: 0
     - _RoughnessMapExposure: 0
     - _RoughnessMapExposure2: 0
     - _Shininess: 0
@@ -227,7 +227,7 @@ Material:
     - _SubsurfaceThickness: 0.8
     - _Surface: 0
     - _UVSec: 0
-    - _UseVertexColors: 1
+    - _UseVertexColors: 0
     - _WorkflowMode: 1
     - _ZTest: 4
     - _ZWrite: 1

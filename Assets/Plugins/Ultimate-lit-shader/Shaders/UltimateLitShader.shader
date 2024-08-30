@@ -156,8 +156,7 @@ Shader"CJ_URP/PBR/UltimateLitShader"
             ZClip Off
             
             HLSLPROGRAM
-
-
+            
             // Render Paths
             #pragma multi_compile _ _FORWARD_PLUS
 
