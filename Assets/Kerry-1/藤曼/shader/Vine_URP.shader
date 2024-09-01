@@ -73,7 +73,7 @@ Shader "Unlit/VineURP"
             #pragma fragment Fragment
         	
         	#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
-        	#include "Assets/Shaders/URP/Library/SamplePBR.hlsl"
+        	#include "./SamplePBR.hlsl"
         	
             CBUFFER_START(UnityPerMaterial)
                 float _GrouMin1;

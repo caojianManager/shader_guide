@@ -388,7 +388,7 @@ Varyings Vert(Attributes IN)
 
     OUT.positionWS = mul(unity_ObjectToWorld, IN.positionOS).xyz;
     OUT.normalWS = TransformObjectToWorldNormal(IN.normalOS);
-    OUT.normalWS = normalize(OUT.normalWS);
+    // OUT.normalWS = normalize(OUT.normalWS);
     OUT.positionHCS = GetClipSpacePosition(OUT.positionWS, OUT.normalWS);
     OUT.uv = IN.uv;
     OUT.viewDirectionWS = (GetWorldSpaceViewDir(OUT.positionWS));
