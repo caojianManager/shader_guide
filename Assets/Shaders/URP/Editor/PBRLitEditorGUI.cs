@@ -53,6 +53,7 @@ namespace URPShaderEditor
             MaterialProperty _HasEmissionMap = FindProperty("_HasEmissionMap", properties);
             MaterialProperty _EmissionColor = FindProperty("_EmissionColor", properties);
             MaterialProperty _EmissionMap = FindProperty("_EmissionMap", properties);
+            MaterialProperty _EmissionMapMultiply = FindProperty("_EmissionMapMultiply", properties);
             MaterialProperty _Culling = FindProperty("_Culling", properties);
             MaterialProperty _ZTest = FindProperty("_ZTest", properties);
            
@@ -214,6 +215,7 @@ namespace URPShaderEditor
                         new GUIContent("Roughness"));
                     EditorGUILayout.Space();
                     EditorGUI.BeginChangeCheck();
+                    materialEditor.ShaderProperty(_EmissionMapMultiply,new GUIContent("Emission Multiply Enabled"));
                     TexturePropertyWithColor(
                         new GUIContent(
                             "Emssion",

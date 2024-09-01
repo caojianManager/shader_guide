@@ -9,6 +9,7 @@ Shader "CALF/PBRLit"
         _EmissionMap("Emission Map", 2D) = "black" {}
         [HDR] _EmissionColor("EmissionColor", Color) = (0,0,0)
         [Toggle(_HasEmissionMap)] _HasEmissionMap("Has Emission Map", Float) = 0
+        [Toggle(_EmissionMapMultiply)] _EmissionMapMultiply("_EmissionMapMultiply", Float) = 0
         //基础贴图
         _BaseMap("BaseMap",2D) = "white" {}
         _BaseColor("BaseColor",Color) = (1,1,1,1)
@@ -122,6 +123,7 @@ Shader "CALF/PBRLit"
                 float _ReceiveShadowsEnabled;
                 float _HasEmissionMap;
                 float _AlphaClip;
+                float _EmissionMapMultiply;
                 float4 _BaseColor;
                 float4 _EmissionColor;
                 float4 _DetailMapColor;
@@ -155,9 +157,9 @@ Shader "CALF/PBRLit"
                 
                 MaterialData mat;
                 float4 albedo = _EnableDetailMap ? float4(baseMap.rgb * detailMap.rgb,baseMap.a):baseMap;
-                mat.albedoAlpha = albedo;
+                mat.albedoAlpha = _EmissionMapMultiply ? (_HasEmissionMap ? albedo * emissionMap : albedo) :albedo;
                 mat.metalness = metalV;
-                mat.emission = emissionMap.rgb;
+                mat.emission = _EmissionMapMultiply ? float3(0,0,0) : emissionMap.rgb;
                 mat.occlusion = ao;
                 mat.perceptualRoughness = roughness;
                 mat.specularity = GetSpecularity();
