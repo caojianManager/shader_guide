@@ -21,17 +21,8 @@ Shader "CALF/PBRGlass"
         _LightEdgeMax("_LightEdgeMax",Float) = 1
  
         // Surface
-        _Surface("Surface", Float) = 0.0
-        _Blend("Blend", Float) = 0.0
-        _AlphaClip("Alpha Clip", Range(0.0, 1.0)) = 0.0
-        [Toggle(_AlphaClipEnabled)] _AlphaClipEnabled ("Alpha Clip Enabled", Float) = 0.0
         [HideInInspector] _SrcBlend("Source Blending", Float) = 1.0
         [HideInInspector] _DstBlend("Dest Blending", Float) = 0.0
-        _SortPriority("Sort Priority", Range(-50.0, 50.0)) = 0.0
-        
-        //Advanced Properties
-        [Toggle(_ReceiveFogEnabled)] _ReceiveFogEnabled ("Receive Fog", Float) = 1
-        [Toggle(_ReceiveShadowsEnabled)] _ReceiveShadowsEnabled ("Receive Shadow", Float) = 1
         
         [Enum(Off, 0, On, 1)]_ZWrite ("ZWrite", Float) = 1.0 // Default to "ZWrite On"
         [Enum(UnityEngine.Rendering.CompareFunction)] _ZTest("Depth Test", Float) = 4 // Default to "LEqual"
@@ -41,7 +32,11 @@ Shader "CALF/PBRGlass"
     }
     SubShader
     {
-        Tags {"RenderType" = "Opaque" "RenderPipeline" = "UniversalPipeline"}
+        Tags {
+            "RenderType" = "Transparency"   
+            "IgnoreProjector" = "True"
+            "UniversalMaterialType" = "Unlit"
+             "RenderPipeline" = "UniversalPipeline"}
 
         Pass
         {
@@ -58,35 +53,9 @@ Shader "CALF/PBRGlass"
             
             // Render Paths
             #pragma multi_compile _ _FORWARD_PLUS
-
-            // Fog, Decals, SSAO
-            #pragma multi_compile_fog
-            #pragma multi_compile_fragment _ _DBUFFER_MRT1 _DBUFFER_MRT2 _DBUFFER_MRT3
-            #pragma multi_compile _ _SCREEN_SPACE_OCCLUSION
-
+            
             // Transparency
             #pragma shader_feature_local_fragment _SURFACE_TYPE_TRANSPARENT
-            #pragma shader_feature_local_fragment _ALPHATEST_ON
-            #pragma shader_feature_local_fragment _ALPHAPREMULTIPLY_ON
-            
-            // Lighting
-            #pragma multi_compile _ _MAIN_LIGHT_SHADOWS _MAIN_LIGHT_SHADOWS_CASCADE _MAIN_LIGHT_SHADOWS_SCREEN
-            #pragma multi_compile _ _ADDITIONAL_LIGHTS_VERTEX _ADDITIONAL_LIGHTS
-            #pragma multi_compile _ _ADDITIONAL_LIGHT_SHADOWS
-            #pragma multi_compile _ _SHADOWS_SOFT
-
-            // Unity stuff
-            #pragma multi_compile_fragment _ _LIGHT_LAYERS
-            #pragma multi_compile_fragment _ _LIGHT_COOKIES
-            #include_with_pragmas "Packages/com.unity.render-pipelines.universal/ShaderLibrary/RenderingLayers.hlsl"
-            #pragma multi_compile_fragment _ LOD_FADE_CROSSFADE
-            
-            // Lightmapping
-            #pragma multi_compile _ LIGHTMAP_SHADOW_MIXING
-            #pragma multi_compile _ SHADOWS_SHADOWMASK
-            #pragma multi_compile _ DIRLIGHTMAP_COMBINED
-            #pragma multi_compile _ LIGHTMAP_ON
-            #pragma multi_compile _ DYNAMICLIGHTMAP_ON
 
             // Instancing
             #pragma multi_compile_instancing
@@ -109,15 +78,8 @@ Shader "CALF/PBRGlass"
             CBUFFER_START(UnityMatVar)
                 float4 _RefractColor;
                 float _RefractIntensity;
-                float _ObjectPivotOffset;
-                float _ObjectPivotHeight;
                 float _LightEdgeMin;
                 float _LightEdgeMax;
-                float _ReceiveFogEnabled;
-                float _ReceiveShadowsEnabled;
-                float _HasEmissionMap;
-                float _AlphaClip;
-                float4 _EmissionColor;
             CBUFFER_END
 
              //第一种matcap uv采样算法。会被拉伸，如果法线结构变化不圆润(平坦会导致采样matcap 贴图出现变形)。
@@ -147,7 +109,6 @@ Shader "CALF/PBRGlass"
             
             Varyings vert(Attributes IN)
             {
-                //r-金属 g-粗糙 b-ao
                 Varyings OUT = Vert(IN);
                 return OUT;
             }
@@ -155,14 +116,10 @@ Shader "CALF/PBRGlass"
             float4 frag(Varyings IN) : SV_Target
             {
                 //matcap map采样
-                float2 matcapUV = MatcapUV2(IN.normalWS,IN.positionWS);
+                float2 matcapUV = MatcapUV2(IN.normalWS,IN.positionWS)*0.1;
                 float4 matcapMap = SAMPLE_TEXTURE2D(_MatcapMap,sampler_MatcapMap, matcapUV);
-
-                //Unity Shader中获取模型中心点世界坐标的几种写法--这种计算又弊端(正确做法需要用3DMax展好UV)
-                float3 objectPivot = mul(unity_ObjectToWorld , float4(0,0,0,1)).xyz;
-                float pv = ((IN.positionWS.y - objectPivot.y) - _ObjectPivotOffset) / _ObjectPivotHeight;
-                float2 tickMapUV = float2(0.5,pv);
-                float4 thickMap = SAMPLE_TEXTURE2D(_ThickMap,sampler_ThickMap,tickMapUV);
+                //厚度贴图
+                float4 thickMap = SAMPLE_TEXTURE2D(_ThickMap,sampler_ThickMap,IN.uv);
 
                 //dirt map采样
                 float4 dirtMap = SAMPLE_TEXTURE2D(_DirtMap,sampler_DirtMap,IN.uv);
@@ -175,48 +132,12 @@ Shader "CALF/PBRGlass"
                 refractMatcapMap = lerp(_RefractColor*0.5,_RefractColor * refractMatcapMap,clamp(refractThickness,0,1));
                 
                 float alpha = clamp(max(matcapMap.r,lightEg),0,1);
-              
-                
-                MaterialData mat;
-                mat.albedoAlpha = float4(matcapMap.rgb + refractMatcapMap,alpha);
-                mat.metalness = 0;
-                mat.emission = float3(0,0,0);
-                mat.occlusion = 1.0;
-                mat.perceptualRoughness = 1.0;
-                mat.specularity = GetSpecularity();
-                mat.normalTS = float3(1,1,1);
-                float4 col = Frag(IN, mat,_ReceiveFogEnabled,_ReceiveShadowsEnabled,_AlphaClip);
-                return col;
+                return float4(matcapMap.rgb + refractMatcapMap,alpha);
             }
             
             ENDHLSL
         }
-
-        Pass
-        {
-            
-            Tags {"LightMode" = "ShadowCaster"}
-            ZWrite On
-            ZTest LEqual
-            ZClip Off
-            
-            
-            HLSLPROGRAM
-
-            #pragma shader_feature_local_fragment _ALPHATEST_ON
-            #pragma multi_compile_instancing
-            #pragma multi_compile _ DOTS_INSTANCING_ON
-            #pragma multi_compile_fragment _ LOD_FADE_CROSSFADE
-            
-            #pragma vertex Vert
-            #pragma fragment FragmentDepthOnly
-            #define CAST_SHADOWS_PASS
-            #pragma multi_compile_vertex _ _CASTING_PUNCTUAL_LIGHT_SHADOW
-            
-            #include "./Library/SurfacePBR_URP.hlsl"
-
-            ENDHLSL
-        }
+        
     }
     CustomEditor "URPShaderEditor.PBRGlassEditor"
 }

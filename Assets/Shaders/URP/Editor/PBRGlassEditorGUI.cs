@@ -43,119 +43,34 @@ namespace URPShaderEditor
             MaterialProperty _RefractColor = FindProperty("_RefractColor", properties);
             MaterialProperty _RefractIntensity = FindProperty("_RefractIntensity", properties);
             MaterialProperty _ThickMap = FindProperty("_ThickMap", properties);
-            MaterialProperty _ObjectPivotOffset = FindProperty("_ObjectPivotOffset", properties);
-            MaterialProperty _ObjectPivotHeight = FindProperty("_ObjectPivotHeight", properties);
             MaterialProperty _DirtMap = FindProperty("_DirtMap", properties);
-
             MaterialProperty _LightEdgeMin = FindProperty("_LightEdgeMin", properties);
             MaterialProperty _LightEdgeMax = FindProperty("_LightEdgeMax", properties);
-            MaterialProperty _ReceiveFogEnabled = FindProperty("_ReceiveFogEnabled", properties);
-            MaterialProperty _ReceiveShadowsEnabled = FindProperty("_ReceiveShadowsEnabled", properties);
             MaterialProperty _Culling = FindProperty("_Culling", properties);
             MaterialProperty _ZTest = FindProperty("_ZTest", properties);
            
             //Surface
-            MaterialProperty _Surface = FindProperty("_Surface", properties);
-            MaterialProperty _Blend = FindProperty("_Blend", properties);
-            MaterialProperty _AlphaClip = FindProperty("_AlphaClip", properties);
-            MaterialProperty _AlphaClipEnabled = FindProperty("_AlphaClipEnabled", properties);
-            MaterialProperty _SortPriority = FindProperty("_SortPriority", properties);
             
             DrawSurfaceOptions();
             DrawSurfaceInput();
-            DrawAdvancedOptions();
             
-
-            bool IsTransparent() => _Surface.floatValue > 0.0f ? true : false;
-            bool AlphaClipEnabled() => _AlphaClipEnabled.floatValue > 0.0f ? true : false;
-
             void DrawSurfaceOptions()
             {
                  showSurfaceOptions = EditorGUILayout.BeginFoldoutHeaderGroup(showSurfaceOptions, "Surface Options");
                 if (showSurfaceOptions)
                 {
                     EditorGUI.indentLevel++;
-                    materialEditor.IntPopupShaderProperty(_Surface, "Surface", _SurfaceOptions, _SurfaceValues);
-
-                    mat.DisableKeyword("_ALPHAPREMULTIPLY_ON");
-
-                    bool depthWrite = true;
-                    if (IsTransparent())
-                    {
-                        mat.EnableKeyword("_SURFACE_TYPE_TRANSPARENT");
-                        mat.SetOverrideTag("RenderType", "Transparent");
-                        depthWrite = false;
-
-                        CommonEditorGUI.DrawEnumProperty(GetAlphaBlendMode(_Blend), _Blend, new GUIContent("Blend"));
-
-                        switch (GetAlphaBlendMode(_Blend))
-                        {
-                            case AlphaOptions.Alpha:
-                                CommonEditorGUI.SetSrcDestProperties(mat, BlendMode.SrcAlpha, BlendMode.OneMinusSrcAlpha);
-                                break;
-                            case AlphaOptions.Premultiply:
-                                CommonEditorGUI.SetSrcDestProperties(mat, BlendMode.One, BlendMode.OneMinusSrcAlpha);
-                                mat.EnableKeyword("_ALPHAPREMULTIPLY_ON");
-                                break;
-                            case AlphaOptions.Additive:
-                                CommonEditorGUI.SetSrcDestProperties(mat, BlendMode.One, BlendMode.One);
-                                break;
-                            case AlphaOptions.Multiply:
-                                CommonEditorGUI.SetSrcDestProperties(mat, BlendMode.DstColor, BlendMode.Zero);
-                                break;
-                        }
-                    }
-                    else
-                    {
-                        mat.DisableKeyword("_SURFACE_TYPE_TRANSPARENT");
-                        mat.SetOverrideTag("RenderType", "Opaque");
-                        CommonEditorGUI.SetSrcDestProperties(mat, BlendMode.One, BlendMode.Zero);
-                    }
-
+                    mat.EnableKeyword("_SURFACE_TYPE_TRANSPARENT");
+                    mat.SetOverrideTag("RenderType", "Transparent");
+                    CommonEditorGUI.SetSrcDestProperties(mat, BlendMode.SrcAlpha, BlendMode.OneMinusSrcAlpha);
                     matEditor.IntPopupShaderProperty(_Culling, "Render Face", _CullOptions, _CullValues);
+                    
+                 
+                    
+                    mat.renderQueue = (int)RenderQueue.Transparent + 0;
 
-                    matEditor.ShaderProperty(_AlphaClipEnabled, new GUIContent("Alpha Clip"));
-                    if (AlphaClipEnabled())
-                    {
-                        EditorGUI.indentLevel++;
-                        matEditor.ShaderProperty(_AlphaClip, new GUIContent("Threshold"));
-                        EditorGUI.indentLevel--;
-                    }
-
-                    if (AlphaClipEnabled())
-                    {
-                        mat.EnableKeyword("_ALPHATEST_ON");
-                    }
-                    else
-                    {
-                        mat.DisableKeyword("_ALPHATEST_ON");
-                    }
-
-                    if (IsTransparent())
-                    {
-                        mat.renderQueue = (int)RenderQueue.Transparent + _SortPriority.intValue;
-                    }
-                    else
-                    {
-                        if (AlphaClipEnabled())
-                        {
-                            mat.renderQueue = (int)RenderQueue.AlphaTest + _SortPriority.intValue;
-                        }
-                        else
-                        {
-                            mat.renderQueue = (int)RenderQueue.Geometry + _SortPriority.intValue;
-                        }
-                    }
-
-                    CommonEditorGUI.SetupDepthWriting(mat, depthWrite);
-
-                    DrawToggleProperty(
-                        _ReceiveShadowsEnabled,
-                        new GUIContent(
-                            "Receive Shadows",
-                            "A setting that determines whether or not an object will receive shadows from other objects in the scene. When enabled, the object will appear to receive shadows, adding depth and realism to the scene."
-                        )
-                    );
+                    CommonEditorGUI.SetupDepthWriting(mat, false);
+                    
                     EditorGUI.indentLevel--;
                     EditorGUILayout.Space();
                 }
@@ -191,22 +106,9 @@ namespace URPShaderEditor
                         );
                     materialEditor.ShaderProperty(_RefractIntensity,new GUIContent("RefractIntensity"));
                     materialEditor.TexturePropertySingleLine(new GUIContent("Thick Map"), _ThickMap);
-                    materialEditor.ShaderProperty(_ObjectPivotOffset, new GUIContent("PivotOffset"));
-                    materialEditor.ShaderProperty(_ObjectPivotHeight, new GUIContent("PivotHeight"));
                     materialEditor.TexturePropertySingleLine(new GUIContent("Dirt Map"), _DirtMap);
                     materialEditor.ShaderProperty(_LightEdgeMin,new GUIContent("Edge Min"));
                     materialEditor.ShaderProperty(_LightEdgeMax,new GUIContent("Edge Max"));
-                }
-                EditorGUILayout.EndFoldoutHeaderGroup();
-            }
-
-            void DrawAdvancedOptions()
-            {
-                showAdvancedOptions = EditorGUILayout.BeginFoldoutHeaderGroup(showAdvancedOptions, "Advanced Options");
-                if (showAdvancedOptions)
-                {
-                    materialEditor.ShaderProperty(_ReceiveFogEnabled, new GUIContent("Receive Fog"));
-                    materialEditor.ShaderProperty(_ReceiveShadowsEnabled, new GUIContent("Receive Shadow"));
                 }
                 EditorGUILayout.EndFoldoutHeaderGroup();
             }
