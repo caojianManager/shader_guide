@@ -215,6 +215,7 @@ namespace URPShaderEditor
                         new GUIContent("Roughness"));
                     EditorGUILayout.Space();
                     materialEditor.ShaderProperty(_EmissionMapMultiply,new GUIContent("Emission Multiply Enabled"));
+                    EditorGUI.BeginChangeCheck();
                     TexturePropertyWithColor(
                         new GUIContent(
                             "Emssion",
@@ -225,7 +226,6 @@ namespace URPShaderEditor
                         true,
                         true
                     );
-                    EditorGUI.BeginChangeCheck();
                     if (EditorGUI.EndChangeCheck())
                     {
                         _HasEmissionMap.floatValue = (_EmissionMap.textureValue == null ? 0: 1);
