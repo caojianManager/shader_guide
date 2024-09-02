@@ -133,7 +133,7 @@ Material:
     - _Glossiness: 0
     - _GlossyReflections: 0
     - _LightEdgeMax: 1
-    - _LightEdgeMin: -0.69
+    - _LightEdgeMin: -1.86
     - _Metallic: 0
     - _ObjectPivotHeight: 1.26
     - _ObjectPivotOffset: -0.12

@@ -37,10 +37,9 @@ Shader "CALF/PBRGlass"
             
             Blend [_SrcBlend] [_DstBlend]
             Cull Off
-            ZWrite On
+            ZWrite Off
             ZTest LEqual
             ZClip Off
-            AlphaToMask Off
             
             HLSLPROGRAM
             
