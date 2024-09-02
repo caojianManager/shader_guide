@@ -46,9 +46,7 @@ namespace URPShaderEditor
             MaterialProperty _DirtMap = FindProperty("_DirtMap", properties);
             MaterialProperty _LightEdgeMin = FindProperty("_LightEdgeMin", properties);
             MaterialProperty _LightEdgeMax = FindProperty("_LightEdgeMax", properties);
-            MaterialProperty _Culling = FindProperty("_Culling", properties);
-            MaterialProperty _ZTest = FindProperty("_ZTest", properties);
-           
+         
             //Surface
             
             DrawSurfaceOptions();
@@ -56,26 +54,11 @@ namespace URPShaderEditor
             
             void DrawSurfaceOptions()
             {
-                 showSurfaceOptions = EditorGUILayout.BeginFoldoutHeaderGroup(showSurfaceOptions, "Surface Options");
-                if (showSurfaceOptions)
-                {
-                    EditorGUI.indentLevel++;
-                    mat.EnableKeyword("_SURFACE_TYPE_TRANSPARENT");
-                    mat.SetOverrideTag("RenderType", "Transparent");
-                    CommonEditorGUI.SetSrcDestProperties(mat, BlendMode.SrcAlpha, BlendMode.OneMinusSrcAlpha);
-                    matEditor.IntPopupShaderProperty(_Culling, "Render Face", _CullOptions, _CullValues);
-                    
-                 
-                    
-                    mat.renderQueue = (int)RenderQueue.Transparent + 0;
-
-                    CommonEditorGUI.SetupDepthWriting(mat, false);
-                    
-                    EditorGUI.indentLevel--;
-                    EditorGUILayout.Space();
-                }
-
-                EditorGUILayout.EndFoldoutHeaderGroup();
+                mat.EnableKeyword("_SURFACE_TYPE_TRANSPARENT");
+                CommonEditorGUI.SetSrcDestProperties(mat, BlendMode.SrcAlpha, BlendMode.OneMinusSrcAlpha);
+                mat.renderQueue = (int)RenderQueue.Transparent + 0;
+                CommonEditorGUI.SetupDepthWriting(mat, false);
+                EditorGUILayout.Space();
             }
             
             void DrawSurfaceInput()

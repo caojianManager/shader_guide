@@ -8,15 +8,12 @@ Shader "CALF/PBRGlass"
         _RefractMap("_RefractMap",2D) = "white" {}
         _RefractColor("_RefractColor",Color) = (1,1,1,1)
         _RefractIntensity("_RefractIntensity",Float) = 1.0
-        
         //厚度贴图
         _ThickMap("Thick Map",2D) = "white" {}
         _ObjectPivotOffset("_ObjectPivotOffset",Float) = 0
         _ObjectPivotHeight("_ObjectPivotHeight",Float) = 1
-        
         //污迹图
         _DirtMap("DirtMap",2D) = "white" {}
-        
         _LightEdgeMin("LightEdgeMin",Float) = 0
         _LightEdgeMax("_LightEdgeMax",Float) = 1
  
@@ -24,11 +21,7 @@ Shader "CALF/PBRGlass"
         [HideInInspector] _SrcBlend("Source Blending", Float) = 1.0
         [HideInInspector] _DstBlend("Dest Blending", Float) = 0.0
         
-        [Enum(Off, 0, On, 1)]_ZWrite ("ZWrite", Float) = 1.0 // Default to "ZWrite On"
         [Enum(UnityEngine.Rendering.CompareFunction)] _ZTest("Depth Test", Float) = 4 // Default to "LEqual"
-        [Enum(UnityEngine.Rendering.CullMode)] _Culling ("Culling", Float) = 2 // Default to "Cull Back"
-
-        
     }
     SubShader
     {
@@ -43,8 +36,8 @@ Shader "CALF/PBRGlass"
             Tags {"LightMode" = "UniversalForwardOnly"}
             
             Blend [_SrcBlend] [_DstBlend]
-            Cull [_Culling]
-            ZWrite [_ZWrite]
+            Cull Back
+            ZWrite On
             ZTest LEqual
             ZClip Off
             AlphaToMask Off
@@ -97,7 +90,7 @@ Shader "CALF/PBRGlass"
                 positionVS = normalize(positionVS);
                 float3 NcP = cross(positionVS, normalVS);
                 float2 matcapUV = float2(-NcP.y, NcP.x);
-                return matcapUV * 0.5 + 0.5;
+                return matcapUV * 0.2 + 0.5;
             }
 
             //边缘光
@@ -116,7 +109,7 @@ Shader "CALF/PBRGlass"
             float4 frag(Varyings IN) : SV_Target
             {
                 //matcap map采样
-                float2 matcapUV = MatcapUV2(IN.normalWS,IN.positionWS)*0.1;
+                float2 matcapUV = MatcapUV2(IN.normalWS,IN.positionWS)*1;
                 float4 matcapMap = SAMPLE_TEXTURE2D(_MatcapMap,sampler_MatcapMap, matcapUV);
                 //厚度贴图
                 float4 thickMap = SAMPLE_TEXTURE2D(_ThickMap,sampler_ThickMap,IN.uv);
