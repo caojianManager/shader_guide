@@ -96,7 +96,7 @@ Shader "CALF/PBRLit"
             
             #pragma vertex vert;
             #pragma fragment frag;
-            #include "./Library/SurfacePBR_URP.hlsl"
+            #include "./Librarys/SurfacePBR_URP.hlsl"
 
             TEXTURE2D(_BlendMap);
             SAMPLER(sampler_BlendMap);
@@ -157,7 +157,9 @@ Shader "CALF/PBRLit"
                 
                 MaterialData mat;
                 float4 albedo = _EnableDetailMap ? float4(baseMap.rgb * detailMap.rgb,baseMap.a):baseMap;
-                mat.albedoAlpha = _EmissionMapMultiply ? (_HasEmissionMap ? albedo * emissionMap : albedo) :albedo;
+                float emissionV = emissionMap.r <= 0.01f && emissionMap.g <= 0.01f && emissionMap.b <= 0.01f; //emissionV为1时 环境贴图这块像素颜色值为黑色
+                float IsEmissionMapMulAndHasEmissionMap = _EmissionMapMultiply && _HasEmissionMap && (emissionV == 0);        
+                mat.albedoAlpha = IsEmissionMapMulAndHasEmissionMap ? albedo * emissionMap : albedo;
                 mat.metalness = metalV;
                 mat.emission = _EmissionMapMultiply ? float3(0,0,0) : emissionMap.rgb;
                 mat.occlusion = ao;
@@ -200,7 +202,7 @@ Shader "CALF/PBRLit"
             #define CAST_SHADOWS_PASS
             #pragma multi_compile_vertex _ _CASTING_PUNCTUAL_LIGHT_SHADOW
             
-            #include "./Library/SurfacePBR_URP.hlsl"
+            #include "./Librarys/SurfacePBR_URP.hlsl"
 
             ENDHLSL
         }

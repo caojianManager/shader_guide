@@ -41,7 +41,7 @@ Shader "CALF/MaterialBlend"
             Tags{"LightMode" = "UniversalForward"}
             HLSLPROGRAM
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
-            #include "Assets/Shaders/URP/Library/SurfacePBR_URP.hlsl"
+            #include "Assets/Shaders/URP/Librarys/SurfacePBR_URP.hlsl"
             
             #pragma vertex vert;
             #pragma fragment frag;

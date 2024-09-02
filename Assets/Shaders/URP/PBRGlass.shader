@@ -36,7 +36,7 @@ Shader "CALF/PBRGlass"
             Tags {"LightMode" = "UniversalForwardOnly"}
             
             Blend [_SrcBlend] [_DstBlend]
-            Cull Back
+            Cull Off
             ZWrite On
             ZTest LEqual
             ZClip Off
@@ -57,7 +57,7 @@ Shader "CALF/PBRGlass"
             
             #pragma vertex vert;
             #pragma fragment frag;
-            #include "./Library/SurfacePBR_URP.hlsl"
+            #include "./Librarys/SurfacePBR_URP.hlsl"
             
             TEXTURE2D(_MatcapMap);
             SAMPLER(sampler_MatcapMap);
@@ -90,7 +90,7 @@ Shader "CALF/PBRGlass"
                 positionVS = normalize(positionVS);
                 float3 NcP = cross(positionVS, normalVS);
                 float2 matcapUV = float2(-NcP.y, NcP.x);
-                return matcapUV * 0.2 + 0.5;
+                return matcapUV * 0.175 + 0.5;
             }
 
             //边缘光
