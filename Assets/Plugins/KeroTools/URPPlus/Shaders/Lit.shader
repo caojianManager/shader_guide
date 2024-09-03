@@ -1,4 +1,4 @@
-Shader "HJZG/Environment/Lit"
+Shader "HJZG/Lit"
 {
     Properties
     {

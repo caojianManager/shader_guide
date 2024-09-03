@@ -98,6 +98,25 @@ namespace URPShaderEditor
             materialEditor.EnableInstancingField();
         }
         
+        public static void DrawConditionalTextureProperty(MaterialEditor matEditor,GUIContent content, MaterialProperty a, MaterialProperty b)
+        {
+            EditorGUI.BeginChangeCheck();
+            EditorGUI.showMixedValue = a.hasMixedValue || b.hasMixedValue;
+
+            if (a.textureValue == null)
+                b = null;
+
+            matEditor.TexturePropertySingleLine(content, a, b);
+            if (EditorGUI.EndChangeCheck())
+            {
+                if (b != null)
+                {
+                    b.floatValue = Mathf.Max(0, b.floatValue);
+                }
+            }
+            EditorGUI.showMixedValue = false;
+        }
+        
     }
 }
 

@@ -42,6 +42,7 @@ namespace URPShaderEditor
             MaterialProperty _BaseMap = FindProperty("_BaseMap", properties);
             MaterialProperty _BaseColor = FindProperty("_BaseColor", properties);
             MaterialProperty _NormalMap = FindProperty("_NormalMap", properties);
+            MaterialProperty _NormalStrength = FindProperty("_NormalStrength", properties);
             MaterialProperty _EnableDetailMap = FindProperty("_EnableDetailMap", properties);
             MaterialProperty _DetailMap = FindProperty("_DetailMap", properties);
             MaterialProperty _DetailNormalMap = FindProperty("_DetailNormalMap", properties);
@@ -188,9 +189,7 @@ namespace URPShaderEditor
                         true,
                         false
                     );
-                    materialEditor.TexturePropertySingleLine(
-                        new GUIContent("Normal Map"),
-                        _NormalMap);
+                    CommonEditorGUI.DrawConditionalTextureProperty(materialEditor,new GUIContent("Normal Map"),_NormalMap,_NormalStrength);
                     materialEditor.ShaderProperty(_EmissionMapMultiply,new GUIContent("Emission Multiply Enabled"));
                     EditorGUI.BeginChangeCheck();
                     TexturePropertyWithColor(

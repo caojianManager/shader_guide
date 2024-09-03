@@ -439,7 +439,7 @@ float3 GetEmission()
 //法线长度-Default
 float GetNormalStrength()
 {
-    return 1.0f;
+    return 1.6f;
 }
 
 //高光-通过这个方法获取
@@ -623,8 +623,10 @@ float4 Frag(Varyings IN,MaterialData mat,float IsRecivedFog = 0,float IsRecivedS
     
     float indirectSpecularOcclusion = lerp(1, (NoV + 1.0) * 0.5, perceptualRoughness);
     float fresnel = Fresnel(f0, NoV, perceptualRoughness);
-    f0 = lerp(f0, albedo, metalness);
-    float mFresnel = Fresnel(f0, NoV, perceptualRoughness);
+    
+    //不同的Fresnel系数 结果不同
+    // f0 = lerp(f0, albedo, metalness);
+    // float mFresnel = Fresnel(f0, NoV, perceptualRoughness);
     
     float3 indirectSpecular = GetReflection(IN.viewDirectionWS, IN.normalWS, IN.positionWS, perceptualRoughness, normalizedScreenSpaceUV) * (1.0 - perceptualRoughness) * indirectSpecularOcclusion;
     float3 indirectDiffuse = bakedGI * albedo * lerp(1, 0, metalness);

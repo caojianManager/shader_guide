@@ -14,6 +14,7 @@ Shader "CALF/PBRLit"
         _BaseMap("BaseMap",2D) = "white" {}
         _BaseColor("BaseColor",Color) = (1,1,1,1)
         _NormalMap("NormalMap",2D) = "white" {}
+        _NormalStrength("Normal Strength",Range(0,3)) = 1
         _Roughness("Roughness",Range(0,1)) = 0.0
         //细节贴图
         _EnableDetailMap("Enable Detail Map",Float) = 0
@@ -33,6 +34,7 @@ Shader "CALF/PBRLit"
         //Advanced Properties
         [Toggle(_ReceiveFogEnabled)] _ReceiveFogEnabled ("Receive Fog", Float) = 1
         [Toggle(_ReceiveShadowsEnabled)] _ReceiveShadowsEnabled ("Receive Shadow", Float) = 1
+        [ToggleOff] _SpecularHighlights("Specular Highlights", Float) = 1.0
         
         [Enum(Off, 0, On, 1)]_ZWrite ("ZWrite", Float) = 1.0 // Default to "ZWrite On"
         [Enum(UnityEngine.Rendering.CompareFunction)] _ZTest("Depth Test", Float) = 4 // Default to "LEqual"
@@ -96,7 +98,7 @@ Shader "CALF/PBRLit"
             
             #pragma vertex vert;
             #pragma fragment frag;
-            #include "./Librarys/SurfacePBR_URP.hlsl"
+            #include "./Librarys/URP_PBR.hlsl"
 
             TEXTURE2D(_BlendMap);
             SAMPLER(sampler_BlendMap);
@@ -124,6 +126,7 @@ Shader "CALF/PBRLit"
                 float _HasEmissionMap;
                 float _AlphaClip;
                 float _EmissionMapMultiply;
+                float _NormalStrength;
                 float4 _BaseColor;
                 float4 _EmissionColor;
                 float4 _DetailMapColor;
@@ -165,10 +168,10 @@ Shader "CALF/PBRLit"
                 mat.perceptualRoughness = roughness;
                 mat.specularity = GetSpecularity();
                 float3 normalTS = UnpackNormal(normalMap);
-                normalTS = float3(normalTS.rg * GetNormalStrength(), lerp(1, normalTS.b, saturate(GetNormalStrength())));
+                normalTS = float3(normalTS.rg * _NormalStrength, lerp(1, normalTS.b, saturate(_NormalStrength)));
                 normalTS = normalize(normalTS);
                 float3 detailNormalTS = UnpackNormal(detailNormal);
-                detailNormalTS = float3(detailNormalTS.rg * GetNormalStrength(), lerp(1, detailNormalTS.b, saturate(GetNormalStrength())));
+                detailNormalTS = float3(detailNormalTS.rg * _NormalStrength, lerp(1, detailNormalTS.b, saturate(_NormalStrength)));
                 detailNormalTS = normalize(detailNormalTS);
                 float3 blendNormalTS = lerp(normalTS, BlendNormalRNM(normalTS, detailNormalTS),1);
                 mat.normalTS = _EnableDetailMap ? blendNormalTS : normalTS;
@@ -201,7 +204,7 @@ Shader "CALF/PBRLit"
             #define CAST_SHADOWS_PASS
             #pragma multi_compile_vertex _ _CASTING_PUNCTUAL_LIGHT_SHADOW
             
-            #include "./Librarys/SurfacePBR_URP.hlsl"
+            #include "./Librarys/URP_PBR.hlsl"
 
             ENDHLSL
         }

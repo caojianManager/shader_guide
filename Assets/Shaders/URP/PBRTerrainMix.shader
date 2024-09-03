@@ -39,8 +39,7 @@ Shader "CALF/PBRTerrainMix"
         {
             Tags{"LightMode" = "UniversalForward"}
             HLSLPROGRAM
-            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
-            #include "./Librarys/SurfacePBR_URP.hlsl"
+            #include "./Librarys/URP_PBR.hlsl"
             
             #pragma vertex vert;
             #pragma fragment frag;
@@ -196,7 +195,7 @@ Shader "CALF/PBRTerrainMix"
             #define CAST_SHADOWS_PASS
             #pragma multi_compile_vertex _ _CASTING_PUNCTUAL_LIGHT_SHADOW
             
-            #include "./Librarys/SurfacePBR_URP.hlsl"
+            #include "./Librarys/URP_PBR.hlsl"
 
             ENDHLSL
         }
