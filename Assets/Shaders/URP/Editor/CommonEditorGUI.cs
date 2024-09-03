@@ -93,6 +93,10 @@ namespace URPShaderEditor
             EditorGUI.showMixedValue = false;
         }
         
+        public static void DrawInstancingFiled(MaterialEditor materialEditor)
+        {
+            materialEditor.EnableInstancingField();
+        }
         
     }
 }

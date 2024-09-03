@@ -114,7 +114,7 @@ Shader "CALF/PBRLit"
             TEXTURE2D(_EmissionMap);
             SAMPLER(sampler_EmissionMap);
 
-            CBUFFER_START(UnityMatVar)
+            CBUFFER_START(UnityPerMaterial)
                 float _DetailScale;
                 float _HasMRAMap;
                 float _Roughness;
@@ -149,7 +149,7 @@ Shader "CALF/PBRLit"
                 float4 detailMap = SAMPLE_TEXTURE2D(_DetailMap, sampler_DetailMap,IN.uv.zw).rgba * _DetailMapColor;
                 float4 detailNormal = SAMPLE_TEXTURE2D(_DetailNormalMap, sampler_DetailMap, IN.uv.zw);
                 detailMap =  half(2.0) * detailMap * _DetailScale - _DetailScale + half(1.0);
-
+                
                 float4 emissionMap = _HasEmissionMap ? SAMPLE_TEXTURE2D(_EmissionMap,sampler_EmissionMap,IN.uv) * _EmissionColor : _EmissionColor;
                 float metalV = _HasMRAMap ? saturate(mraMap.r): 0.0;
                 float ao = _HasMRAMap ? mraMap.b : 1.0;

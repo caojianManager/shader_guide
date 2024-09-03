@@ -165,14 +165,6 @@ namespace URPShaderEditor
                     }
 
                     CommonEditorGUI.SetupDepthWriting(mat, depthWrite);
-
-                    DrawToggleProperty(
-                        _ReceiveShadowsEnabled,
-                        new GUIContent(
-                            "Receive Shadows",
-                            "A setting that determines whether or not an object will receive shadows from other objects in the scene. When enabled, the object will appear to receive shadows, adding depth and realism to the scene."
-                        )
-                    );
                     EditorGUI.indentLevel--;
                     EditorGUILayout.Space();
                 }
@@ -199,21 +191,6 @@ namespace URPShaderEditor
                     materialEditor.TexturePropertySingleLine(
                         new GUIContent("Normal Map"),
                         _NormalMap);
-                    matEditor.TextureScaleOffsetProperty(_BaseMap);
-                }
-                EditorGUILayout.EndFoldoutHeaderGroup();
-            }
-            
-            void DrawAdvancedOptions()
-            {
-                showAdvancedOptions = EditorGUILayout.BeginFoldoutHeaderGroup(showAdvancedOptions, "Advanced Options");
-                if (showAdvancedOptions)
-                {
-                    materialEditor.ShaderProperty(_ReceiveFogEnabled, new GUIContent("Receive Fog"));
-                    materialEditor.ShaderProperty(_ReceiveShadowsEnabled, new GUIContent("Receive Shadow"));
-                    materialEditor.ShaderProperty(_Roughness,
-                        new GUIContent("Roughness"));
-                    EditorGUILayout.Space();
                     materialEditor.ShaderProperty(_EmissionMapMultiply,new GUIContent("Emission Multiply Enabled"));
                     EditorGUI.BeginChangeCheck();
                     TexturePropertyWithColor(
@@ -230,6 +207,22 @@ namespace URPShaderEditor
                     {
                         _HasEmissionMap.floatValue = (_EmissionMap.textureValue == null ? 0: 1);
                     }
+                    matEditor.TextureScaleOffsetProperty(_BaseMap);
+                }
+                EditorGUILayout.EndFoldoutHeaderGroup();
+            }
+            
+            void DrawAdvancedOptions()
+            {
+                showAdvancedOptions = EditorGUILayout.BeginFoldoutHeaderGroup(showAdvancedOptions, "Advanced Options");
+                if (showAdvancedOptions)
+                {
+                    materialEditor.ShaderProperty(_ReceiveFogEnabled, new GUIContent("Receive Fog"));
+                    materialEditor.ShaderProperty(_ReceiveShadowsEnabled, new GUIContent("Receive Shadow"));
+                    materialEditor.ShaderProperty(_Roughness,
+                        new GUIContent("Roughness"));
+                    CommonEditorGUI.DrawInstancingFiled(materialEditor);
+                    EditorGUILayout.Space();
                 }
                 EditorGUILayout.EndFoldoutHeaderGroup();
             }
