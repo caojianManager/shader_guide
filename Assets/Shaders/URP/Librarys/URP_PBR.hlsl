@@ -349,7 +349,7 @@ struct Attributes
     float3 normalOS           : NORMAL;
     float4 tangentOS          : TANGENT;
     float3 color              : COLOR;
-    float4 uv                 : TEXCOORD0;
+    float2 uv                 : TEXCOORD0;
     float2 staticLightmapUV   : TEXCOORD1;
     float2 dynamicLightmapUV  : TEXCOORD2;
     UNITY_VERTEX_INPUT_INSTANCE_ID
@@ -358,7 +358,7 @@ struct Attributes
 struct Varyings
 {
     float4 positionHCS     : SV_POSITION;
-    float4 uv              : TEXCOORD0;
+    float2 uv              : TEXCOORD0;
     float3 positionWS      : TEXCOORD1;
     float3 normalWS        : TEXCOORD2;
     float3 viewDirectionWS : TEXCOORD3;

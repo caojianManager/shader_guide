@@ -7,29 +7,12 @@ namespace URPShaderEditor
 {
     public class PBRGlassEditor : ShaderGUI
     {
-        public static readonly string[] _CullOptions = new string[] { "Both", "Back", "Front" };
-        public static readonly int[] _CullValues = new int[] { 0, 1, 2 };
-
-        public static readonly string[] _SurfaceOptions = new string[] { "Opaque", "Transparent" };
-        public static readonly int[] _SurfaceValues = new int[] { 0, 1 };
-        
+    
         bool showSurfaceOptions = true;
-        bool showDetailsOptions = true;
-        bool showAdvancedOptions = true;
 
         private MaterialEditor matEditor;
         private Material mat;
         
-        public enum AlphaOptions
-        {
-            Alpha,
-            Premultiply,
-            Additive,
-            Multiply
-        }
-
-        private AlphaOptions GetAlphaBlendMode(MaterialProperty blend) => (AlphaOptions)blend.floatValue;
-
         
         public override void OnGUI(MaterialEditor materialEditor, MaterialProperty[] properties)
         {
@@ -129,17 +112,6 @@ namespace URPShaderEditor
                 EditorGUI.indentLevel = indentLevel;
             }
             
-            void DrawToggleProperty(MaterialProperty p, GUIContent c)
-            {
-                EditorGUI.BeginChangeCheck();
-                EditorGUI.showMixedValue = p.hasMixedValue;
-                bool v = EditorGUILayout.Toggle(c, p.floatValue == 1.0f);
-                if (EditorGUI.EndChangeCheck())
-                {
-                    p.floatValue = v ? 1.0f : 0.0f;
-                }
-                EditorGUI.showMixedValue = false;
-            }
         }
     }
     
