@@ -488,10 +488,6 @@ float4 FragmentDepthNormalsOnly(Varyings IN) : SV_Target
     return float4(normalize(IN.normalWS), 0);
 }
 
-void ApplyHeightmap(float height, float3 viewDirectionTS, float scale, inout float2 uv)
-{
-    uv += ParallaxOffset1Step(height, scale, viewDirectionTS);
-}
 
 //PBR-材质基础颜色
 struct MaterialData

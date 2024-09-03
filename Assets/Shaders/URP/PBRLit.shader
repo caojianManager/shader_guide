@@ -135,7 +135,6 @@ Shader "CALF/PBRLit"
             {
                 //r-金属 g-粗糙 b-ao
                 Varyings OUT = Vert(IN);
-                OUT.color = float4(0.5,0.5,0.5,1);
                 OUT.uv.xy = IN.uv * _BaseMap_ST.xy + _BaseMap_ST.zw;
                 OUT.uv.zw = IN.uv * _DetailMap_ST.xy + _DetailMap_ST.zw;
                 return OUT;
@@ -152,7 +151,7 @@ Shader "CALF/PBRLit"
                 
                 float4 emissionMap = _HasEmissionMap ? SAMPLE_TEXTURE2D(_EmissionMap,sampler_EmissionMap,IN.uv) * _EmissionColor : _EmissionColor;
                 float metalV = _HasMRAMap ? saturate(mraMap.r): 0.0;
-                float ao = _HasMRAMap ? mraMap.b : 1.0;
+                float ao = lerp(1,mraMap.b,1);
                 float roughness = _HasMRAMap ? saturate(mraMap.g * _Roughness) : _Roughness;
                 
                 MaterialData mat;
