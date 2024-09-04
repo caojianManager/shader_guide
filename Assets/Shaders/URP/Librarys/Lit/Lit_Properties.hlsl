@@ -1,6 +1,4 @@
-﻿#include <HLSLSupport.cginc>
-
-//这样会走CBUFFER --> 走SPR Batch
+﻿//这样会走CBUFFER --> 走SPR Batch
 CBUFFER_START(UnityPerMaterial)
 float _DetailScale;
 float _HasMRAMap;

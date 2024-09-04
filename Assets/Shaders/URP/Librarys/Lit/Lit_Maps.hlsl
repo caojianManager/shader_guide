@@ -1,5 +1,4 @@
 ﻿
-
 TEXTURE2D(_BaseMap);                      SAMPLER(sampler_BaseMap);
 float4 _BaseMap_TexelSize;
 float4 _BaseMap_MipInfo;
@@ -14,12 +13,4 @@ TEXTURE2D(_DetailMap);                    SAMPLER(sampler_DetailMap);
 TEXTURE2D(_TransmittanceColorMap);        SAMPLER(sampler_TransmittanceColorMap);
 TEXTURE2D(_EmissionMap);                  SAMPLER(sampler_EmissionMap);
 
-#if defined(_NORMALMAP)
-#define SAMPLER_NORMALMAP_IDX sampler_NormalMap
-#elif defined(_BENTNORMALMAP)
-#define SAMPLER_NORMALMAP_IDX sampler_BentNormalMap
-#elif defined(_COATNORMALMAP)
-#define SAMPLER_NORMALMAP_IDX sampler_CoatNormalMap
-#else
-#define SAMPLER_NORMALMAP_IDX sampler_NormalMap
-#endif
+
