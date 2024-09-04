@@ -16,8 +16,8 @@
 #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Shadows.hlsl"
 // See ShaderVariablesFunctions.hlsl in com.unity.render-pipelines.universal/ShaderLibrary/ShaderVariablesFunctions.hlsl
 
-#include "Lit_Maps.hlsl"
-#include "Lit_Properties.hlsl"
+#include "SimpleLit_Maps.hlsl"
+#include "SimpleLit_Properties.hlsl"
 
 #if defined(LOD_FADE_CROSSFADE)
     #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/LODCrossFade.hlsl"
@@ -508,16 +508,9 @@ struct MaterialData
 void InitializeMaterialData(float2 uv,out MaterialData mat)
 {
     float2 baseUV = uv * _BaseMap_ST.xy + _BaseMap_ST.zw;
-    float2 detailUV = uv * _DetailMap_ST.xy + _DetailMap_ST.zw;
 
     //基础贴图
     float4 albedoMap =  SAMPLE_TEXTURE2D(_BaseMap,sampler_BaseMap, baseUV).rgba * _BaseColor;
-    if(_EnableDetailMap)
-    {
-        float4 detailMap = SAMPLE_TEXTURE2D(_DetailMap, sampler_DetailMap,detailUV).rgba * _DetailMapColor;
-        detailMap =  half(2.0) * detailMap * _DetailScale - _DetailScale + half(1.0);
-        albedoMap = float4(albedoMap.rgb * detailMap.rgb, albedoMap.a);
-    }
     mat.albedoAlpha = albedoMap;
 
     //法线
@@ -525,30 +518,22 @@ void InitializeMaterialData(float2 uv,out MaterialData mat)
     float3 normalTS = UnpackNormal(normalMap);
     normalTS = float3(normalTS.rg * _NormalStrength, lerp(1, normalTS.b, saturate(_NormalStrength)));
     normalTS = normalize(normalTS);
-    if(_EnableDetailMap)
-    {
-        float4 detailNormal = SAMPLE_TEXTURE2D(_DetailNormalMap, sampler_DetailMap, detailUV);
-        float3 detailNormalTS = UnpackNormal(detailNormal);
-        detailNormalTS = float3(detailNormalTS.rg * _NormalStrength, lerp(1, detailNormalTS.b, saturate(_NormalStrength)));
-        detailNormalTS = normalize(detailNormalTS);
-        normalTS = lerp(normalTS, BlendNormalRNM(normalTS, detailNormalTS),1);
-    }
     mat.normalTS = normalTS;
 
     //自发光
-    float4 emissionMap = float4(0,0,0,0) ;
+    float4 emissionMap = _EmissionColor ;
     if(_HasEmissionMap)
     {
-        emissionMap = SAMPLE_TEXTURE2D(_EmissionMap,sampler_EmissionMap,uv) * _EmissionColor;
+        emissionMap *= SAMPLE_TEXTURE2D(_EmissionMap,sampler_EmissionMap,uv);
     }
     //IsEmissionMapMulAndHasEmissionMap为True-->环境贴图*基础贴图。False--> 环境贴图+基础贴图
     float emissionV = emissionMap.r <= 0.01f && emissionMap.g <= 0.01f && emissionMap.b <= 0.01f; //emissionV为1时 环境贴图这块像素颜色值为黑色
     float IsEmissionMapMulAndHasEmissionMap = _EmissionMapMultiply && _HasEmissionMap && (emissionV == 0);     
     if(IsEmissionMapMulAndHasEmissionMap)
     {
-        mat.albedoAlpha *= emissionMap;
+        mat.albedoAlpha *= _EmissionColor;
     }
-    mat.emission = emissionMap;
+    mat.emission = _EmissionMapMultiply ? float3(0,0,0): emissionMap.rgb;
     
     float4 mraMap = SAMPLE_TEXTURE2D(_MRAMap, sampler_MRAMap,uv);
 

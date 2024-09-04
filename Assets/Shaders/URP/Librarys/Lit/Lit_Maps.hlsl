@@ -3,9 +3,6 @@
 
 #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
 
-TEXTURE2D(_BlendMap);
-SAMPLER(sampler_BlendMap);
-
 TEXTURE2D(_BaseMap);
 SAMPLER(sampler_BaseMap);
 TEXTURE2D(_NormalMap);

@@ -17,12 +17,8 @@
         _NormalMap("NormalMap",2D) = "white" {}
         _NormalStrength("Normal Strength",Range(0,3)) = 1
         _Roughness("Roughness",Range(0,1)) = 0.0
-        //细节贴图
-        _EnableDetailMap("Enable Detail Map",Float) = 0
-        _DetailMap("Detail Map",2D) = "white" {}
-        _DetailMapColor("Detail Map Color",Color) = (1,1,1,1)
-        _DetailNormalMap("Detail NormalMap",2D) = "white" {}
-        _DetailScale("Detail Scale",Range(0,2)) = 1.0
+
+        
         // Surface
         _Surface("Surface", Float) = 0.0
         _Blend("Blend", Float) = 0.0
@@ -99,7 +95,7 @@
             
             #pragma vertex Vert;
             #pragma fragment Frag;
-            #include "./Librarys/Lit/Lit.hlsl"
+            #include "./Librarys/SimpleLit/SimpleLit.hlsl"
            
             ENDHLSL
         }
@@ -124,10 +120,10 @@
             #define CAST_SHADOWS_PASS
             #pragma multi_compile_vertex _ _CASTING_PUNCTUAL_LIGHT_SHADOW
             
-            #include "./Librarys/Lit/Lit.hlsl"
+            #include "./Librarys/SimpleLit/SimpleLit.hlsl"
 
             ENDHLSL
         }
     }
-    CustomEditor "URPShaderEditor.LitEditorGUI"
+    CustomEditor "URPShaderEditor.SimpleLitEditorGUI"
 }
