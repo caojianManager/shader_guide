@@ -385,11 +385,12 @@ Varyings Vert(Attributes IN)
     UNITY_SETUP_INSTANCE_ID(IN);
     UNITY_TRANSFER_INSTANCE_ID(IN, OUT);
     UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(OUT);
-    
-    OUT.positionWS = TransformObjectToWorld(IN.positionOS);
+
+    VertexPositionInputs position_inputs = GetVertexPositionInputs(IN.positionOS);
+    OUT.positionWS = position_inputs.positionWS;
     OUT.normalWS = TransformObjectToWorldNormal(IN.normalOS);
     OUT.normalWS = normalize(OUT.normalWS);
-    OUT.positionHCS = TransformWorldToHClip(OUT.positionWS);
+    OUT.positionHCS = position_inputs.positionCS;
     OUT.uv = IN.uv;
     OUT.viewDirectionWS = (GetWorldSpaceViewDir(OUT.positionWS));
 

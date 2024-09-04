@@ -39,14 +39,13 @@ Shader "CALF/PBRTerrainMix"
         {
             Tags{"LightMode" = "UniversalForward"}
             HLSLPROGRAM
-            #include "Librarys\PBR.hlsl"
+            #include "./Librarys/Lit/Lit.hlsl"
             
             #pragma vertex vert;
             #pragma fragment frag;
 
             TEXTURE2D(_BlendMap);
             SAMPLER(sampler_BlendMap);
-
             TEXTURE2D(_Layer1_BaseMap);
             SAMPLER(sampler_Layer1_BaseMap);
             TEXTURE2D(_Layer1_NormalMap);
@@ -195,7 +194,7 @@ Shader "CALF/PBRTerrainMix"
             #define CAST_SHADOWS_PASS
             #pragma multi_compile_vertex _ _CASTING_PUNCTUAL_LIGHT_SHADOW
             
-            #include "Librarys\PBR.hlsl"
+            #include "./Librarys/Lit/Lit.hlsl"
 
             ENDHLSL
         }

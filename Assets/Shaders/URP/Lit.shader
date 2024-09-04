@@ -98,26 +98,9 @@ Shader "CURP/Lit"
             
             #pragma vertex Vert;
             #pragma fragment FragPlus;
+            #include "./Librarys/Lit/Lit_Maps.hlsl"
             #include "./Librarys/Lit/Lit_Properties.hlsl"
             #include "./Librarys/Lit/Lit.hlsl"
-
-            TEXTURE2D(_BlendMap);
-            SAMPLER(sampler_BlendMap);
-
-            TEXTURE2D(_BaseMap);
-            SAMPLER(sampler_BaseMap);
-            TEXTURE2D(_NormalMap);
-            SAMPLER(sampler_NormalMap);
-            TEXTURE2D(_DetailMap);
-            SAMPLER(sampler_DetailMap);
-            TEXTURE2D(_DetailNormalMap);
-            SAMPLER(sampler_DetailNormalMap);
-            TEXTURE2D(_MRAMap);
-            SAMPLER(sampler_MRAMap);
-            TEXTURE2D(_EmissionMap);
-            SAMPLER(sampler_EmissionMap);
-
-
 
            float4 FragPlus(Varyings IN) : SV_Target
            {
@@ -182,7 +165,7 @@ Shader "CURP/Lit"
             #define CAST_SHADOWS_PASS
             #pragma multi_compile_vertex _ _CASTING_PUNCTUAL_LIGHT_SHADOW
             
-            #include "Librarys\PBR.hlsl"
+            #include "./Librarys/Lit/Lit.hlsl"
 
             ENDHLSL
         }
