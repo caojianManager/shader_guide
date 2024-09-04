@@ -23,5 +23,3 @@ TEXTURE2D(_EmissionMap);                  SAMPLER(sampler_EmissionMap);
 #else
 #define SAMPLER_NORMALMAP_IDX sampler_NormalMap
 #endif
-
-#endif
