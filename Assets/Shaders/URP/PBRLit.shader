@@ -94,7 +94,8 @@ Shader "CALF/PBRLit"
             // Instancing
             #pragma multi_compile_instancing
             #pragma instancing_options renderinglayer
-            #pragma multi_compile _ DOTS_INSTANCING_ON
+            #include_with_pragmas "Packages/com.unity.render-pipelines.universal/ShaderLibrary/DOTS.hlsl"
+
             
             #pragma vertex Vert;
             #pragma fragment FragPlus;
@@ -189,7 +190,7 @@ Shader "CALF/PBRLit"
 
             #pragma shader_feature_local_fragment _ALPHATEST_ON
             #pragma multi_compile_instancing
-            #pragma multi_compile _ DOTS_INSTANCING_ON
+            #include_with_pragmas "Packages/com.unity.render-pipelines.universal/ShaderLibrary/DOTS.hlsl"
             #pragma multi_compile_fragment _ LOD_FADE_CROSSFADE
             
             #pragma vertex Vert
