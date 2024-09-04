@@ -505,6 +505,64 @@ struct MaterialData
     float specularity;              //镜面值
 };
 
+void InitializeMaterialData(float2 uv,out MaterialData mat)
+{
+    float2 baseUV = uv * _BaseMap_ST.xy + _BaseMap_ST.zw;
+    float2 detailUV = uv * _DetailMap_ST.xy + _DetailMap_ST.zw;
+
+    //基础贴图
+    float4 albedoMap =  SAMPLE_TEXTURE2D(_BaseMap,sampler_BaseMap, baseUV).rgba * _BaseColor;
+    if(_EnableDetailMap)
+    {
+        float4 detailMap = SAMPLE_TEXTURE2D(_DetailMap, sampler_DetailMap,detailUV).rgba * _DetailMapColor;
+        detailMap =  half(2.0) * detailMap * _DetailScale - _DetailScale + half(1.0);
+        albedoMap = float4(albedoMap.rgb * detailMap.rgb, albedoMap.a);
+    }
+    mat.albedoAlpha = albedoMap;
+
+    //法线
+    float4 normalMap = SAMPLE_TEXTURE2D(_NormalMap,sampler_NormalMap,baseUV);
+    float3 normalTS = UnpackNormal(normalMap);
+    normalTS = float3(normalTS.rg * _NormalStrength, lerp(1, normalTS.b, saturate(_NormalStrength)));
+    normalTS = normalize(normalTS);
+    if(_EnableDetailMap)
+    {
+        float4 detailNormal = SAMPLE_TEXTURE2D(_DetailNormalMap, sampler_DetailMap, detailUV);
+        float3 detailNormalTS = UnpackNormal(detailNormal);
+        detailNormalTS = float3(detailNormalTS.rg * _NormalStrength, lerp(1, detailNormalTS.b, saturate(_NormalStrength)));
+        detailNormalTS = normalize(detailNormalTS);
+        normalTS = lerp(normalTS, BlendNormalRNM(normalTS, detailNormalTS),1);
+    }
+    mat.normalTS = normalTS;
+
+    //自发光
+    float4 emissionMap = float4(0,0,0,0) ;
+    if(_HasEmissionMap)
+    {
+        emissionMap = SAMPLE_TEXTURE2D(_EmissionMap,sampler_EmissionMap,uv) * _EmissionColor;
+    }
+    //IsEmissionMapMulAndHasEmissionMap为True-->环境贴图*基础贴图。False--> 环境贴图+基础贴图
+    float emissionV = emissionMap.r <= 0.01f && emissionMap.g <= 0.01f && emissionMap.b <= 0.01f; //emissionV为1时 环境贴图这块像素颜色值为黑色
+    float IsEmissionMapMulAndHasEmissionMap = _EmissionMapMultiply && _HasEmissionMap && (emissionV == 0);     
+    if(IsEmissionMapMulAndHasEmissionMap)
+    {
+        mat.albedoAlpha *= emissionMap;
+    }
+    mat.emission = emissionMap;
+    
+    float4 mraMap = SAMPLE_TEXTURE2D(_MRAMap, sampler_MRAMap,uv);
+    float metalV = _HasMRAMap ? saturate(mraMap.r): 0.0;
+    float ao = lerp(1,mraMap.b,1);
+    float roughness = _HasMRAMap ? saturate(mraMap.g * _Roughness) : _Roughness;
+    
+    mat.metalness = metalV;
+    mat.occlusion = ao;
+    mat.perceptualRoughness = roughness;
+    mat.specularity = GetSpecularity();
+   
+    
+}
+
 float2 GetBlendFactors(float height1, float a1, float height2, float a2)
 {
     float depth = 0.2;
@@ -525,38 +583,8 @@ float4 Frag(Varyings IN) : SV_TARGET
         LODFadeCrossFade(IN.positionHCS);
     #endif
 
-    float2 baseUV = IN.uv * _BaseMap_ST.xy + _BaseMap_ST.zw;
-    float2 detailUV = IN.uv * _DetailMap_ST.xy + _DetailMap_ST.zw;
-    float4 mraMap = SAMPLE_TEXTURE2D(_MRAMap, sampler_MRAMap,IN.uv);
-    float4 baseMap = SAMPLE_TEXTURE2D(_BaseMap,sampler_BaseMap, baseUV).rgba * _BaseColor;
-    float4 normalMap = SAMPLE_TEXTURE2D(_NormalMap,sampler_NormalMap,baseUV);
-    float4 detailMap = SAMPLE_TEXTURE2D(_DetailMap, sampler_DetailMap,detailUV).rgba * _DetailMapColor;
-    float4 detailNormal = SAMPLE_TEXTURE2D(_DetailNormalMap, sampler_DetailMap, detailUV);
-    detailMap =  half(2.0) * detailMap * _DetailScale - _DetailScale + half(1.0);
-   
-    float4 emissionMap = _HasEmissionMap ? SAMPLE_TEXTURE2D(_EmissionMap,sampler_EmissionMap,IN.uv) * _EmissionColor : _EmissionColor;
-    float metalV = _HasMRAMap ? saturate(mraMap.r): 0.0;
-    float ao = lerp(1,mraMap.b,1);
-    float roughness = _HasMRAMap ? saturate(mraMap.g * _Roughness) : _Roughness;
-   
     MaterialData mat;
-    float4 albedoMap = _EnableDetailMap ? float4(baseMap.rgb * detailMap.rgb,baseMap.a):baseMap;
-    float emissionV = emissionMap.r <= 0.01f && emissionMap.g <= 0.01f && emissionMap.b <= 0.01f; //emissionV为1时 环境贴图这块像素颜色值为黑色
-    float IsEmissionMapMulAndHasEmissionMap = _EmissionMapMultiply && _HasEmissionMap && (emissionV == 0);        
-    mat.albedoAlpha = IsEmissionMapMulAndHasEmissionMap ? albedoMap * emissionMap : albedoMap;
-    mat.metalness = metalV;
-    mat.emission = _EmissionMapMultiply ? float3(0,0,0) : emissionMap.rgb;
-    mat.occlusion = ao;
-    mat.perceptualRoughness = roughness;
-    mat.specularity = GetSpecularity();
-    float3 normalTS = UnpackNormal(normalMap);
-    normalTS = float3(normalTS.rg * _NormalStrength, lerp(1, normalTS.b, saturate(_NormalStrength)));
-    normalTS = normalize(normalTS);
-    float3 detailNormalTS = UnpackNormal(detailNormal);
-    detailNormalTS = float3(detailNormalTS.rg * _NormalStrength, lerp(1, detailNormalTS.b, saturate(_NormalStrength)));
-    detailNormalTS = normalize(detailNormalTS);
-    float3 blendNormalTS = lerp(normalTS, BlendNormalRNM(normalTS, detailNormalTS),1);
-    mat.normalTS = _EnableDetailMap ? blendNormalTS : normalTS;
+    InitializeMaterialData(IN.uv,mat);
     
     ///////////////////////////////
     //   Alpha Clipping          //

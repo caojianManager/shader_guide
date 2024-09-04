@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace URPShaderEditor
 {
-    public class PBRLitEditorGUI : ShaderGUI
+    public class LitEditorGUI : ShaderGUI
     {
         public static readonly string[] _CullOptions = new string[] { "Both", "Back", "Front" };
         public static readonly int[] _CullValues = new int[] { 0, 1, 2 };
@@ -65,24 +65,10 @@ namespace URPShaderEditor
             MaterialProperty _AlphaClipEnabled = FindProperty("_AlphaClipEnabled", properties);
             MaterialProperty _SortPriority = FindProperty("_SortPriority", properties);
             
-            
-            DrawMraOptions();
             DrawSurfaceOptions();
             DrawSurfaceInput();
             DrawDetailsOptions();
             DrawAdvancedOptions();
-
-            void DrawMraOptions()
-            {
-                EditorGUI.BeginChangeCheck();
-                materialEditor.TexturePropertySingleLine(
-                    new GUIContent("MRA Map"),
-                    _MRAMap);
-                if(EditorGUI.EndChangeCheck())
-                {
-                    _HasMRAMap.floatValue = (_MRAMap.textureValue == null ? 0: 1);
-                }
-            }
 
             bool IsTransparent() => _Surface.floatValue > 0.0f ? true : false;
             bool AlphaClipEnabled() => _AlphaClipEnabled.floatValue > 0.0f ? true : false;
@@ -179,6 +165,20 @@ namespace URPShaderEditor
                 if (showSurfaceOptions)
                 {
                     EditorGUI.indentLevel++;
+                    //MRA贴图-M金属度-R-粗糙度-A-AO贴图
+                    EditorGUI.BeginChangeCheck();
+                    materialEditor.TexturePropertySingleLine(
+                        new GUIContent("MRA Map"),
+                        _MRAMap);
+                    if(EditorGUI.EndChangeCheck())
+                    {
+                        _HasMRAMap.floatValue = (_MRAMap.textureValue == null ? 0: 1);
+                    }
+                    EditorGUI.indentLevel += 2;
+                    materialEditor.ShaderProperty(_Roughness,
+                        new GUIContent("Roughness"));
+                    EditorGUI.indentLevel -= 2;
+                    EditorGUILayout.Space();
                     TexturePropertyWithColor(
                         new GUIContent(
                             "Base Color",
@@ -190,7 +190,8 @@ namespace URPShaderEditor
                         false
                     );
                     CommonEditorGUI.DrawConditionalTextureProperty(materialEditor,new GUIContent("Normal Map"),_NormalMap,_NormalStrength);
-                    materialEditor.ShaderProperty(_EmissionMapMultiply,new GUIContent("Emission Multiply Enabled"));
+                    
+                    EditorGUILayout.Space();
                     EditorGUI.BeginChangeCheck();
                     TexturePropertyWithColor(
                         new GUIContent(
@@ -206,6 +207,10 @@ namespace URPShaderEditor
                     {
                         _HasEmissionMap.floatValue = (_EmissionMap.textureValue == null ? 0: 1);
                     }
+                    EditorGUI.indentLevel += 2;
+                    materialEditor.ShaderProperty(_EmissionMapMultiply,new GUIContent("Emission Multiply Enabled"));
+                    EditorGUI.indentLevel -= 2;
+                    EditorGUILayout.Space();
                     matEditor.TextureScaleOffsetProperty(_BaseMap);
                 }
                 EditorGUILayout.EndFoldoutHeaderGroup();
@@ -218,8 +223,6 @@ namespace URPShaderEditor
                 {
                     materialEditor.ShaderProperty(_ReceiveFogEnabled, new GUIContent("Receive Fog"));
                     materialEditor.ShaderProperty(_ReceiveShadowsEnabled, new GUIContent("Receive Shadow"));
-                    materialEditor.ShaderProperty(_Roughness,
-                        new GUIContent("Roughness"));
                     CommonEditorGUI.DrawInstancingFiled(materialEditor);
                     EditorGUILayout.Space();
                 }

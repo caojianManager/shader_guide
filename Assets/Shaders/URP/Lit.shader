@@ -98,8 +98,6 @@ Shader "CURP/Lit"
             
             #pragma vertex Vert;
             #pragma fragment Frag;
-            #include "./Librarys/Lit/Lit_Maps.hlsl"
-            #include "./Librarys/Lit/Lit_Properties.hlsl"
             #include "./Librarys/Lit/Lit.hlsl"
            
             ENDHLSL
@@ -132,5 +130,5 @@ Shader "CURP/Lit"
             ENDHLSL
         }
     }
-    CustomEditor "URPShaderEditor.PBRLitEditorGUI"
+    CustomEditor "URPShaderEditor.LitEditorGUI"
 }
