@@ -1,4 +1,8 @@
-﻿
+﻿#ifndef  LIT_MAPS_INCLUDED
+#define  LIT_MAPS_INCLUDED
+
+#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
+
 TEXTURE2D(_BaseMap);                      SAMPLER(sampler_BaseMap);
 float4 _BaseMap_TexelSize;
 float4 _BaseMap_MipInfo;
@@ -13,4 +17,4 @@ TEXTURE2D(_DetailMap);                    SAMPLER(sampler_DetailMap);
 TEXTURE2D(_TransmittanceColorMap);        SAMPLER(sampler_TransmittanceColorMap);
 TEXTURE2D(_EmissionMap);                  SAMPLER(sampler_EmissionMap);
 
-
+#endif

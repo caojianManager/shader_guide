@@ -1,4 +1,8 @@
-﻿//这样会走CBUFFER --> 走SPR Batch
+﻿#ifndef LIT_PROPERTIES_INCLUDED
+#define LIT_PROPERTIES_INCLUDED
+#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
+
+//这样会走CBUFFER --> 走SPR Batch
 CBUFFER_START(UnityPerMaterial)
 float _DetailScale;
 float _HasMRAMap;
@@ -57,5 +61,7 @@ UNITY_DOTS_INSTANCING_END(MaterialPropertyMetadata)
 #define _DetailMapColor          UNITY_ACCESS_DOTS_INSTANCED_PROP_WITH_DEFAULT(float4  , _DetailMapColor)
 #define _DetailMap_ST            UNITY_ACCESS_DOTS_INSTANCED_PROP_WITH_DEFAULT(float4  , _DetailMap_ST)
 #define _BaseMap_ST              UNITY_ACCESS_DOTS_INSTANCED_PROP_WITH_DEFAULT(float4  , _BaseMap_ST)
+
+#endif
 
 #endif
