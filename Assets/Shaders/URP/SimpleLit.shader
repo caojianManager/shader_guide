@@ -1,11 +1,11 @@
-Shader "CURP/Lit"
+﻿Shader "CURP/SimpleLit"
 {
     Properties
     {
         //MRA贴图 r-金属度,g-粗糙度,b-ao
         _MRAMap("MRA Map",2D) = "white" {}
         [Toggle(_HasMRAMap)] _HasMRAMap("Has MRA Map",Float) = 0
-        _Metalness("Metalness",Range(0,1)) = 0.0
+        _Metalness("_Metalness",Range(0,3)) = 1
         
         _EmissionMap("Emission Map", 2D) = "black" {}
         [HDR] _EmissionColor("EmissionColor", Color) = (0,0,0)
@@ -100,22 +100,20 @@ Shader "CURP/Lit"
             #pragma vertex Vert;
             #pragma fragment Frag;
             #include "./Librarys/Lit/Lit.hlsl"
-            
+           
             ENDHLSL
         }
 
         Pass
         {
-            Name "PBRLit_ShadowCaster"
+            Name "Lit_ShadowCaster"
             
             Tags {"LightMode" = "ShadowCaster"}
             ZWrite On
             ZTest LEqual
             ZClip Off
             
-            
             HLSLPROGRAM
-
             #pragma shader_feature_local_fragment _ALPHATEST_ON
             #pragma multi_compile_instancing
             #include_with_pragmas "Packages/com.unity.render-pipelines.universal/ShaderLibrary/DOTS.hlsl"
