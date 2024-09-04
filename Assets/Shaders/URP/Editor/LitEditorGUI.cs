@@ -39,6 +39,7 @@ namespace URPShaderEditor
             //Material Property
             MaterialProperty _MRAMap = FindProperty("_MRAMap", properties);
             MaterialProperty _HasMRAMap = FindProperty("_HasMRAMap", properties);
+            MaterialProperty _Metalness = FindProperty("_Metalness", properties);
             MaterialProperty _BaseMap = FindProperty("_BaseMap", properties);
             MaterialProperty _BaseColor = FindProperty("_BaseColor", properties);
             MaterialProperty _NormalMap = FindProperty("_NormalMap", properties);
@@ -177,6 +178,7 @@ namespace URPShaderEditor
                     EditorGUI.indentLevel += 2;
                     materialEditor.ShaderProperty(_Roughness,
                         new GUIContent("Roughness"));
+                    materialEditor.ShaderProperty(_Metalness,new GUIContent("Metalness"));
                     EditorGUI.indentLevel -= 2;
                     EditorGUILayout.Space();
                     TexturePropertyWithColor(

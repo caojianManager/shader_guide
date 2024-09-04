@@ -14,6 +14,7 @@ float _HasEmissionMap;
 float _AlphaClip;
 float _EmissionMapMultiply;
 float _NormalStrength;
+float _Metalness;
 float4 _BaseColor;
 float4 _EmissionColor;
 float4 _DetailMapColor;

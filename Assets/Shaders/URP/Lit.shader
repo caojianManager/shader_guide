@@ -5,6 +5,7 @@ Shader "CURP/Lit"
         //MRA贴图 r-金属度,g-粗糙度,b-ao
         _MRAMap("MRA Map",2D) = "white" {}
         [Toggle(_HasMRAMap)] _HasMRAMap("Has MRA Map",Float) = 0
+        _Metalness("_Metalness",Range(0,3)) = 1
         
         _EmissionMap("Emission Map", 2D) = "black" {}
         [HDR] _EmissionColor("EmissionColor", Color) = (0,0,0)

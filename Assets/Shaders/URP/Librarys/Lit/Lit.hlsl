@@ -551,15 +551,32 @@ void InitializeMaterialData(float2 uv,out MaterialData mat)
     mat.emission = emissionMap;
     
     float4 mraMap = SAMPLE_TEXTURE2D(_MRAMap, sampler_MRAMap,uv);
-    float metalV = _HasMRAMap ? saturate(mraMap.r): 0.0;
-    float ao = lerp(1,mraMap.b,1);
-    float roughness = _HasMRAMap ? saturate(mraMap.g * _Roughness) : _Roughness;
+
+    //金属度
+    float metalness = 0.0;
+    if(_HasMRAMap)
+    {
+        metalness = saturate(mraMap.r * _Metalness);
+    } 
+    mat.metalness = metalness;
     
-    mat.metalness = metalV;
+    //AO
+    float ao = 1;
+    if(_HasMRAMap)
+    {
+        ao = lerp(1,mraMap.b,1);
+    }
     mat.occlusion = ao;
+
+    //粗糙度
+    float roughness = _Roughness;
+    if(_HasMRAMap)
+    {
+       roughness = saturate(mraMap.g * _Roughness);
+    }
     mat.perceptualRoughness = roughness;
+    
     mat.specularity = GetSpecularity();
-   
     
 }
 
