@@ -732,6 +732,6 @@ float4 Frag(Varyings IN) : SV_TARGET
         color = MixFog(color, fogFactor);
     }
     
-    return float4(color, mat.albedoAlpha.a);
+    return float4(color, 1);
 }
 #endif 
