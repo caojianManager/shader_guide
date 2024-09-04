@@ -97,55 +97,17 @@ Shader "CURP/Lit"
             #include_with_pragmas "Packages/com.unity.render-pipelines.universal/ShaderLibrary/DOTS.hlsl"
             
             #pragma vertex Vert;
-            #pragma fragment FragPlus;
+            #pragma fragment Frag;
             #include "./Librarys/Lit/Lit_Maps.hlsl"
             #include "./Librarys/Lit/Lit_Properties.hlsl"
             #include "./Librarys/Lit/Lit.hlsl"
-
-           float4 FragPlus(Varyings IN) : SV_Target
-           {
-               float2 baseUV = IN.uv * _BaseMap_ST.xy + _BaseMap_ST.zw;
-               float2 detailUV = IN.uv * _DetailMap_ST.xy + _DetailMap_ST.zw;
-               float4 mraMap = SAMPLE_TEXTURE2D(_MRAMap, sampler_MRAMap,IN.uv);
-               float4 baseMap = SAMPLE_TEXTURE2D(_BaseMap,sampler_BaseMap, baseUV).rgba * _BaseColor;
-               float4 normalMap = SAMPLE_TEXTURE2D(_NormalMap,sampler_NormalMap,baseUV);
-               float4 detailMap = SAMPLE_TEXTURE2D(_DetailMap, sampler_DetailMap,detailUV).rgba * _DetailMapColor;
-               float4 detailNormal = SAMPLE_TEXTURE2D(_DetailNormalMap, sampler_DetailMap, detailUV);
-               detailMap =  half(2.0) * detailMap * _DetailScale - _DetailScale + half(1.0);
-               
-               float4 emissionMap = _HasEmissionMap ? SAMPLE_TEXTURE2D(_EmissionMap,sampler_EmissionMap,IN.uv) * _EmissionColor : _EmissionColor;
-               float metalV = _HasMRAMap ? saturate(mraMap.r): 0.0;
-               float ao = lerp(1,mraMap.b,1);
-               float roughness = _HasMRAMap ? saturate(mraMap.g * _Roughness) : _Roughness;
-               
-               MaterialData mat;
-               float4 albedo = _EnableDetailMap ? float4(baseMap.rgb * detailMap.rgb,baseMap.a):baseMap;
-               float emissionV = emissionMap.r <= 0.01f && emissionMap.g <= 0.01f && emissionMap.b <= 0.01f; //emissionV为1时 环境贴图这块像素颜色值为黑色
-               float IsEmissionMapMulAndHasEmissionMap = _EmissionMapMultiply && _HasEmissionMap && (emissionV == 0);        
-               mat.albedoAlpha = IsEmissionMapMulAndHasEmissionMap ? albedo * emissionMap : albedo;
-               mat.metalness = metalV;
-               mat.emission = _EmissionMapMultiply ? float3(0,0,0) : emissionMap.rgb;
-               mat.occlusion = ao;
-               mat.perceptualRoughness = roughness;
-               mat.specularity = GetSpecularity();
-               float3 normalTS = UnpackNormal(normalMap);
-               normalTS = float3(normalTS.rg * _NormalStrength, lerp(1, normalTS.b, saturate(_NormalStrength)));
-               normalTS = normalize(normalTS);
-               float3 detailNormalTS = UnpackNormal(detailNormal);
-               detailNormalTS = float3(detailNormalTS.rg * _NormalStrength, lerp(1, detailNormalTS.b, saturate(_NormalStrength)));
-               detailNormalTS = normalize(detailNormalTS);
-               float3 blendNormalTS = lerp(normalTS, BlendNormalRNM(normalTS, detailNormalTS),1);
-               mat.normalTS = _EnableDetailMap ? blendNormalTS : normalTS;
-               float4 col = Frag(IN, mat,_ReceiveFogEnabled,_ReceiveShadowsEnabled,_AlphaClip);
-               return col;
-          }
            
             ENDHLSL
         }
 
         Pass
         {
-            Name "PBRLit_ShadowCaster"
+            Name "Lit_ShadowCaster"
             
             Tags {"LightMode" = "ShadowCaster"}
             ZWrite On

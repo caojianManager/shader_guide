@@ -16,6 +16,9 @@
 #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Shadows.hlsl"
 // See ShaderVariablesFunctions.hlsl in com.unity.render-pipelines.universal/ShaderLibrary/ShaderVariablesFunctions.hlsl
 
+#include "Lit_Maps.hlsl"
+#include "Lit_Properties.hlsl"
+
 #if defined(LOD_FADE_CROSSFADE)
     #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/LODCrossFade.hlsl"
 #endif
@@ -513,7 +516,7 @@ float2 GetBlendFactors(float height1, float a1, float height2, float a2)
     return float2(b1 * b3, b2 * b3);
 }
 
-float4 Frag(Varyings IN,MaterialData mat,float IsRecivedFog = 0,float IsRecivedShadow = 0,float alphaClip = 0.0) 
+float4 Frag(Varyings IN) : SV_TARGET
 {
     UNITY_SETUP_INSTANCE_ID(IN);  // --- 仅当要在片元着色器中访问任何实例化属性时才需要
     UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(IN);
@@ -521,12 +524,45 @@ float4 Frag(Varyings IN,MaterialData mat,float IsRecivedFog = 0,float IsRecivedS
     #ifdef LOD_FADE_CROSSFADE
         LODFadeCrossFade(IN.positionHCS);
     #endif
+
+    float2 baseUV = IN.uv * _BaseMap_ST.xy + _BaseMap_ST.zw;
+    float2 detailUV = IN.uv * _DetailMap_ST.xy + _DetailMap_ST.zw;
+    float4 mraMap = SAMPLE_TEXTURE2D(_MRAMap, sampler_MRAMap,IN.uv);
+    float4 baseMap = SAMPLE_TEXTURE2D(_BaseMap,sampler_BaseMap, baseUV).rgba * _BaseColor;
+    float4 normalMap = SAMPLE_TEXTURE2D(_NormalMap,sampler_NormalMap,baseUV);
+    float4 detailMap = SAMPLE_TEXTURE2D(_DetailMap, sampler_DetailMap,detailUV).rgba * _DetailMapColor;
+    float4 detailNormal = SAMPLE_TEXTURE2D(_DetailNormalMap, sampler_DetailMap, detailUV);
+    detailMap =  half(2.0) * detailMap * _DetailScale - _DetailScale + half(1.0);
+   
+    float4 emissionMap = _HasEmissionMap ? SAMPLE_TEXTURE2D(_EmissionMap,sampler_EmissionMap,IN.uv) * _EmissionColor : _EmissionColor;
+    float metalV = _HasMRAMap ? saturate(mraMap.r): 0.0;
+    float ao = lerp(1,mraMap.b,1);
+    float roughness = _HasMRAMap ? saturate(mraMap.g * _Roughness) : _Roughness;
+   
+    MaterialData mat;
+    float4 albedoMap = _EnableDetailMap ? float4(baseMap.rgb * detailMap.rgb,baseMap.a):baseMap;
+    float emissionV = emissionMap.r <= 0.01f && emissionMap.g <= 0.01f && emissionMap.b <= 0.01f; //emissionV为1时 环境贴图这块像素颜色值为黑色
+    float IsEmissionMapMulAndHasEmissionMap = _EmissionMapMultiply && _HasEmissionMap && (emissionV == 0);        
+    mat.albedoAlpha = IsEmissionMapMulAndHasEmissionMap ? albedoMap * emissionMap : albedoMap;
+    mat.metalness = metalV;
+    mat.emission = _EmissionMapMultiply ? float3(0,0,0) : emissionMap.rgb;
+    mat.occlusion = ao;
+    mat.perceptualRoughness = roughness;
+    mat.specularity = GetSpecularity();
+    float3 normalTS = UnpackNormal(normalMap);
+    normalTS = float3(normalTS.rg * _NormalStrength, lerp(1, normalTS.b, saturate(_NormalStrength)));
+    normalTS = normalize(normalTS);
+    float3 detailNormalTS = UnpackNormal(detailNormal);
+    detailNormalTS = float3(detailNormalTS.rg * _NormalStrength, lerp(1, detailNormalTS.b, saturate(_NormalStrength)));
+    detailNormalTS = normalize(detailNormalTS);
+    float3 blendNormalTS = lerp(normalTS, BlendNormalRNM(normalTS, detailNormalTS),1);
+    mat.normalTS = _EnableDetailMap ? blendNormalTS : normalTS;
     
     ///////////////////////////////
     //   Alpha Clipping          //
     ///////////////////////////////
 
-    AlphaDiscard(mat.albedoAlpha.a, alphaClip);
+    AlphaDiscard(mat.albedoAlpha.a, _AlphaClip);
     
     
     ///////////////////////////////
@@ -576,7 +612,7 @@ float4 Frag(Varyings IN,MaterialData mat,float IsRecivedFog = 0,float IsRecivedS
 
     
     // Lighting--固定接受阴影
-    if(IsRecivedShadow == 0)
+    if(_ReceiveShadowsEnabled == 0)
     {
         mainLight.shadowAttenuation = 1;
     }
@@ -645,7 +681,7 @@ float4 Frag(Varyings IN,MaterialData mat,float IsRecivedFog = 0,float IsRecivedS
    
     
     // Mix Fog
-    if (IsRecivedFog == 1)
+    if (_ReceiveFogEnabled == 1)
     {
         float fogFactor = InitializeInputDataFog(float4(IN.positionWS, 1), 0);
         color = MixFog(color, fogFactor);
