@@ -1,4 +1,4 @@
-Shader "CALF/PBRLit"
+Shader "CURP/Lit"
 {
     Properties
     {
@@ -95,11 +95,11 @@ Shader "CALF/PBRLit"
             #pragma multi_compile_instancing
             #pragma instancing_options renderinglayer
             #include_with_pragmas "Packages/com.unity.render-pipelines.universal/ShaderLibrary/DOTS.hlsl"
-
             
             #pragma vertex Vert;
             #pragma fragment FragPlus;
-            #include "./Librarys/URP_PBR.hlsl"
+            #include "./Librarys/Lit/Lit_Properties.hlsl"
+            #include "./Librarys/Lit/Lit.hlsl"
 
             TEXTURE2D(_BlendMap);
             SAMPLER(sampler_BlendMap);
@@ -117,23 +117,7 @@ Shader "CALF/PBRLit"
             TEXTURE2D(_EmissionMap);
             SAMPLER(sampler_EmissionMap);
 
-            CBUFFER_START(UnityPerMaterial)
-                float _DetailScale;
-                float _HasMRAMap;
-                float _Roughness;
-                float _EnableDetailMap;
-                float _ReceiveFogEnabled;
-                float _ReceiveShadowsEnabled;
-                float _HasEmissionMap;
-                float _AlphaClip;
-                float _EmissionMapMultiply;
-                float _NormalStrength;
-                float4 _BaseColor;
-                float4 _EmissionColor;
-                float4 _DetailMapColor;
-                float4 _DetailMap_ST;
-                float4 _BaseMap_ST;
-            CBUFFER_END
+
 
            float4 FragPlus(Varyings IN) : SV_Target
            {
@@ -198,7 +182,7 @@ Shader "CALF/PBRLit"
             #define CAST_SHADOWS_PASS
             #pragma multi_compile_vertex _ _CASTING_PUNCTUAL_LIGHT_SHADOW
             
-            #include "./Librarys/URP_PBR.hlsl"
+            #include "Librarys\PBR.hlsl"
 
             ENDHLSL
         }
