@@ -111,7 +111,7 @@ float3 GetEmission()
 //法线长度-Default
 float GetNormalStrength()
 {
-    return 1.6f;
+    return 1;
 }
 
 //高光-通过这个方法获取
@@ -272,24 +272,38 @@ void InitializeMaterialData(float2 uv,out MaterialData mat)
     {
         float4 layer2_normal = SAMPLE_TEXTURE2D(_Layer2_NormalMap,sampler_Layer2_NormalMap, uv2);
         normalMap += layer2_normal * blendWieght.y;
-        normalMap *= _Layer2_NormalScale;
     }
     if(_Layer3_Enable)
     {
         float4 layer3_normal = SAMPLE_TEXTURE2D(_Layer3_NormalMap,sampler_Layer3_NormalMap, uv3);
         normalMap += layer3_normal * blendWieght.z;
-        normalMap *= _Layer3_NormalScale;
     }
     if(_Layer4_Enable)
     {
         float4 layer4_normal = SAMPLE_TEXTURE2D(_Layer4_NormalMap,sampler_Layer4_NormalMap, uv4);
         normalMap += layer4_normal * blendWieght.w;
-        normalMap *= _Layer4_NormalScale;
     }
+
+    //法线长度
+    float normalScale = _Layer1_NormalScale * blendWieght.x;
+    if(_Layer2_Enable)
+    {
+        normalScale += _Layer2_NormalScale * blendWieght.y;
+    }
+    if(_Layer3_Enable)
+    {
+        normalScale += _Layer3_NormalScale * blendWieght.z;
+    }
+    if(_Layer4_Enable)
+    {
+        normalScale += _Layer4_NormalScale * blendWieght.w;
+    }
+    
     float3 normalTS = UnpackNormal(normalMap);
-    normalTS = float3(normalTS.rg * GetNormalStrength(), lerp(1, normalTS.b, saturate(GetNormalStrength())));
+    normalTS = float3(normalTS.rg * normalScale, lerp(1, normalTS.b, saturate(normalScale)));
     normalTS = normalize(normalTS);
     mat.normalTS = normalTS;
+    
 
     //金属度
     float metalness = layer1_mrah.x * blendWieght.x;
