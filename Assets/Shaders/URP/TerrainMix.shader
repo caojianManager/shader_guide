@@ -105,5 +105,5 @@ Shader "CURP/TerrainMix"
             ENDHLSL
         }
     }
-    CustomEditor "URPShaderEditor.PBRTerrainMixEditorGUI"
+    CustomEditor "URPShaderEditor.TerrainMixEditorGUI"
 }

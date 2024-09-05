@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace URPShaderEditor
 {
-    public class PBRTerrainMixEditorGUI : ShaderGUI
+    public class TerrainMixEditorGUI : ShaderGUI
     {
         bool showLayerOneOptions = true;
         bool showLayerTwoOptions = true;

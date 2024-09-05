@@ -266,7 +266,7 @@ Material:
     - _MetalnessMapExposure: 0
     - _MetalnessMapExposure2: 0
     - _NormalScale: 1.82
-    - _NormalStrength: 1.39
+    - _NormalStrength: 3
     - _NormalStrength2: 1
     - _OcclusionStrength: 1
     - _OcclusionStrength2: 1

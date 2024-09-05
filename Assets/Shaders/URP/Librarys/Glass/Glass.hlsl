@@ -84,6 +84,9 @@ Varyings Vert(Attributes IN)
 
 float4 Frag(Varyings IN) : SV_Target
 {
+    UNITY_SETUP_INSTANCE_ID(IN);  // --- 仅当要在片元着色器中访问任何实例化属性时才需要
+    UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(IN);
+    
     //matcap map采样
     float2 matcapUV = MatcapUV2(IN.normalWS,IN.positionWS)*1;
     float4 matcapMap = SAMPLE_TEXTURE2D(_MatcapMap,sampler_MatcapMap, matcapUV);
