@@ -1,5 +1,5 @@
-﻿#ifndef  LIT_MAPS_INCLUDED
-#define  LIT_MAPS_INCLUDED
+﻿#ifndef  SIMPLELIT_MAPS_INCLUDED
+#define  SIMPLELIT_MAPS_INCLUDED
 
 #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
 

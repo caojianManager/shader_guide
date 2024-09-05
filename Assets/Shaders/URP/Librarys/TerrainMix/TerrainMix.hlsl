@@ -1,15 +1,9 @@
-﻿#ifndef LIT_INCLUDE
-#define LIT_INCLUDE
-
-
-
-///////////////////////////////////////////////////////////////////////////////
-//                      Includes                                             //
-///////////////////////////////////////////////////////////////////////////////
+﻿#ifndef TERRAINMIX_INCLUDE
+#define TERRAINMIX_INCLUDE
 
 #include "./Librarys/Common/PBRCommon.hlsl"
-#include "Lit_Maps.hlsl"
-#include "Lit_Properties.hlsl"
+#include "TerrainMix_Maps.hlsl"
+#include "TerrainMix_Properties.hlsl"
 
 /////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
@@ -140,8 +134,8 @@ float FragmentDepthOnly(Varyings IN) : SV_Target
     UNITY_SETUP_INSTANCE_ID(IN);
     UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(IN);
     
-    float alpha = SAMPLE_TEXTURE2D(_BaseMap, sampler_BaseMap, IN.uv.xy).a * _BaseColor.a;
-    AlphaDiscard(alpha, _AlphaClip);
+    // float alpha = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, IN.uv.xy).a * _BaseColor.a;
+    // AlphaDiscard(alpha, _AlphaClip);
 
     #ifdef LOD_FADE_CROSSFADE
         LODFadeCrossFade(IN.positionHCS);
@@ -156,8 +150,8 @@ float4 FragmentDepthNormalsOnly(Varyings IN) : SV_Target
     UNITY_SETUP_INSTANCE_ID(IN);
     UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(IN);
     
-    float alpha = SAMPLE_TEXTURE2D(_BaseMap, sampler_BaseMap, IN.uv.xy).a * _BaseColor.a;
-    AlphaDiscard(alpha, _AlphaClip);
+    // float alpha = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, IN.uv.xy).a * _BaseColor.a;
+    // AlphaDiscard(alpha, _AlphaClip);
     
     #ifdef LOD_FADE_CROSSFADE
         LODFadeCrossFade(IN.positionHCS);
@@ -179,78 +173,76 @@ struct MaterialData
     float specularity;              //镜面值
 };
 
+//一个来自UE4 计算heightLerp的公式
+float HeightLerp(float height, float transition, float blendeContrast)
+{
+    return clamp(lerp(0 - blendeContrast, blendeContrast + 1, clamp((height - 1) + (transition * 2),0,1)),0,1);
+}
+
+//一个来自UE4 图片对比度计算公式
+float CheapContrast(float input, float blendeContrast)
+{
+    return clamp(lerp((0 - blendeContrast), (blendeContrast + 1), input),0,1);
+}
+
+//基于权重的混合因子
+float4 WeightBlend(float4 vec4,float blendContrast)
+{
+    float w1 = max(max(max(vec4.x,vec4.y),vec4.z),vec4.w) - blendContrast;
+    float c1 = max(0,vec4.x - w1);
+    float c2 = max(0, vec4.y - w1);
+    float c3 = max(0, vec4.z - w1);
+    float c4 = max(0, vec4.w - w1);
+    float4 blendWieght = float4(c1,c2,c3,c4) / (c1 + c2 + c3 + c4);
+    return blendWieght; //blendweight中保存着四个权重值
+}
+
 void InitializeMaterialData(float2 uv,out MaterialData mat)
 {
-    float2 baseUV = uv * _BaseMap_ST.xy + _BaseMap_ST.zw;
-    float2 detailUV = uv * _DetailMap_ST.xy + _DetailMap_ST.zw;
-
-    //基础贴图
-    float4 albedoMap =  SAMPLE_TEXTURE2D(_BaseMap,sampler_BaseMap, baseUV).rgba * _BaseColor;
-    if(_EnableDetailMap)
-    {
-        float4 detailMap = SAMPLE_TEXTURE2D(_DetailMap, sampler_DetailMap,detailUV).rgba * _DetailMapColor;
-        detailMap =  half(2.0) * detailMap * _DetailScale - _DetailScale + half(1.0);
-        albedoMap = float4(albedoMap.rgb * detailMap.rgb, albedoMap.a);
-    }
-    mat.albedoAlpha = albedoMap;
-
-    //法线
-    float4 normalMap = SAMPLE_TEXTURE2D(_NormalMap,sampler_NormalMap,baseUV);
-    float3 normalTS = UnpackNormal(normalMap);
-    normalTS = float3(normalTS.rg * _NormalStrength, lerp(1, normalTS.b, saturate(_NormalStrength)));
-    normalTS = normalize(normalTS);
-    if(_EnableDetailMap)
-    {
-        float4 detailNormal = SAMPLE_TEXTURE2D(_DetailNormalMap, sampler_DetailMap, detailUV);
-        float3 detailNormalTS = UnpackNormal(detailNormal);
-        detailNormalTS = float3(detailNormalTS.rg * _NormalStrength, lerp(1, detailNormalTS.b, saturate(_NormalStrength)));
-        detailNormalTS = normalize(detailNormalTS);
-        normalTS = lerp(normalTS, BlendNormalRNM(normalTS, detailNormalTS),1);
-    }
-    mat.normalTS = normalTS;
-
-    //自发光
-    float4 emissionMap = float4(0,0,0,0) ;
-    if(_HasEmissionMap)
-    {
-        emissionMap = SAMPLE_TEXTURE2D(_EmissionMap,sampler_EmissionMap,uv) * _EmissionColor;
-    }
-    //IsEmissionMapMulAndHasEmissionMap为True-->环境贴图*基础贴图。False--> 环境贴图+基础贴图
-    float emissionV = emissionMap.r <= 0.01f && emissionMap.g <= 0.01f && emissionMap.b <= 0.01f; //emissionV为1时 环境贴图这块像素颜色值为黑色
-    float IsEmissionMapMulAndHasEmissionMap = _EmissionMapMultiply && _HasEmissionMap && (emissionV == 0);     
-    if(IsEmissionMapMulAndHasEmissionMap)
-    {
-        mat.albedoAlpha *= emissionMap;
-    }
-    mat.emission = emissionMap.rgb;
+    float4 blendMap = SAMPLE_TEXTURE2D(_BlendMap,sampler_BlendMap, uv);
     
-    float4 mraMap = SAMPLE_TEXTURE2D(_MRAMap, sampler_MRAMap,uv);
-
-    //金属度
-    float metalness = 0.0;
-    if(_HasMRAMap)
-    {
-        metalness = saturate(mraMap.r * _Metalness);
-    } 
-    mat.metalness = metalness;
+    //注意HRA贴图 R通道-->保存高度Height信息 G通道-->roughness B通道-->AO
+    float2 uw1 = uv * _Layer1_BaseMap_ST.xy + _Layer1_BaseMap_ST.zw;
+    float4 layer1_baseColor = SAMPLE_TEXTURE2D(_Layer1_BaseMap,sampler_Layer1_BaseMap, uw1)  * _Layer1_BaseColor;
+    float4 layer1_normal = SAMPLE_TEXTURE2D(_Layer1_NormalMap,sampler_Layer1_NormalMap, uw1);
+    float4 layer1_hra = SAMPLE_TEXTURE2D(_Layer1_HRA,sampler_Layer1_HRA, uw1);
+    float layer1_height = CheapContrast(layer1_hra.x, _Layer1_HeightContrast);
     
-    //AO
-    float ao = 1;
-    if(_HasMRAMap)
-    {
-        ao = lerp(1,mraMap.b,1);
-    }
+    float2 uv2 = uv * _Layer2_BaseMap_ST.xy + _Layer2_BaseMap_ST.zw;
+    float4 layer2_baseColor = SAMPLE_TEXTURE2D(_Layer2_BaseMap,sampler_Layer2_BaseMap, uv2)  * _Layer2_BaseColor;
+    float4 layer2_normal = SAMPLE_TEXTURE2D(_Layer2_NormalMap,sampler_Layer2_NormalMap, uv2);
+    float4 layer2_hra = SAMPLE_TEXTURE2D(_Layer2_HRA,sampler_Layer2_HRA, uv2);
+    float layer2_height = CheapContrast(layer2_hra.x, _Layer2_HeightContrast);
+    
+    float2 uv3 = uv * _Layer3_BaseMap_ST.xy + _Layer3_BaseMap_ST.zw;
+    float4 layer3_baseColor = SAMPLE_TEXTURE2D(_Layer3_BaseMap,sampler_Layer3_BaseMap, uv3)  * _Layer3_BaseColor;
+    float4 layer3_normal = SAMPLE_TEXTURE2D(_Layer3_NormalMap,sampler_Layer3_NormalMap, uv3);
+    float4 layer3_hra = SAMPLE_TEXTURE2D(_Layer3_HRA,sampler_Layer3_HRA, uv3);
+    float layer3_height = CheapContrast(layer3_hra.x, _Layer3_HeightContrast);
+    
+    float2 uv4 = uv * _Layer4_BaseMap_ST.xy + _Layer4_BaseMap_ST.zw;
+    float4 layer4_baseColor = SAMPLE_TEXTURE2D(_Layer4_BaseMap,sampler_Layer4_BaseMap, uv4)  * _Layer4_BaseColor;
+    float4 layer4_normal = SAMPLE_TEXTURE2D(_Layer4_NormalMap,sampler_Layer4_NormalMap, uv4);
+    float4 layer4_hra = SAMPLE_TEXTURE2D(_Layer4_HRA,sampler_Layer4_HRA, uv4);
+    float layer4_height = CheapContrast(layer4_hra.x, _Layer4_HeightContrast);
+    
+    float4 blend_vec4 = float4(blendMap.x + layer1_height, blendMap.y + layer2_height, blendMap.z + layer3_height, blendMap.w + layer4_height);
+    float4 blendWieght = WeightBlend(blend_vec4, _BlendContrast);
+    float4 baseColor = layer1_baseColor * blendWieght.x + layer2_baseColor * blendWieght.y + layer3_baseColor * blendWieght.z + layer4_baseColor * blendWieght.w;
+    float roughness = layer1_hra.y * blendWieght.x  + layer2_hra.y * blendWieght.y + layer3_hra.y * blendWieght.z + layer4_hra.y * blendWieght.w;
+    float ao = layer1_hra.z * blendWieght.x  + layer2_hra.z * blendWieght.y + layer3_hra.z * blendWieght.z + layer4_hra.z * blendWieght.w;
+    float4 normalMap = layer1_normal * blendWieght.x + layer2_normal * blendWieght.y + layer3_normal * blendWieght.z + layer4_normal * blendWieght.w;
+    
+    mat.albedoAlpha = baseColor;
+    mat.metalness = GetMetalness();
+    mat.emission = GetEmission();
     mat.occlusion = ao;
-
-    //粗糙度
-    float roughness = _Roughness;
-    if(_HasMRAMap)
-    {
-       roughness = saturate(mraMap.g * _Roughness);
-    }
     mat.perceptualRoughness = roughness;
-    
     mat.specularity = GetSpecularity();
+    float3 normalTS = UnpackNormal(normalMap);
+    normalTS = float3(normalTS.rg * GetNormalStrength(), lerp(1, normalTS.b, saturate(GetNormalStrength())));
+    normalTS = normalize(normalTS);
+    mat.normalTS = normalTS;
     
 }
 
@@ -281,7 +273,7 @@ float4 Frag(Varyings IN) : SV_TARGET
     //   Alpha Clipping          //
     ///////////////////////////////
 
-    AlphaDiscard(mat.albedoAlpha.a, _AlphaClip);
+    // AlphaDiscard(mat.albedoAlpha.a, _AlphaClip);
     
     
     ///////////////////////////////
@@ -331,10 +323,10 @@ float4 Frag(Varyings IN) : SV_TARGET
 
     
     // Lighting--固定接受阴影
-    if(_ReceiveShadowsEnabled == 0)
-    {
-        mainLight.shadowAttenuation = 1;
-    }
+    // if(_ReceiveShadowsEnabled == 0)
+    // {
+    //     mainLight.shadowAttenuation = 1;
+    // }
 
     float3 lightingModel;
     float NoV, NoL, NoH, VoH, VoL, LoH;
@@ -361,7 +353,6 @@ float4 Frag(Varyings IN) : SV_TARGET
     
     EvaluateLighting(albedo, specularity, perceptualRoughness, metalness, subsurfaceThickness, f0, NoV, IN.normalWS, IN.viewDirectionWS, mainLight, brdf);
     GetAdditionalLightData(albedo, specularity, perceptualRoughness, metalness, subsurfaceThickness, f0, NoV, normalizedScreenSpaceUV, IN.positionWS, IN.normalWS, IN.viewDirectionWS, brdf);
-    
     
     // IBL
     LightInputs lightInputs = GetLightInputs(IN.normalWS, IN.viewDirectionWS, mainLight.direction);
@@ -400,11 +391,11 @@ float4 Frag(Varyings IN) : SV_TARGET
    
     
     // Mix Fog
-    if (_ReceiveFogEnabled == 1)
-    {
-        float fogFactor = InitializeInputDataFog(float4(IN.positionWS, 1), 0);
-        color = MixFog(color, fogFactor);
-    }
+    // if (_ReceiveFogEnabled == 1)
+    // {
+    //     float fogFactor = InitializeInputDataFog(float4(IN.positionWS, 1), 0);
+    //     color = MixFog(color, fogFactor);
+    // }
     
     return float4(color, 1);
 }

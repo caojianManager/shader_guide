@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace URPShaderEditor
 {
-    public class PBRGlassEditor : ShaderGUI
+    public class GlassEditor : ShaderGUI
     {
     
         bool showSurfaceOptions = true;
