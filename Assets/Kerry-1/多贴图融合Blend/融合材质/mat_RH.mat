@@ -21,7 +21,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: mat_RH
-  m_Shader: {fileID: 4800000, guid: ccb430354a413804b9fedeec56d27b8e, type: 3}
+  m_Shader: {fileID: 4800000, guid: f05dbac5704269d4e909391ff14db367, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -29,11 +29,14 @@ Material:
   - _Layer2_Enable
   - _Layer3_Enable
   - _Layer4_Enable
+  - _ReceiveFogEnabled
+  - _ReceiveShadowsEnabled
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: -1
-  stringTagMap: {}
+  m_CustomRenderQueue: 2000
+  stringTagMap:
+    RenderType: Opaque
   disabledShaderPasses: []
   m_LockedProperties: 
   m_SavedProperties:
@@ -211,9 +214,9 @@ Material:
     - _OcclusionStrength: 1
     - _Parallax: 0.005
     - _QueueOffset: 0
-    - _ReceiveFogEnabled: 0
+    - _ReceiveFogEnabled: 1
     - _ReceiveShadows: 1
-    - _ReceiveShadowsEnabled: 0
+    - _ReceiveShadowsEnabled: 1
     - _Roughness: 0
     - _Smoothness: 0.5
     - _SmoothnessTextureChannel: 0

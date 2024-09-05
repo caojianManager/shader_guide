@@ -21,20 +21,20 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: URP_Default_Lit 1
-  m_Shader: {fileID: 4800000, guid: 5eb05bf5885cad243a31110ece3be176, type: 3}
+  m_Shader: {fileID: 4800000, guid: f1507da9f8714ea40bb9810805abc1d6, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
-  m_ValidKeywords:
-  - _MASKMAP
-  - _NORMALMAP
+  m_ValidKeywords: []
   m_InvalidKeywords:
   - _HORIZONOCCLUSION_OFF
+  - _MASKMAP
+  - _NORMALMAP
+  - _ReceiveFogEnabled
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: 1950
-  stringTagMap:
-    RenderType: Opaque
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
   disabledShaderPasses: []
   m_LockedProperties: 
   m_SavedProperties:
@@ -164,6 +164,10 @@ Material:
         m_Texture: {fileID: 2800000, guid: 1413732e30f95bc40bc924fa5379d3d3, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _Tex:
+        m_Texture: {fileID: 8900000, guid: 58bd0b190257ac947a46a49e9273da30, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _TransmittanceColorMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -217,6 +221,7 @@ Material:
     - _EnableEmissionFresnel: 0
     - _EnableGeometricSpecularAA: 0
     - _EnvironmentReflections: 1
+    - _Exposure: 1
     - _GlossMapScale: 0
     - _Glossiness: 0
     - _GlossinessSource: 0
@@ -263,11 +268,12 @@ Material:
     - _RainNormalScale: 1
     - _RainSize: 1
     - _RainWetnessFactor: 1
-    - _ReceiveFogEnabled: 0
+    - _ReceiveFogEnabled: 1
     - _ReceiveShadows: 1
     - _ReceiveShadowsEnabled: 0
     - _RefractionEnable: 0
     - _RefractionShadowAttenuation: 1
+    - _Rotation: 0
     - _Roughness: 0.775
     - _Roughness2: 0.284
     - _RoughnessMapExposure: 0
@@ -315,6 +321,7 @@ Material:
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
     - _SpecularColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
     - _SubsurfaceColor: {r: 1, g: 1, b: 1, a: 1}
+    - _Tint: {r: 0.5, g: 0.5, b: 0.5, a: 0.5}
     - _TransmittanceColor: {r: 1, g: 1, b: 1, a: 1}
     - _WeatherProfileAsset: {r: 0, g: 0, b: 0, a: 0}
   m_BuildTextureStacks: []
