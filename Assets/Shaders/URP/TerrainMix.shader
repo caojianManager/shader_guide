@@ -58,7 +58,7 @@ Shader "CURP/TerrainMix"
         {
             Tags{"LightMode" = "UniversalForward"}
             
-            Cull Back
+            Cull Off
             ZTest LEqual
             ZClip Off
             

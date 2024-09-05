@@ -29,8 +29,6 @@ Material:
   - _Layer2_Enable
   - _Layer3_Enable
   - _Layer4_Enable
-  - _ReceiveFogEnabled
-  - _ReceiveShadowsEnabled
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -167,7 +165,7 @@ Material:
     - _AlphaClipEnabled: 0
     - _AlphaToMask: 0
     - _Blend: 0
-    - _BlendContrast: 0.1
+    - _BlendContrast: 1
     - _BlendModePreserveSpecular: 1
     - _BumpScale: 1
     - _ClearCoatMask: 0
@@ -190,7 +188,7 @@ Material:
     - _HasMRAMap: 0
     - _Layer1_HeightContrast: 0
     - _Layer1_Metalness: 1
-    - _Layer1_NormalScale: 1.61
+    - _Layer1_NormalScale: 1
     - _Layer1_Roughness: 3
     - _Layer2_Enable: 1
     - _Layer2_HeightContrast: 0
@@ -201,7 +199,7 @@ Material:
     - _Layer3_HeightContrast: 0
     - _Layer3_Metalness: 1
     - _Layer3_NormalScale: 1
-    - _Layer3_Roughness: 1
+    - _Layer3_Roughness: 3
     - _Layer4_Enable: 1
     - _Layer4_HeightContrast: 0
     - _Layer4_Metalness: 1
@@ -213,9 +211,9 @@ Material:
     - _OcclusionStrength: 1
     - _Parallax: 0.005
     - _QueueOffset: 0
-    - _ReceiveFogEnabled: 1
+    - _ReceiveFogEnabled: 0
     - _ReceiveShadows: 1
-    - _ReceiveShadowsEnabled: 1
+    - _ReceiveShadowsEnabled: 0
     - _Roughness: 0
     - _Smoothness: 0.5
     - _SmoothnessTextureChannel: 0
