@@ -266,21 +266,25 @@ void InitializeMaterialData(float2 uv,out MaterialData mat)
     //法线
     float4 normalMap = SAMPLE_TEXTURE2D(_Layer1_NormalMap,sampler_Layer1_NormalMap, uv1);
     normalMap *= blendWieght.x;
+    normalMap *= _Layer1_NormalScale;
     
     if(_Layer2_Enable)
     {
         float4 layer2_normal = SAMPLE_TEXTURE2D(_Layer2_NormalMap,sampler_Layer2_NormalMap, uv2);
         normalMap += layer2_normal * blendWieght.y;
+        normalMap *= _Layer2_NormalScale;
     }
     if(_Layer3_Enable)
     {
         float4 layer3_normal = SAMPLE_TEXTURE2D(_Layer3_NormalMap,sampler_Layer3_NormalMap, uv3);
         normalMap += layer3_normal * blendWieght.z;
+        normalMap *= _Layer3_NormalScale;
     }
     if(_Layer4_Enable)
     {
         float4 layer4_normal = SAMPLE_TEXTURE2D(_Layer4_NormalMap,sampler_Layer4_NormalMap, uv4);
         normalMap += layer4_normal * blendWieght.w;
+        normalMap *= _Layer4_NormalScale;
     }
     float3 normalTS = UnpackNormal(normalMap);
     normalTS = float3(normalTS.rg * GetNormalStrength(), lerp(1, normalTS.b, saturate(GetNormalStrength())));

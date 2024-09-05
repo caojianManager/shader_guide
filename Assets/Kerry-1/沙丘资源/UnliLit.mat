@@ -157,7 +157,7 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _AlphaClip: 0.2
+    - _AlphaClip: 0
     - _AlphaClipEnabled: 1
     - _AlphaToMask: 0
     - _Blend: 2
