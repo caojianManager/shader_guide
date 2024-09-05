@@ -27,25 +27,25 @@ namespace URPShaderEditor
             MaterialProperty _Layer1_BaseMap = FindProperty("_Layer1_BaseMap", properties);
             MaterialProperty _Layer1_BaseColor = FindProperty("_Layer1_BaseColor", properties);
             MaterialProperty _Layer1_NormalMap = FindProperty("_Layer1_NormalMap", properties);
-            MaterialProperty _Layer1_HRA = FindProperty("_Layer1_HRA", properties);
+            MaterialProperty _Layer1_MRAH = FindProperty("_Layer1_MRAH", properties);
             MaterialProperty _Layer1_HeightContrast = FindProperty("_Layer1_HeightContrast", properties);
             //Layer Two
             MaterialProperty _Layer2_BaseMap = FindProperty("_Layer2_BaseMap", properties);
             MaterialProperty _Layer2_BaseColor = FindProperty("_Layer2_BaseColor", properties);
             MaterialProperty _Layer2_NormalMap = FindProperty("_Layer2_NormalMap", properties);
-            MaterialProperty _Layer2_HRA = FindProperty("_Layer2_HRA", properties);
+            MaterialProperty _Layer2_MRAH = FindProperty("_Layer2_MRAH", properties);
             MaterialProperty _Layer2_HeightContrast = FindProperty("_Layer2_HeightContrast", properties);
             //Layer Three
             MaterialProperty _Layer3_BaseMap = FindProperty("_Layer3_BaseMap", properties);
             MaterialProperty _Layer3_BaseColor = FindProperty("_Layer3_BaseColor", properties);
             MaterialProperty _Layer3_NormalMap = FindProperty("_Layer3_NormalMap", properties);
-            MaterialProperty _Layer3_HRA = FindProperty("_Layer3_HRA", properties);
+            MaterialProperty _Layer3_MRAH = FindProperty("_Layer3_MRAH", properties);
             MaterialProperty _Layer3_HeightContrast = FindProperty("_Layer3_HeightContrast", properties);
             //Layer Four
             MaterialProperty _Layer4_BaseMap = FindProperty("_Layer4_BaseMap", properties);
             MaterialProperty _Layer4_BaseColor = FindProperty("_Layer4_BaseColor", properties);
             MaterialProperty _Layer4_NormalMap = FindProperty("_Layer4_NormalMap", properties);
-            MaterialProperty _Layer4_HRA = FindProperty("_Layer4_HRA", properties);
+            MaterialProperty _Layer4_MRAH = FindProperty("_Layer4_MRAH", properties);
             MaterialProperty _Layer4_HeightContrast = FindProperty("_Layer4_HeightContrast", properties);
             
             DrawBlendOptions();
@@ -84,7 +84,7 @@ namespace URPShaderEditor
                         _Layer1_NormalMap);
                     materialEditor.TexturePropertySingleLine(
                         new GUIContent("HRA Map"),
-                        _Layer1_HRA);
+                        _Layer1_MRAH);
                     materialEditor.ShaderProperty(_Layer1_HeightContrast,
                         new GUIContent("Height Contrast"));
                     matEditor.TextureScaleOffsetProperty(_Layer1_BaseMap);
@@ -115,7 +115,7 @@ namespace URPShaderEditor
                         _Layer2_NormalMap);
                     materialEditor.TexturePropertySingleLine(
                         new GUIContent("HRA Map"),
-                        _Layer2_HRA);
+                        _Layer2_MRAH);
                     materialEditor.ShaderProperty(_Layer2_HeightContrast,
                         new GUIContent("Height Contrast"));
                     matEditor.TextureScaleOffsetProperty(_Layer2_BaseMap);
@@ -147,7 +147,7 @@ namespace URPShaderEditor
                         _Layer3_NormalMap);
                     materialEditor.TexturePropertySingleLine(
                         new GUIContent("HRA Map"),
-                        _Layer3_HRA);
+                        _Layer3_MRAH);
                     materialEditor.ShaderProperty(_Layer3_HeightContrast,
                         new GUIContent("Height Contrast"));
                     matEditor.TextureScaleOffsetProperty(_Layer3_BaseMap);
@@ -178,7 +178,7 @@ namespace URPShaderEditor
                         _Layer4_NormalMap);
                     materialEditor.TexturePropertySingleLine(
                         new GUIContent("HRA Map"),
-                        _Layer4_HRA);
+                        _Layer4_MRAH);
                     materialEditor.ShaderProperty(_Layer4_HeightContrast,
                         new GUIContent("Height Contrast"));
                     matEditor.TextureScaleOffsetProperty(_Layer4_BaseMap);

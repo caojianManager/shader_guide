@@ -9,26 +9,41 @@ Shader "CURP/TerrainMix"
         _Layer1_BaseMap("Layer1 BaseMap",2D) = "white" {}
         _Layer1_BaseColor("Layer1 BaseColor",Color) = (1,1,1,1)
         _Layer1_NormalMap("Layer1 NormalMap",2D) = "white" {}
-        _Layer1_HRA("Layer1 HRA",2D) = "white" {}
+        _Layer1_MRAH("Layer1 MRAH",2D) = "white" {}
         _Layer1_HeightContrast("Layer1 Height Contrast",Range(0,1)) = 0.0
+        _Layer1_Metalness("Layer1 Metalness",Range(0,3)) = 1
+        _Layer1_Roughness("Layer1 Roughness",Range(0,3)) = 1
         //Layer02
+        [Toggle(_Layer2_Enable)] _Layer2_Enable("Layer2 Enable",Float) = 0
         _Layer2_BaseMap("Layer2 BaseMap",2D) = "white" {}
         _Layer2_BaseColor("Layer2 BaseColor",Color) = (1,1,1,1)
         _Layer2_NormalMap("Layer2 NormalMap",2D) = "white" {}
-        _Layer2_HRA("Layer2 HRA",2D) = "white" {}
+        _Layer2_MRAH("Layer2 MRAH",2D) = "white" {}
         _Layer2_HeightContrast("Layer2 Height Contrast",Range(0,1)) = 0.0
+        _Layer2_Metalness("Layer2 Metalness",Range(0,3)) = 1
+        _Layer2_Roughness("Layer2 Roughness",Range(0,3)) = 1
         //Layer03
+        [Toggle(_Layer3_Enable)] _Layer3_Enable("Layer3 Enable",Float) = 0
         _Layer3_BaseMap("Layer3 BaseMap",2D) = "white" {}
         _Layer3_BaseColor("Layer3 BaseColor",Color) = (1,1,1,1)
         _Layer3_NormalMap("Layer3 NormalMap",2D) = "white" {}
-        _Layer3_HRA("Layer3 HRA",2D) = "white" {}
+        _Layer3_MRAH("Layer3 MRAH",2D) = "white" {}
         _Layer3_HeightContrast("Layer3 Height Contrast",Range(0,1)) = 0.0
+        _Layer3_Metalness("Layer3 Metalness",Range(0,3)) = 1
+        _Layer3_Roughness("Layer3 Roughness",Range(0,3)) = 1
         //Layer04
+        [Toggle(_Layer4_Enable)] _Layer4_Enable("Layer4 Enable",Float) = 0
         _Layer4_BaseMap("Layer4 BaseColor",2D) = "white" {}
         _Layer4_BaseColor("Layer4 BaseColor",Color) = (1,1,1,1)
         _Layer4_NormalMap("Layer4 NormalMap",2D) = "white" {}
-        _Layer4_HRA("Layer4 HRA",2D) = "white" {}
+        _Layer4_MRAH("Layer4 MRAH",2D) = "white" {}
         _Layer4_HeightContrast("Layer4 Height Contrast",Range(0,1)) = 0.0
+        _Layer4_Metalness("Layer4 Metalness",Range(0,3)) = 1
+        _Layer4_Roughness("Layer4 Roughness",Range(0,3)) = 1
+        
+        //Advanced Properties
+        [Toggle(_ReceiveFogEnabled)] _ReceiveFogEnabled ("Receive Fog", Float) = 1
+        [Toggle(_ReceiveShadowsEnabled)] _ReceiveShadowsEnabled ("Receive Shadow", Float) = 1
     }
     
     SubShader
@@ -38,6 +53,11 @@ Shader "CURP/TerrainMix"
         Pass
         {
             Tags{"LightMode" = "UniversalForward"}
+            
+            Cull Back
+            ZTest LEqual
+            ZClip Off
+            
             HLSLPROGRAM
                         // Render Paths
             #pragma multi_compile _ _FORWARD_PLUS

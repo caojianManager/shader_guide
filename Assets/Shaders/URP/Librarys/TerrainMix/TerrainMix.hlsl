@@ -186,7 +186,7 @@ float CheapContrast(float input, float blendeContrast)
 }
 
 //基于权重的混合因子
-float4 WeightBlend(float4 vec4,float blendContrast)
+float4  WeightBlend(float4 vec4,float blendContrast)
 {
     float w1 = max(max(max(vec4.x,vec4.y),vec4.z),vec4.w) - blendContrast;
     float c1 = max(0,vec4.x - w1);
@@ -200,49 +200,151 @@ float4 WeightBlend(float4 vec4,float blendContrast)
 void InitializeMaterialData(float2 uv,out MaterialData mat)
 {
     float4 blendMap = SAMPLE_TEXTURE2D(_BlendMap,sampler_BlendMap, uv);
-    
-    //注意HRA贴图 R通道-->保存高度Height信息 G通道-->roughness B通道-->AO
-    float2 uw1 = uv * _Layer1_BaseMap_ST.xy + _Layer1_BaseMap_ST.zw;
-    float4 layer1_baseColor = SAMPLE_TEXTURE2D(_Layer1_BaseMap,sampler_Layer1_BaseMap, uw1)  * _Layer1_BaseColor;
-    float4 layer1_normal = SAMPLE_TEXTURE2D(_Layer1_NormalMap,sampler_Layer1_NormalMap, uw1);
-    float4 layer1_hra = SAMPLE_TEXTURE2D(_Layer1_HRA,sampler_Layer1_HRA, uw1);
-    float layer1_height = CheapContrast(layer1_hra.x, _Layer1_HeightContrast);
-    
+
+    //uv
+    float2 uv1 = uv * _Layer1_BaseMap_ST.xy + _Layer1_BaseMap_ST.zw;
     float2 uv2 = uv * _Layer2_BaseMap_ST.xy + _Layer2_BaseMap_ST.zw;
-    float4 layer2_baseColor = SAMPLE_TEXTURE2D(_Layer2_BaseMap,sampler_Layer2_BaseMap, uv2)  * _Layer2_BaseColor;
-    float4 layer2_normal = SAMPLE_TEXTURE2D(_Layer2_NormalMap,sampler_Layer2_NormalMap, uv2);
-    float4 layer2_hra = SAMPLE_TEXTURE2D(_Layer2_HRA,sampler_Layer2_HRA, uv2);
-    float layer2_height = CheapContrast(layer2_hra.x, _Layer2_HeightContrast);
-    
     float2 uv3 = uv * _Layer3_BaseMap_ST.xy + _Layer3_BaseMap_ST.zw;
-    float4 layer3_baseColor = SAMPLE_TEXTURE2D(_Layer3_BaseMap,sampler_Layer3_BaseMap, uv3)  * _Layer3_BaseColor;
-    float4 layer3_normal = SAMPLE_TEXTURE2D(_Layer3_NormalMap,sampler_Layer3_NormalMap, uv3);
-    float4 layer3_hra = SAMPLE_TEXTURE2D(_Layer3_HRA,sampler_Layer3_HRA, uv3);
-    float layer3_height = CheapContrast(layer3_hra.x, _Layer3_HeightContrast);
-    
     float2 uv4 = uv * _Layer4_BaseMap_ST.xy + _Layer4_BaseMap_ST.zw;
-    float4 layer4_baseColor = SAMPLE_TEXTURE2D(_Layer4_BaseMap,sampler_Layer4_BaseMap, uv4)  * _Layer4_BaseColor;
-    float4 layer4_normal = SAMPLE_TEXTURE2D(_Layer4_NormalMap,sampler_Layer4_NormalMap, uv4);
-    float4 layer4_hra = SAMPLE_TEXTURE2D(_Layer4_HRA,sampler_Layer4_HRA, uv4);
-    float layer4_height = CheapContrast(layer4_hra.x, _Layer4_HeightContrast);
     
-    float4 blend_vec4 = float4(blendMap.x + layer1_height, blendMap.y + layer2_height, blendMap.z + layer3_height, blendMap.w + layer4_height);
+    //计算混合因子
+    float4 layer1_mrah = SAMPLE_TEXTURE2D(_Layer1_MRAH,sampler_Layer1_MRAH, uv1);
+    float layer1_height = CheapContrast(layer1_mrah.w, _Layer1_HeightContrast);
+    float layer1_w = blendMap.x + layer1_height;
+
+    float4 layer2_mrah = SAMPLE_TEXTURE2D(_Layer2_MRAH,sampler_Layer2_MRAH, uv2);
+    float layer2_height = 0;
+    float layer2_w = 0;
+    if(_Layer2_Enable)
+    {
+        layer2_height = CheapContrast(layer2_mrah.w,_Layer2_HeightContrast);
+        layer2_w = blendMap.y + layer2_height;
+    }
+
+    float4 layer3_mrah = SAMPLE_TEXTURE2D(_Layer3_MRAH,sampler_Layer3_MRAH, uv3);
+    float layer3_height = 0;
+    float layer3_w = 0;
+    if(_Layer3_Enable)
+    {
+        layer3_height = CheapContrast(layer3_mrah.w, _Layer3_HeightContrast);
+        layer3_w =  blendMap.z + layer3_height;
+    }
+
+    float4 layer4_mrah = SAMPLE_TEXTURE2D(_Layer4_MRAH,sampler_Layer4_MRAH, uv4);
+    float layer4_height = 0;
+    float layer4_w = 0;
+    if(_Layer4_Enable)
+    {
+        layer4_height = CheapContrast(layer4_mrah.w, _Layer4_HeightContrast);
+        layer4_w = blendMap.w + layer4_height;
+    }
+      
+    float4 blend_vec4 = float4(layer1_w, layer2_w, layer3_w, layer4_w);
     float4 blendWieght = WeightBlend(blend_vec4, _BlendContrast);
-    float4 baseColor = layer1_baseColor * blendWieght.x + layer2_baseColor * blendWieght.y + layer3_baseColor * blendWieght.z + layer4_baseColor * blendWieght.w;
-    float roughness = layer1_hra.y * blendWieght.x  + layer2_hra.y * blendWieght.y + layer3_hra.y * blendWieght.z + layer4_hra.y * blendWieght.w;
-    float ao = layer1_hra.z * blendWieght.x  + layer2_hra.z * blendWieght.y + layer3_hra.z * blendWieght.z + layer4_hra.z * blendWieght.w;
-    float4 normalMap = layer1_normal * blendWieght.x + layer2_normal * blendWieght.y + layer3_normal * blendWieght.z + layer4_normal * blendWieght.w;
     
-    mat.albedoAlpha = baseColor;
-    mat.metalness = GetMetalness();
-    mat.emission = GetEmission();
-    mat.occlusion = ao;
-    mat.perceptualRoughness = roughness;
-    mat.specularity = GetSpecularity();
+    
+    //基础贴图
+    float4 albedo = _Layer1_BaseColor * SAMPLE_TEXTURE2D(_Layer1_BaseMap,sampler_Layer1_BaseMap, uv1);
+    albedo *= blendWieght.x;
+    if(_Layer2_Enable)
+    {
+        float4 layer2_baseColor = SAMPLE_TEXTURE2D(_Layer2_BaseMap,sampler_Layer2_BaseMap, uv2)  * _Layer2_BaseColor;
+        albedo += layer2_baseColor * blendWieght.y;
+    }
+    if(_Layer3_Enable)
+    {
+        float4 layer3_baseColor = SAMPLE_TEXTURE2D(_Layer3_BaseMap,sampler_Layer3_BaseMap, uv3)  * _Layer3_BaseColor;
+        albedo += layer3_baseColor * blendWieght.z;
+    }
+    if(_Layer4_Enable)
+    {
+        float4 layer4_baseColor = SAMPLE_TEXTURE2D(_Layer4_BaseMap,sampler_Layer4_BaseMap, uv4)  * _Layer4_BaseColor;
+        albedo += layer4_baseColor * blendWieght.w;
+    }
+    mat.albedoAlpha = albedo;
+
+    //法线
+    float4 normalMap = SAMPLE_TEXTURE2D(_Layer1_NormalMap,sampler_Layer1_NormalMap, uv1);
+    normalMap *= blendWieght.x;
+    
+    if(_Layer2_Enable)
+    {
+        float4 layer2_normal = SAMPLE_TEXTURE2D(_Layer2_NormalMap,sampler_Layer2_NormalMap, uv2);
+        normalMap += layer2_normal * blendWieght.y;
+    }
+    if(_Layer3_Enable)
+    {
+        float4 layer3_normal = SAMPLE_TEXTURE2D(_Layer3_NormalMap,sampler_Layer3_NormalMap, uv3);
+        normalMap += layer3_normal * blendWieght.z;
+    }
+    if(_Layer4_Enable)
+    {
+        float4 layer4_normal = SAMPLE_TEXTURE2D(_Layer4_NormalMap,sampler_Layer4_NormalMap, uv4);
+        normalMap += layer4_normal * blendWieght.w;
+    }
     float3 normalTS = UnpackNormal(normalMap);
     normalTS = float3(normalTS.rg * GetNormalStrength(), lerp(1, normalTS.b, saturate(GetNormalStrength())));
     normalTS = normalize(normalTS);
     mat.normalTS = normalTS;
+
+    //金属度
+    float metalness = layer1_mrah.x * blendWieght.x;
+    metalness *= _Layer1_Metalness;
+    if(_Layer2_Enable)
+    {
+        metalness += layer2_mrah.x * blendWieght.y;
+        metalness *= _Layer2_Metalness;
+    }
+    if(_Layer3_Enable)
+    {
+        metalness += layer3_mrah.x * blendWieght.z;
+        metalness *= _Layer3_Metalness;
+    }
+    if(_Layer4_Enable)
+    {
+        metalness += layer4_mrah.x * blendWieght.w;
+        metalness *= _Layer4_Metalness;
+    }
+    mat.metalness = saturate(metalness);
+
+    //粗糙度
+    float roughness = layer1_mrah.y * blendWieght.x;
+    roughness *= _Layer1_Roughness;
+    if(_Layer2_Enable)
+    {
+        roughness += layer2_mrah.y * blendWieght.y;
+        roughness *= _Layer2_Roughness;
+    }
+    if(_Layer3_Enable)
+    {
+        roughness += layer3_mrah.y * blendWieght.z;
+        roughness *= _Layer3_Roughness;
+    }
+    if(_Layer4_Enable)
+    {
+        roughness += layer4_mrah.y * blendWieght.w;
+        roughness *= _Layer4_Roughness;
+    }
+    mat.perceptualRoughness = saturate(roughness);
+    
+    //AO
+    float ao = layer1_mrah.z * blendWieght.x;
+    if(_Layer2_Enable)
+    {
+        ao += layer2_mrah.z * blendWieght.y;
+    }
+    if(_Layer2_Enable)
+    {
+        ao += layer3_mrah.z * blendWieght.z;
+    }
+    if(_Layer3_Enable)
+    {
+        ao += layer4_mrah.z * blendWieght.w;
+    }
+    
+    mat.occlusion = ao;
+    mat.emission = GetEmission();
+    mat.specularity = GetSpecularity();
     
 }
 
