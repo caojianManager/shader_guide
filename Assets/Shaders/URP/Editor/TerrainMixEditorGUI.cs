@@ -11,6 +11,8 @@ namespace URPShaderEditor
         bool showLayerTwoOptions = true;
         bool showLayerThreeOptions = true;
         bool showLayerFourOptions = true;
+        bool showAdvancesOptions = true;
+
 
         private MaterialEditor matEditor;
         private Material mat;
@@ -29,37 +31,60 @@ namespace URPShaderEditor
             MaterialProperty _Layer1_NormalMap = FindProperty("_Layer1_NormalMap", properties);
             MaterialProperty _Layer1_MRAH = FindProperty("_Layer1_MRAH", properties);
             MaterialProperty _Layer1_HeightContrast = FindProperty("_Layer1_HeightContrast", properties);
+            MaterialProperty _Layer1_Metalness = FindProperty("_Layer1_Metalness", properties);
+            MaterialProperty _Layer1_Roughness = FindProperty("_Layer1_Roughness", properties);
             //Layer Two
             MaterialProperty _Layer2_BaseMap = FindProperty("_Layer2_BaseMap", properties);
             MaterialProperty _Layer2_BaseColor = FindProperty("_Layer2_BaseColor", properties);
             MaterialProperty _Layer2_NormalMap = FindProperty("_Layer2_NormalMap", properties);
             MaterialProperty _Layer2_MRAH = FindProperty("_Layer2_MRAH", properties);
             MaterialProperty _Layer2_HeightContrast = FindProperty("_Layer2_HeightContrast", properties);
+            MaterialProperty _Layer2_Enable = FindProperty("_Layer2_Enable", properties);
+            MaterialProperty _Layer2_Metalness = FindProperty("_Layer2_Metalness", properties);
+            MaterialProperty _Layer2_Roughness = FindProperty("_Layer2_Roughness", properties);
             //Layer Three
             MaterialProperty _Layer3_BaseMap = FindProperty("_Layer3_BaseMap", properties);
             MaterialProperty _Layer3_BaseColor = FindProperty("_Layer3_BaseColor", properties);
             MaterialProperty _Layer3_NormalMap = FindProperty("_Layer3_NormalMap", properties);
             MaterialProperty _Layer3_MRAH = FindProperty("_Layer3_MRAH", properties);
             MaterialProperty _Layer3_HeightContrast = FindProperty("_Layer3_HeightContrast", properties);
+            MaterialProperty _Layer3_Enable = FindProperty("_Layer3_Enable", properties);
+            MaterialProperty _Layer3_Metalness = FindProperty("_Layer3_Metalness", properties);
+            MaterialProperty _Layer3_Roughness = FindProperty("_Layer3_Roughness", properties);
             //Layer Four
             MaterialProperty _Layer4_BaseMap = FindProperty("_Layer4_BaseMap", properties);
             MaterialProperty _Layer4_BaseColor = FindProperty("_Layer4_BaseColor", properties);
             MaterialProperty _Layer4_NormalMap = FindProperty("_Layer4_NormalMap", properties);
             MaterialProperty _Layer4_MRAH = FindProperty("_Layer4_MRAH", properties);
             MaterialProperty _Layer4_HeightContrast = FindProperty("_Layer4_HeightContrast", properties);
+            MaterialProperty _Layer4_Enable = FindProperty("_Layer4_Enable", properties);
+            MaterialProperty _Layer4_Metalness = FindProperty("_Layer4_Metalness", properties);
+            MaterialProperty _Layer4_Roughness = FindProperty("_Layer4_Roughness", properties);
             
-            DrawBlendOptions();
+            MaterialProperty _ReceiveFogEnabled = FindProperty("_ReceiveFogEnabled", properties);
+            MaterialProperty _ReceiveShadowsEnabled = FindProperty("_ReceiveShadowsEnabled", properties);
+            
+            DrawAdvancesOptions();
             DrawLayerOneOptions();
             DrawLayerTwoOptions();
             DrawLayerThreeOptions();
             DrawLayerFourOptions();
 
-            void DrawBlendOptions()
+            void DrawAdvancesOptions()
             {
-                materialEditor.ShaderProperty(_BlendContrast, new GUIContent("Blend Contrast"));
-                materialEditor.TexturePropertySingleLine(
-                    new GUIContent("Blend Map"),
-                    _BlendMap);
+                showAdvancesOptions = EditorGUILayout.BeginFoldoutHeaderGroup(showAdvancesOptions, "Advances Options");
+                if (showAdvancesOptions)
+                {
+                    EditorGUI.indentLevel++;
+                    materialEditor.ShaderProperty(_BlendContrast, new GUIContent("Blend Contrast"));
+                    materialEditor.TexturePropertySingleLine(
+                        new GUIContent("Blend Map"),
+                        _BlendMap);
+                    materialEditor.ShaderProperty(_ReceiveFogEnabled,new GUIContent("Receive Fog"));
+                    materialEditor.ShaderProperty(_ReceiveShadowsEnabled,new GUIContent("Receive Shadow"));
+                    EditorGUI.indentLevel--;
+                }
+                EditorGUILayout.EndFoldoutHeaderGroup();
             }
             
             void DrawLayerOneOptions()
@@ -83,7 +108,7 @@ namespace URPShaderEditor
                         new GUIContent("Normal Map"),
                         _Layer1_NormalMap);
                     materialEditor.TexturePropertySingleLine(
-                        new GUIContent("HRA Map"),
+                        new GUIContent("MRAH Map"),
                         _Layer1_MRAH);
                     materialEditor.ShaderProperty(_Layer1_HeightContrast,
                         new GUIContent("Height Contrast"));
@@ -99,6 +124,7 @@ namespace URPShaderEditor
                 if (showLayerTwoOptions)
                 {
                     EditorGUI.indentLevel++;
+                    materialEditor.ShaderProperty(_Layer2_Enable, new GUIContent("Enable"));
                     CommonEditorGUI.Instance.TexturePropertyWithColor(
                         materialEditor,
                         new GUIContent(
@@ -113,11 +139,16 @@ namespace URPShaderEditor
                     materialEditor.TexturePropertySingleLine(
                         new GUIContent("Normal Map"),
                         _Layer2_NormalMap);
+                    
                     materialEditor.TexturePropertySingleLine(
-                        new GUIContent("HRA Map"),
+                        new GUIContent("MRAH Map"),
                         _Layer2_MRAH);
+                    EditorGUI.indentLevel += 2;
+                    materialEditor.ShaderProperty(_Layer2_Metalness,new GUIContent("Metalness"));
+                    materialEditor.ShaderProperty(_Layer2_Roughness,new GUIContent("Roughness"));
                     materialEditor.ShaderProperty(_Layer2_HeightContrast,
                         new GUIContent("Height Contrast"));
+                    EditorGUI.indentLevel -= 2;
                     matEditor.TextureScaleOffsetProperty(_Layer2_BaseMap);
                     EditorGUI.indentLevel--;
                 }
@@ -131,6 +162,7 @@ namespace URPShaderEditor
                 if (showLayerThreeOptions)
                 {
                     EditorGUI.indentLevel++;
+                    materialEditor.ShaderProperty(_Layer3_Enable, new GUIContent("Enable"));
                     CommonEditorGUI.Instance.TexturePropertyWithColor(
                         materialEditor,
                         new GUIContent(
@@ -146,10 +178,14 @@ namespace URPShaderEditor
                         new GUIContent("Normal Map"),
                         _Layer3_NormalMap);
                     materialEditor.TexturePropertySingleLine(
-                        new GUIContent("HRA Map"),
+                        new GUIContent("MRAH Map"),
                         _Layer3_MRAH);
+                    EditorGUI.indentLevel += 2;
+                    materialEditor.ShaderProperty(_Layer3_Metalness,new GUIContent("Metalness"));
+                    materialEditor.ShaderProperty(_Layer3_Roughness,new GUIContent("Roughness"));
                     materialEditor.ShaderProperty(_Layer3_HeightContrast,
                         new GUIContent("Height Contrast"));
+                    EditorGUI.indentLevel -= 2;
                     matEditor.TextureScaleOffsetProperty(_Layer3_BaseMap);
                     EditorGUI.indentLevel--;
                 }
@@ -162,6 +198,7 @@ namespace URPShaderEditor
                 if (showLayerFourOptions)
                 {
                     EditorGUI.indentLevel++;
+                    materialEditor.ShaderProperty(_Layer4_Enable, new GUIContent("Enable"));
                     CommonEditorGUI.Instance.TexturePropertyWithColor(
                         materialEditor,
                         new GUIContent(
@@ -177,11 +214,15 @@ namespace URPShaderEditor
                         new GUIContent("Normal Map"),
                         _Layer4_NormalMap);
                     materialEditor.TexturePropertySingleLine(
-                        new GUIContent("HRA Map"),
+                        new GUIContent("MRAH Map"),
                         _Layer4_MRAH);
+                    EditorGUI.indentLevel += 2;
+                    materialEditor.ShaderProperty(_Layer4_Metalness,new GUIContent("Metalness"));
+                    materialEditor.ShaderProperty(_Layer4_Roughness,new GUIContent("Roughness"));
                     materialEditor.ShaderProperty(_Layer4_HeightContrast,
                         new GUIContent("Height Contrast"));
                     matEditor.TextureScaleOffsetProperty(_Layer4_BaseMap);
+                    EditorGUI.indentLevel -= 2;
                     EditorGUI.indentLevel--;
                 }
                 EditorGUILayout.EndFoldoutHeaderGroup();

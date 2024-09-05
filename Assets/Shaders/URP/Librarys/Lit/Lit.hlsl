@@ -224,7 +224,7 @@ void InitializeMaterialData(float2 uv,out MaterialData mat)
     }
     mat.emission = emissionMap.rgb;
     
-    float4 mraMap = SAMPLE_TEXTURE2D(_MRAMap, sampler_MRAMap,uv);
+    float4 mraMap = SAMPLE_TEXTURE2D(_MRAMap, sampler_MRAMap,baseUV);
 
     //金属度
     float metalness = 0.0;

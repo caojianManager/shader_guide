@@ -135,8 +135,8 @@ float FragmentDepthOnly(Varyings IN) : SV_Target
     UNITY_SETUP_INSTANCE_ID(IN);
     UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(IN);
     
-    // float alpha = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, IN.uv.xy).a * _BaseColor.a;
-    // AlphaDiscard(alpha, _AlphaClip);
+    float alpha = SAMPLE_TEXTURE2D(_BaseMap, sampler_BaseMap, IN.uv.xy).a * _BaseColor.a;
+    AlphaDiscard(alpha, _AlphaClip);
 
     #ifdef LOD_FADE_CROSSFADE
         LODFadeCrossFade(IN.positionHCS);
@@ -151,8 +151,8 @@ float4 FragmentDepthNormalsOnly(Varyings IN) : SV_Target
     UNITY_SETUP_INSTANCE_ID(IN);
     UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(IN);
     
-    // float alpha = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, IN.uv.xy).a * _BaseColor.a;
-    // AlphaDiscard(alpha, _AlphaClip);
+    float alpha = SAMPLE_TEXTURE2D(_BaseMap, sampler_BaseMap, IN.uv.xy).a * _BaseColor.a;
+    AlphaDiscard(alpha, _AlphaClip);
     
     #ifdef LOD_FADE_CROSSFADE
         LODFadeCrossFade(IN.positionHCS);
@@ -204,7 +204,7 @@ void InitializeMaterialData(float2 uv,out MaterialData mat)
     }
     mat.emission = _EmissionMapMultiply ? float3(0,0,0): emissionMap.rgb;
     
-    float4 mraMap = SAMPLE_TEXTURE2D(_MRAMap, sampler_MRAMap,uv);
+    float4 mraMap = SAMPLE_TEXTURE2D(_MRAMap, sampler_MRAMap,baseUV);
 
     //金属度
     float metalness = 0.0;

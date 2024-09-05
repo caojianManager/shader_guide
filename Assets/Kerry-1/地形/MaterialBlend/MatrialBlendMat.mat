@@ -13,8 +13,9 @@ Material:
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
   m_InvalidKeywords:
+  - _Layer2_Enable
+  - _Layer3_Enable
   - _ReceiveFogEnabled
-  - _ReceiveShadowsEnabled
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -81,6 +82,10 @@ Material:
         m_Texture: {fileID: 2800000, guid: 0bc83a0095e29674a936bddc1dea3e0c, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _Layer1_MRAH:
+        m_Texture: {fileID: 2800000, guid: b2c98b5bc31bb6a49901fb7eb2032853, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _Layer1_Normal:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -98,6 +103,10 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Layer2_HRA:
+        m_Texture: {fileID: 2800000, guid: ee82d1d8011b4ac4c87f30e3c928d2f7, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Layer2_MRAH:
         m_Texture: {fileID: 2800000, guid: ee82d1d8011b4ac4c87f30e3c928d2f7, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
@@ -121,6 +130,10 @@ Material:
         m_Texture: {fileID: 2800000, guid: b2c98b5bc31bb6a49901fb7eb2032853, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _Layer3_MRAH:
+        m_Texture: {fileID: 2800000, guid: b2c98b5bc31bb6a49901fb7eb2032853, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _Layer3_NormalMap:
         m_Texture: {fileID: 2800000, guid: 97781186bbadd694391d096f9436080f, type: 3}
         m_Scale: {x: 1, y: 1}
@@ -137,8 +150,12 @@ Material:
         m_Texture: {fileID: 2800000, guid: 881d59e41c9a53946824c175279c8222, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _Layer4_MRAH:
+        m_Texture: {fileID: 2800000, guid: 881d59e41c9a53946824c175279c8222, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _Layer4_NormalMap:
-        m_Texture: {fileID: 2800000, guid: f490373aa43e5584da070e6810319400, type: 3}
+        m_Texture: {fileID: 2800000, guid: 606d95c09d879ad44be3568c120cbec4, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
@@ -215,7 +232,7 @@ Material:
     - _AlphaClipEnabled: 0
     - _AlphaToMask: 0
     - _Blend: 0
-    - _BlendContrast: 0.485
+    - _BlendContrast: 0.527
     - _BlendModePreserveSpecular: 1
     - _BumpScale: 1
     - _ClearCoatMask: 0
@@ -247,18 +264,30 @@ Material:
     - _HeightStrength2: 0.02
     - _Layer1_BlendContrast: 1
     - _Layer1_Enable: 0
-    - _Layer1_HeightContrast: 0.271
+    - _Layer1_HasMRAH: 0
+    - _Layer1_HeightContrast: 0.454
+    - _Layer1_Metalness: 1
+    - _Layer1_Roughness: 1
     - _Layer1_Tilling: -5.88
     - _Layer2_BlendContrast: 2
-    - _Layer2_Enable: 0
+    - _Layer2_Enable: 1
+    - _Layer2_HasMRAH: 0
     - _Layer2_HeightContrast: 0.541
+    - _Layer2_Metalness: 1
+    - _Layer2_Roughness: 1
     - _Layer2_Tilling: 2
     - _Layer3_BlendContrast: 2
-    - _Layer3_Enable: 0
-    - _Layer3_HeightContrast: 0.438
+    - _Layer3_Enable: 1
+    - _Layer3_HasMRAH: 0
+    - _Layer3_HeightContrast: 0.126
+    - _Layer3_Metalness: 0.86
+    - _Layer3_Roughness: 0.95
     - _Layer3_Tilling: 2
     - _Layer4_Enable: 0
-    - _Layer4_HeightContrast: 0.389
+    - _Layer4_HasMRAH: 0
+    - _Layer4_HeightContrast: 0.201
+    - _Layer4_Metalness: 0.55
+    - _Layer4_Roughness: 0.99
     - _Layer4_Tilling: 2
     - _Layer_HeightContrast: 0.371
     - _Metallic: 0
@@ -275,7 +304,7 @@ Material:
     - _QueueOffset: 0
     - _ReceiveFogEnabled: 1
     - _ReceiveShadows: 1
-    - _ReceiveShadowsEnabled: 1
+    - _ReceiveShadowsEnabled: 0
     - _Roughness: 0.5
     - _Roughness2: 0.5
     - _RoughnessMapExposure: 0
