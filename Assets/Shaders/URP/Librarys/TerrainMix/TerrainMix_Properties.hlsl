@@ -25,6 +25,7 @@ float _Layer3_Enable;
 float _Layer4_Enable;
 float _BlendContrast;
 float _ReceiveFogEnabled;
+float _ReceiveShadowsEnabled;
 float _Layer1_HeightContrast;
 float _Layer2_HeightContrast;
 float _Layer3_HeightContrast;

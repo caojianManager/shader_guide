@@ -425,10 +425,10 @@ float4 Frag(Varyings IN) : SV_TARGET
 
     
     // Lighting--固定接受阴影
-    // if(_ReceiveShadowsEnabled == 0)
-    // {
-    //     mainLight.shadowAttenuation = 1;
-    // }
+    if(_ReceiveShadowsEnabled == 0)
+    {
+        mainLight.shadowAttenuation = 1;
+    }
 
     float3 lightingModel;
     float NoV, NoL, NoH, VoH, VoL, LoH;
@@ -493,11 +493,11 @@ float4 Frag(Varyings IN) : SV_TARGET
    
     
     // Mix Fog
-    // if (_ReceiveFogEnabled == 1)
-    // {
-    //     float fogFactor = InitializeInputDataFog(float4(IN.positionWS, 1), 0);
-    //     color = MixFog(color, fogFactor);
-    // }
+    if (_ReceiveFogEnabled == 1)
+    {
+        float fogFactor = InitializeInputDataFog(float4(IN.positionWS, 1), 0);
+        color = MixFog(color, fogFactor);
+    }
     
     return float4(color, 1);
 }
