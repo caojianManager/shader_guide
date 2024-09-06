@@ -21,7 +21,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: mat_RH
-  m_Shader: {fileID: 4800000, guid: ccb430354a413804b9fedeec56d27b8e, type: 3}
+  m_Shader: {fileID: 4800000, guid: f05dbac5704269d4e909391ff14db367, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -34,8 +34,9 @@ Material:
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: -1
-  stringTagMap: {}
+  m_CustomRenderQueue: 2000
+  stringTagMap:
+    RenderType: Opaque
   disabledShaderPasses: []
   m_LockedProperties: 
   m_SavedProperties:
@@ -167,7 +168,7 @@ Material:
     - _AlphaClipEnabled: 0
     - _AlphaToMask: 0
     - _Blend: 0
-    - _BlendContrast: 0.1
+    - _BlendContrast: 1
     - _BlendModePreserveSpecular: 1
     - _BumpScale: 1
     - _ClearCoatMask: 0
@@ -190,7 +191,7 @@ Material:
     - _HasMRAMap: 0
     - _Layer1_HeightContrast: 0
     - _Layer1_Metalness: 1
-    - _Layer1_NormalScale: 1.61
+    - _Layer1_NormalScale: 1
     - _Layer1_Roughness: 3
     - _Layer2_Enable: 1
     - _Layer2_HeightContrast: 0
@@ -201,7 +202,7 @@ Material:
     - _Layer3_HeightContrast: 0
     - _Layer3_Metalness: 1
     - _Layer3_NormalScale: 1
-    - _Layer3_Roughness: 1
+    - _Layer3_Roughness: 3
     - _Layer4_Enable: 1
     - _Layer4_HeightContrast: 0
     - _Layer4_Metalness: 1
