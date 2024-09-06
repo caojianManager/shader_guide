@@ -1,4 +1,4 @@
-Shader "CURP/Lit"
+Shader "CURP/Base/Lit"
 {
     Properties
     {
@@ -99,7 +99,7 @@ Shader "CURP/Lit"
             
             #pragma vertex Vert;
             #pragma fragment Frag;
-            #include "./Librarys/Base/Lit/Lit.hlsl"
+            #include "../../Librarys/Base/Lit/Lit.hlsl"
             
             ENDHLSL
         }
@@ -126,7 +126,7 @@ Shader "CURP/Lit"
             #define CAST_SHADOWS_PASS
             #pragma multi_compile_vertex _ _CASTING_PUNCTUAL_LIGHT_SHADOW
             
-            #include "./Librarys/Base/Lit/Lit.hlsl"
+            #include "../../Librarys/Base/Lit/Lit.hlsl"
 
             ENDHLSL
         }

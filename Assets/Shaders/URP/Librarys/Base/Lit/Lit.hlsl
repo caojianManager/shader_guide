@@ -7,7 +7,7 @@
 //                      Includes                                             //
 ///////////////////////////////////////////////////////////////////////////////
 ///
-#include "./Librarys/Common/PBRCommon.hlsl"
+#include "../../Librarys/Common/PBRCommon.hlsl"
 #include "Lit_Maps.hlsl"
 #include "Lit_Properties.hlsl"
 

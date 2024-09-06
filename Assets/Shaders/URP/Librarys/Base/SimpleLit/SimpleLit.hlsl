@@ -1,7 +1,7 @@
 ﻿#ifndef SIMPLELIT_INCLUDE
 #define SIMPLELIT_INCLUDE
 
-#include "./Librarys/Common/PBRCommon.hlsl"
+#include "../../Librarys/Common/PBRCommon.hlsl"
 #include "SimpleLit_Maps.hlsl"
 #include "SimpleLit_Properties.hlsl"
 
