@@ -124,7 +124,7 @@ Shader "CURP/TerrainMix"
             #define CAST_SHADOWS_PASS
             #pragma multi_compile_vertex _ _CASTING_PUNCTUAL_LIGHT_SHADOW
             
-            #include "./Librarys/Lit/Lit.hlsl"
+            #include "./Librarys/TerrainMix/TerrainMix.hlsl"
 
             ENDHLSL
         }

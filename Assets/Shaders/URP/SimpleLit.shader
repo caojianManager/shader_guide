@@ -95,7 +95,7 @@
             
             #pragma vertex Vert;
             #pragma fragment Frag;
-            #include "./Librarys/SimpleLit/SimpleLit.hlsl"
+            #include "./Librarys/Base/SimpleLit/SimpleLit.hlsl"
            
             ENDHLSL
         }
@@ -120,7 +120,7 @@
             #define CAST_SHADOWS_PASS
             #pragma multi_compile_vertex _ _CASTING_PUNCTUAL_LIGHT_SHADOW
             
-            #include "./Librarys/SimpleLit/SimpleLit.hlsl"
+            #include "./Librarys/Base/SimpleLit/SimpleLit.hlsl"
 
             ENDHLSL
         }
