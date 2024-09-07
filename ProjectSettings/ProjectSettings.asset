@@ -739,6 +739,7 @@ PlayerSettings:
   webGLMemoryGeometricGrowthCap: 96
   webGLPowerPreference: 2
   scriptingDefineSymbols:
+    Android: AMPLIFY_SHADER_EDITOR
     Standalone: GPU_INSTANCER
   additionalCompilerArguments: {}
   platformArchitecture: {}
