@@ -35,7 +35,6 @@ Material:
   - _NORMALSMODE_DUAL
   - _REFLECTIONMODE_REALTIME
   - _SCATTERING_ON
-  - _WORLD_UV
   - _ZWRITE_ON
   m_InvalidKeywords:
   - _NORMAL_FADE_ON
@@ -222,7 +221,7 @@ Material:
     - _WaveStartDistance: 20
     - _WaveSteepness: 0.143
     - _WorkflowMode: 1
-    - _WorldUV: 1
+    - _WorldUV: 0
     - _ZWrite: 1
     m_Colors:
     - _AmbientColor: {r: 0.7924528, g: 0.7924528, b: 0.7924528, a: 1}

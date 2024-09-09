@@ -15,7 +15,6 @@ Material:
   - _ADD_FOAM_ON
   - _CAUSTICSMODE_2D
   - _COLORMODE_COLORS
-  - _FOAM_ON
   - _FOAM_RIPPLE_ON
   - _NORMALSMODE_SINGLE
   - _REFLECTIONMODE_PROBES
@@ -73,7 +72,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _FoamTex:
-        m_Texture: {fileID: 2800000, guid: e1dffb88f678c21478aaa069c903fe0b, type: 3}
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
@@ -171,7 +170,7 @@ Material:
     - _EnvironmentReflections: 1
     - _FlowIntensity: 0.12
     - _FlowSpeed: 10
-    - _Foam: 1
+    - _Foam: 0
     - _FoamCapsIntensity: 1
     - _FoamCapsRangeMax: 1
     - _FoamCapsRangeMin: 0
@@ -236,7 +235,7 @@ Material:
     - _CausticsSpeed: {r: 1, g: 1, b: -0.2, a: -0.33}
     - _CausticsSpeed3D: {r: 1, g: 1, b: 1, a: 1}
     - _CausticsTiling: {r: 0.2, g: 0.2, b: 0.3, a: 0.3}
-    - _Color: {r: 0.25490195, g: 0.98039216, b: 0.6740629, a: 1}
+    - _Color: {r: 0.5660378, g: 0.12710543, b: 0, a: 1}
     - _DepthColor: {r: 0, g: 0.25999996, b: 0.39999998, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _FlowTiling: {r: 1, g: 1, b: 0, a: 0}

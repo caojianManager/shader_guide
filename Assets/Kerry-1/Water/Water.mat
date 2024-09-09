@@ -17,7 +17,6 @@ Material:
   - _CAUSTICS_ON
   - _COLORMODE_COLORS
   - _DISPLACEMENTMODE_OFF
-  - _FOAM_ON
   - _NORMALSMODE_SINGLE
   - _REFLECTIONMODE_PROBES
   - _ZWRITE_ON
@@ -53,6 +52,10 @@ Material:
         m_Offset: {x: 0, y: 0}
     - _CausticsTex3D:
         m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Cubemap:
+        m_Texture: {fileID: 8900000, guid: 58bd0b190257ac947a46a49e9273da30, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _CubemapTexture:
@@ -127,6 +130,10 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _Tex:
+        m_Texture: {fileID: 8900000, guid: 58bd0b190257ac947a46a49e9273da30, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _TextureSample0:
         m_Texture: {fileID: 2800000, guid: 31e68d75d2651c148b4a9a296306d21c, type: 3}
         m_Scale: {x: 1, y: 1}
@@ -187,12 +194,14 @@ Material:
     - _ClearCoatMask: 0
     - _ClearCoatSmoothness: 0
     - _ColorMode: 0
+    - _CubemapExposure: 1
+    - _CubemapPosition: 1
     - _Cull: 2
     - _CullMode: 2
     - _Cutoff: 0.5
-    - _DeepRange: 10
-    - _DepthEnd: 1
-    - _DepthStart: 0
+    - _DeepRange: 0
+    - _DepthEnd: -8.52
+    - _DepthStart: 0.79
     - _DetailAlbedoMapScale: 1
     - _DetailNormalMapScale: 1
     - _DispMask: 0
@@ -208,9 +217,10 @@ Material:
     - _EdgeFade: 0
     - _EdgeSize: 1
     - _EnvironmentReflections: 1
+    - _Exposure: 1
     - _FlowIntensity: 0.1
     - _FlowSpeed: 5
-    - _Foam: 1
+    - _Foam: 0
     - _FoamCapsIntensity: 1
     - _FoamCapsRangeMax: 1
     - _FoamCapsRangeMin: 0
@@ -221,7 +231,13 @@ Material:
     - _FoamRipples: 0
     - _FoamSize: 0.1
     - _FoamWhiteCaps: 0
-    - _FresnelPower: 1
+    - _FogEnable: 0
+    - _FogFill: 1
+    - _FogHeight: 1
+    - _FogIntensity: 1
+    - _FogPosition: 0
+    - _FogSmoothness: 1
+    - _FresnelPower: 0
     - _GlossMapScale: 0
     - _Glossiness: 0
     - _GlossyReflections: 0
@@ -249,6 +265,9 @@ Material:
     - _ReflectionIntensity: 1
     - _ReflectionMode: 2
     - _ReflectionRoughness: 0.1
+    - _Rotation: 0
+    - _RotationEnable: 0
+    - _RotationSpeed: 1
     - _Scattering: 0
     - _ScatteringIntensity: 1
     - _ScatteringRangeMax: 1
@@ -293,7 +312,8 @@ Material:
     - _CausticsTiling: {r: 1, g: 1, b: 1, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _Color0: {r: 1, g: 1, b: 1, a: 1}
-    - _DeepColor: {r: 0, g: 0.5840001, b: 1, a: 1}
+    - _CubemapTintColor: {r: 1, g: 1, b: 1, a: 1}
+    - _DeepColor: {r: 1, g: 1, b: 1, a: 1}
     - _DepthColor: {r: 0.20705765, g: 0.3973522, b: 0.4433962, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _FlowTiling: {r: 1, g: 1, b: 0, a: 0}
@@ -317,10 +337,11 @@ Material:
     - _RefractionKey7: {r: -1, g: -1, b: -1, a: -1}
     - _RefractionKey8: {r: -1, g: -1, b: -1, a: -1}
     - _ScatteringColor: {r: 1, g: 1, b: 1, a: 1}
-    - _ShallowColor: {r: 0.4386791, g: 1, b: 0.9110101, a: 1}
+    - _ShallowColor: {r: 0.10935082, g: 0.61006284, b: 0.5295288, a: 1}
     - _ShoreColor: {r: 1, g: 1, b: 1, a: 1}
     - _SpecColor: {r: 1, g: 1, b: 1, a: 1}
     - _SpecTint: {r: 1, g: 1, b: 1, a: 0}
+    - _Tint: {r: 0.5, g: 0.5, b: 0.5, a: 0.5}
     - _UnderWaterColor: {r: 0.24999997, g: 0.32999998, b: 0.45, a: 0.25}
   m_BuildTextureStacks: []
 --- !u!114 &3392596500895574020

@@ -14,12 +14,11 @@ Material:
   m_ValidKeywords:
   - _CAUSTICSMODE_2D
   - _COLORMODE_COLORS
-  - _FOAM_RIPPLE_ON
   - _NORMALSMODE_SINGLE
-  - _REFLECTIONMODE_PROBES
   - _ZWRITE_ON
   m_InvalidKeywords:
   - _DISPLACEMENTMODE_OFF
+  - _REFLECTIONMODE_OFF
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -152,12 +151,14 @@ Material:
     - _CutOff: 0.5
     - _Cutoff: 0.5
     - _DepthEnd: 6
-    - _DepthStart: -2
+    - _DepthStart: -0.16
     - _DetailAlbedoMapScale: 1
     - _DetailNormalMapScale: 1
     - _DispMask: 0
     - _DisplacementMode: 0
-    - _Distortion: 32
+    - _Distortion: 56
+    - _DistortionFar: 32
+    - _DistortionNear: 64
     - _DoubleSided: 0
     - _DstBlend: 0
     - _DynamicDisplacement: 1
@@ -174,11 +175,11 @@ Material:
     - _FoamCapsRangeMax: 1
     - _FoamCapsRangeMin: 0
     - _FoamDistortion: 0
-    - _FoamRippleDistance: 0.31
+    - _FoamRippleDistance: 7.7
     - _FoamRippleSize: 1.46
     - _FoamRippleSpeed: -1
-    - _FoamRipples: 1
-    - _FoamSize: 0.1
+    - _FoamRipples: 0
+    - _FoamSize: -7.02
     - _FoamWhiteCaps: 0
     - _GerstnerSpeedA: 1
     - _GerstnerSpeedB: 1
@@ -190,7 +191,7 @@ Material:
     - _Metallic: 0
     - _NormalFar: 0
     - _NormalFarDistance: 100
-    - _NormalMapAIntensity: 0.497
+    - _NormalMapAIntensity: 0.08
     - _NormalMapBIntensity: 1
     - _NormalMapFarIntensity: 1
     - _NormalsMode: 0
@@ -203,18 +204,19 @@ Material:
     - _ReflectionFresnel: 1.06
     - _ReflectionFresnelNormal: 0.13
     - _ReflectionIntensity: 1
-    - _ReflectionMode: 2
+    - _ReflectionMode: 0
     - _ReflectionRoughness: 0.1
     - _Scattering: 0
     - _ScatteringIntensity: 1
     - _ScatteringRangeMax: 2
     - _ScatteringRangeMin: 0.4131296
-    - _Smoothness: 0.675
+    - _Smoothness: 0.822
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SpeedMul: 0
     - _SrcBlend: 1
     - _Surface: 0
+    - _Tess: 1
     - _WaveAmplitude: 1
     - _WaveCount: 1
     - _WaveEffectsBoost: 0
@@ -234,11 +236,11 @@ Material:
     - _CausticsSpeed: {r: 1, g: 1, b: -0.2, a: -0.33}
     - _CausticsSpeed3D: {r: 1, g: 1, b: 1, a: 1}
     - _CausticsTiling: {r: 0.2, g: 0.2, b: 0.3, a: 0.3}
-    - _Color: {r: 0.25490195, g: 0.98039216, b: 0.6740629, a: 1}
-    - _DepthColor: {r: 0, g: 0.25999996, b: 0.39999998, a: 1}
+    - _Color: {r: 0.16037738, g: 0.16037738, b: 0.16037738, a: 1}
+    - _DepthColor: {r: 0, g: 0.054017544, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _FlowTiling: {r: 1, g: 1, b: 0, a: 0}
-    - _FoamColor: {r: 1, g: 1, b: 1, a: 1}
+    - _FoamColor: {r: 1, g: 0, b: 0, a: 1}
     - _FoamTiling: {r: 1, g: 1, b: 1, a: 1}
     - _GerstnerWaveA: {r: 0.84712195, g: -0.53139853, b: -1.4, a: 6.55}
     - _GerstnerWaveB: {r: 0, g: 1, b: 0.05, a: 4}

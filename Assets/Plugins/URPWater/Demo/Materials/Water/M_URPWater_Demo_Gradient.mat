@@ -13,7 +13,7 @@ Material:
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
   - _CAUSTICSMODE_2D
-  - _COLORMODE_GRADIENT
+  - _COLORMODE_COLORS
   - _FOAM_RIPPLE_ON
   - _NORMALSMODE_SINGLE
   - _REFLECTIONMODE_PROBES
@@ -146,7 +146,7 @@ Material:
     - _CausticsTiling3D: 0.5
     - _ClearCoatMask: 0
     - _ClearCoatSmoothness: 0
-    - _ColorMode: 1
+    - _ColorMode: 0
     - _Cull: 2
     - _CullMode: 2
     - _CutOff: 0.5
