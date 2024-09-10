@@ -4,6 +4,7 @@
 
 //这样会走CBUFFER --> 走SPR Batch
 CBUFFER_START(UnityPerMaterial)
+float _DoubleSidedModel;
 float _DetailScale;
 float _HasMRAMap;
 float _Roughness;
@@ -28,6 +29,7 @@ CBUFFER_END
 #ifdef UNITY_DOTS_INSTANCING_ENABLED
 
 UNITY_DOTS_INSTANCING_START(MaterialPropertyMetadata)
+    UNITY_DOTS_INSTANCED_PROP(float, _DoubleSidedModel)
     UNITY_DOTS_INSTANCED_PROP(float , _DetailScale)
     UNITY_DOTS_INSTANCED_PROP(float, _HasMRAMap)
     UNITY_DOTS_INSTANCED_PROP(float , _Roughness)
@@ -46,6 +48,7 @@ UNITY_DOTS_INSTANCING_START(MaterialPropertyMetadata)
     UNITY_DOTS_INSTANCED_PROP(float4 , _BaseMap_ST)
 UNITY_DOTS_INSTANCING_END(MaterialPropertyMetadata)
 
+#define _DoubleSidedModel             UNITY_ACCESS_DOTS_INSTANCED_PROP_WITH_DEFAULT(float  , _DoubleSidedModel)
 #define _DetailScale             UNITY_ACCESS_DOTS_INSTANCED_PROP_WITH_DEFAULT(float  , _DetailScale)
 #define _HasMRAMap               UNITY_ACCESS_DOTS_INSTANCED_PROP_WITH_DEFAULT(float , _HasMRAMap)
 #define _Roughness               UNITY_ACCESS_DOTS_INSTANCED_PROP_WITH_DEFAULT(float  , _Roughness)

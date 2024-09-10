@@ -9,6 +9,7 @@
 
 
 #include "../../Librarys/Common/PBRCommon.hlsl"
+#include "../../Librarys/Common/Common.hlsl"
 #include "Lit_Maps.hlsl"
 #include "Lit_Properties.hlsl"
 
@@ -57,21 +58,20 @@ struct Varyings
 //                      Vertex                                               //
 ///////////////////////////////////////////////////////////////////////////////
 
+
 Varyings Vert(Attributes IN)
 {
     Varyings OUT = (Varyings)0;
     UNITY_SETUP_INSTANCE_ID(IN);
     UNITY_TRANSFER_INSTANCE_ID(IN, OUT);
     UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(OUT);
-
     VertexPositionInputs position_inputs = GetVertexPositionInputs(IN.positionOS);
     OUT.positionWS = position_inputs.positionWS;
     OUT.normalWS = TransformObjectToWorldNormal(IN.normalOS);
-    OUT.normalWS = normalize(OUT.normalWS);
     OUT.positionHCS = position_inputs.positionCS;
     OUT.uv = IN.uv;
     OUT.viewDirectionWS = (GetWorldSpaceViewDir(OUT.positionWS));
-
+    OUT.normalWS = normalize(OUT.normalWS);
     OUT.tangentWS = float4(TransformObjectToWorldDir(IN.tangentOS.xyz), IN.tangentOS.w);
     OUT.viewDirectionTS = GetViewDirectionTangentSpace(OUT.tangentWS, OUT.normalWS, OUT.viewDirectionWS);
     OUTPUT_LIGHTMAP_UV(IN.staticLightmapUV, unity_LightmapST, OUT.staticLightmapUV);
@@ -180,7 +180,7 @@ struct MaterialData
     float specularity;              //镜面值
 };
 
-void InitializeMaterialData(float2 uv,out MaterialData mat)
+void InitializeMaterialData(float3 viewDirTS,float2 uv,out MaterialData mat)
 {
     float2 baseUV = uv * _BaseMap_ST.xy + _BaseMap_ST.zw;
     float2 detailUV = uv * _DetailMap_ST.xy + _DetailMap_ST.zw;
@@ -208,7 +208,7 @@ void InitializeMaterialData(float2 uv,out MaterialData mat)
         detailNormalTS = normalize(detailNormalTS);
         normalTS = lerp(normalTS, BlendNormalRNM(normalTS, detailNormalTS),1);
     }
-    mat.normalTS = normalTS;
+    mat.normalTS = DoubleSidedNormal(_DoubleSidedModel,normalTS,viewDirTS);
 
     //自发光
     float4 emissionMap = float4(0,0,0,0) ;
@@ -276,7 +276,7 @@ float4 Frag(Varyings IN) : SV_TARGET
     #endif
 
     MaterialData mat;
-    InitializeMaterialData(IN.uv,mat);
+    InitializeMaterialData(IN.viewDirectionTS,IN.uv,mat);
     
     ///////////////////////////////
     //   Alpha Clipping          //

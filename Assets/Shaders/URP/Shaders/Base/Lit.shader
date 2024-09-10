@@ -36,6 +36,7 @@ Shader "CURP/Base/Lit"
         [Toggle(_ReceiveFogEnabled)] _ReceiveFogEnabled ("Receive Fog", Float) = 1
         [Toggle(_ReceiveShadowsEnabled)] _ReceiveShadowsEnabled ("Receive Shadow", Float) = 1
         [ToggleOff] _SpecularHighlights("Specular Highlights", Float) = 1.0
+        [Enum(Flip,0,Mirror,1,None,2)] _DoubleSidedModel("DoubleSided Model",Float) = 2
         
         [Enum(Off, 0, On, 1)]_ZWrite ("ZWrite", Float) = 1.0 // Default to "ZWrite On"
         [Enum(UnityEngine.Rendering.CompareFunction)] _ZTest("Depth Test", Float) = 4 // Default to "LEqual"

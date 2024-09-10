@@ -14,4 +14,43 @@ float Fresnel(float3 Normal, float3 ViewDir, float Power)
     return  pow((1.0 - saturate(dot(normalize(Normal), normalize(ViewDir)))), Power);
 }
 
+//判断是正反面
+float IsFrontFace(float3 normalTS, float3 viewDirectionTS)
+{
+    float NoV = dot(normalize(normalTS),normalize(viewDirectionTS));
+    return NoV >= 0;
+}
+
+/*
+ * 镜面法线，用于双面渲染，让back Face看起来和正面一样
+ */
+float3 MirrorNormal(float3 normalTS, float3 viewDirectionTS)
+{
+    float isFrontFace = IsFrontFace(normalTS,viewDirectionTS);
+    normalTS.z *= isFrontFace ? 1 : -1;
+    return normalTS;
+}
+
+/**
+ * FlipNormal 用于双面渲染，让Back Face看起来和正面一样。背面的normal等于正面normal旋转180
+ */
+float3 FlipNormal(float3 normalTS, float3 viewDirectionTS)
+{
+    float isFrontFace = IsFrontFace(normalTS,viewDirectionTS);
+    normalTS *= isFrontFace ? 1 : -1;
+    return normalTS;
+}
+
+float3 DoubleSidedNormal(float model, float3 normalTS, float3 viewDirectionTS)
+{
+    if(model == 0)
+    {
+        return FlipNormal(normalTS,viewDirectionTS);
+    }else if(model == 1)
+    {
+        return MirrorNormal(normalTS,viewDirectionTS);
+    }
+    return normalTS;
+}
+
 #endif

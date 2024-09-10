@@ -13,6 +13,9 @@ namespace URPShaderEditor
         public static readonly string[] _SurfaceOptions = new string[] { "Opaque", "Transparent" };
         public static readonly int[] _SurfaceValues = new int[] { 0, 1 };
         
+        public static readonly string[] _BackFaceNormalOptions = new string[] { "Flip", "Mirror" ,"None"};
+        public static readonly int[] _BackFaceNormalValues = new int[] { 0, 1,2 };
+        
         bool showSurfaceOptions = true;
         bool showDetailsOptions = true;
         bool showAdvancedOptions = true;
@@ -58,7 +61,7 @@ namespace URPShaderEditor
             MaterialProperty _EmissionMapMultiply = FindProperty("_EmissionMapMultiply", properties);
             MaterialProperty _Culling = FindProperty("_Culling", properties);
             MaterialProperty _ZTest = FindProperty("_ZTest", properties);
-           
+            MaterialProperty _DoubleSidedModel = FindProperty("_DoubleSidedModel", properties);
             //Surface
             MaterialProperty _Surface = FindProperty("_Surface", properties);
             MaterialProperty _Blend = FindProperty("_Blend", properties);
@@ -81,7 +84,7 @@ namespace URPShaderEditor
                 {
                     EditorGUI.indentLevel++;
                     materialEditor.IntPopupShaderProperty(_Surface, "Surface", _SurfaceOptions, _SurfaceValues);
-
+                    materialEditor.IntPopupShaderProperty(_DoubleSidedModel, "Back Face Normal", _BackFaceNormalOptions, _BackFaceNormalValues);
                     mat.DisableKeyword("_ALPHAPREMULTIPLY_ON");
 
                     bool depthWrite = true;
