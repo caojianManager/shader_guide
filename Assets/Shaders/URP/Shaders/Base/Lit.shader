@@ -14,14 +14,14 @@ Shader "CURP/Base/Lit"
         //基础贴图
         _BaseMap("BaseMap",2D) = "white" {}
         _BaseColor("BaseColor",Color) = (1,1,1,1)
-        _NormalMap("NormalMap",2D) = "white" {}
+        [Normal] _NormalMap("NormalMap",2D) = "bump" {}
         _NormalStrength("Normal Strength",Range(0,1)) = 1
         _Roughness("Roughness",Range(0,1)) = 0.0
         //细节贴图
         _EnableDetailMap("Enable Detail Map",Float) = 0
         _DetailMap("Detail Map",2D) = "white" {}
         _DetailMapColor("Detail Map Color",Color) = (1,1,1,1)
-        _DetailNormalMap("Detail NormalMap",2D) = "white" {}
+        [Normal] _DetailNormalMap("Detail NormalMap",2D) = "bump" {}
         _DetailScale("Detail Scale",Range(0,2)) = 1.0
         // Surface
         _Surface("Surface", Float) = 0.0

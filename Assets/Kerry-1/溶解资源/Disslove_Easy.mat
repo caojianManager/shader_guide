@@ -11,11 +11,10 @@ Material:
   m_Shader: {fileID: 4800000, guid: 253a7d06ccbe61d45bc12848f899738d, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
-  m_ValidKeywords:
-  - _AUTODISSLOVE_ON
-  - _RECEIVE_SHADOWS_OFF
+  m_ValidKeywords: []
   m_InvalidKeywords:
   - _RECEIVESHADOWS_OFF
+  - _RECEIVE_SHADOWS_OFF
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -95,11 +94,11 @@ Material:
     - _AlphaClip: 0
     - _AlphaCutoff: 0.5
     - _AlphaToMask: 0
-    - _AutoDisslove: 1
+    - _AutoDisslove: 0
     - _Blend: 0
     - _BlendModePreserveSpecular: 1
     - _BumpScale: 1
-    - _ChangeAmount: 0.5
+    - _ChangeAmount: 0
     - _ClearCoatMask: 0
     - _ClearCoatSmoothness: 0
     - _Cull: 2
@@ -108,8 +107,8 @@ Material:
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
     - _DstBlendAlpha: 0
-    - _EdgeIntensity: 90.86
-    - _EdgeWidth: 0.01
+    - _EdgeIntensity: 30
+    - _EdgeWidth: 0.05
     - _EnvironmentReflections: 1
     - _GlossMapScale: 0
     - _Glossiness: 0
