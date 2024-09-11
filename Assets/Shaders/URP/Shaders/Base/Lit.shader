@@ -14,7 +14,7 @@ Shader "CURP/Base/Lit"
         //基础贴图
         _BaseMap("BaseMap",2D) = "white" {}
         _BaseColor("BaseColor",Color) = (1,1,1,1)
-        [Normal] _NormalMap("NormalMap",2D) = "bump" {}
+        [Normal] _NormalMap("NormalMap",2D) = "bump" {}  ///注意！！！！！，法线贴图的属性一定要声明为bump，要不为空的时候采样会出问题导致NormalTS值不对。
         _NormalStrength("Normal Strength",Range(0,1)) = 1
         _Roughness("Roughness",Range(0,1)) = 0.0
         //细节贴图
