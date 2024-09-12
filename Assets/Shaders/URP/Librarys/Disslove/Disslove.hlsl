@@ -159,12 +159,30 @@ struct MaterialData
     float specularity;              //镜面值
 };
 
-void InitializeMaterialData(float2 uv,out MaterialData mat,float noiseMap_R)
+float NoiseValue(float2 uv)
+{
+    float noiseMap_R = SAMPLE_TEXTURE2D(_NoiseMap,sampler_NoiseMap,uv);
+    float amoutValue = _AutoDisslove ? frac(_Time) : _Amout;
+    float noiseValue = (noiseMap_R - Remap(0,1,-_Spreed,1,amoutValue)) / _Spreed;
+    return noiseValue;
+}
+
+float ColorLerp(float noiseValue)
+{
+    return clamp(1-(distance(noiseValue,0.5)/_EdgeWidth),0,1);
+}
+
+void InitializeMaterialData(float2 uv,out MaterialData mat)
 {
     float2 baseUV = uv * _BaseMap_ST.xy + _BaseMap_ST.zw;
-
     //基础贴图
     float4 albedoMap = SAMPLE_TEXTURE2D(_BaseMap,sampler_BaseMap, baseUV).rgba * _BaseColor;
+    float noiseValue = NoiseValue(uv);
+    float colorLerp = ColorLerp(noiseValue);
+    // albedoMap.rgb = lerp(albedoMap.rgb,albedoMap.rgb*_EdgeColor*_EdgeColorIntensity,0.5);
+    albedoMap.rgb = clamp(1-(distance(normalize(noiseValue),0.5)/_EdgeWidth),0,1);
+    albedoMap.a *= step(0.5,noiseValue);
+    albedoMap = noiseValue;
     mat.albedoAlpha = albedoMap;
     float4 normalMap = SAMPLE_TEXTURE2D(_NormalMap,sampler_NormalMap, baseUV).rgba;
     float3 normalTS = UnpackNormal(normalMap);
@@ -201,10 +219,11 @@ float4 Frag(Varyings IN) : SV_TARGET
     MaterialData mat;
     
     //噪声贴图
-    float noiseMap_R = SAMPLE_TEXTURE2D(_NoiseMap,sampler_NoiseMap,IN.uv);
-    clip(noiseMap_R - _Amout);
-    InitializeMaterialData(IN.uv,mat,noiseMap_R);
-
+    InitializeMaterialData(IN.uv,mat);
+    float noiseValue = NoiseValue(IN.uv);
+    return clamp(1-(distance(noiseValue,0.5)/_EdgeWidth),0,1);
+    clip(mat.albedoAlpha.a-0.0001);
+    
     // Setup Normals
     IN.normalWS = NormalTangentToWorld(mat.normalTS, IN.normalWS, IN.tangentWS);
     IN.normalWS = normalize(IN.normalWS);

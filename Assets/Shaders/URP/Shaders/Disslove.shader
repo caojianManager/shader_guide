@@ -8,8 +8,10 @@
         _NoiseMap("NoiseMap",2D) = "white" {}
         _EdgeColor("Edge Color",Color) = (1,1,1,1)
         _EdgeColorIntensity("EdgeColorIntensity",Float) = 1
-        _EdgeWidth("Edge Width",Float) = 0.0
-        _Amout("Amout",Range(0,1)) = 0
+        _EdgeWidth("Edge Width",Range(0,1)) = 0.0
+        _Amout("Amout",Range(0,1)) = 0              //消融进度
+        _Spreed("Spreed",Range(0.1,1)) = 1            //消融程度
+        [Toggle(_AutoDisslove)] _AutoDisslove("_AutoDisslove",Float) = 0    //是否自动进行消融动画
         
         // Surface
         _Surface("Surface", Float) = 0.0
@@ -26,12 +28,15 @@
     {
         Tags {"RenderType" = "Opaque" "RenderPipeline" = "UniversalPipeline"}
         LOD 200
-        Cull Off
-        AlphaToMask Off
         
         Pass
         {
             Tags {"LightMode" = "UniversalForwardOnly"}
+            Cull Off
+            ZWrite On
+            ZTest LEqual
+            ZClip Off
+            AlphaToMask Off
             
             HLSLPROGRAM
             
@@ -44,7 +49,6 @@
             #pragma multi_compile _ _SCREEN_SPACE_OCCLUSION
             
             // Transparency
-            #pragma shader_feature_local_fragment _SURFACE_TYPE_TRANSPARENT
             #pragma shader_feature_local_fragment _ALPHATEST_ON
             #pragma shader_feature_local_fragment _ALPHAPREMULTIPLY_ON
             
@@ -80,29 +84,30 @@
             ENDHLSL
         }
 
-//        Pass
-//        {
-//            Name "Lit_ShadowCaster"
-//            
-//            Tags {"LightMode" = "ShadowCaster"}
-//            ZWrite On
-//            ZTest LEqual
-//            ZClip Off
-//            
-//            HLSLPROGRAM
-//            #pragma shader_feature_local_fragment _ALPHATEST_ON
-//            #pragma multi_compile_instancing
-//            #include_with_pragmas "Packages/com.unity.render-pipelines.universal/ShaderLibrary/DOTS.hlsl"
-//            #pragma multi_compile_fragment _ LOD_FADE_CROSSFADE
-//            
-//            #pragma vertex Vert
-//            #pragma fragment FragmentDepthOnly
-//            #define CAST_SHADOWS_PASS
-//            #pragma multi_compile_vertex _ _CASTING_PUNCTUAL_LIGHT_SHADOW
-//            
-//            #include "../Librarys/Disslove/Disslove.hlsl"
-//
-//            ENDHLSL
-//        }
+        Pass
+        {
+            Name "Lit_ShadowCaster"
+            
+            Tags {"LightMode" = "ShadowCaster"}
+            ZWrite On
+            ZTest LEqual
+            ZClip Off
+            
+            HLSLPROGRAM
+            #pragma shader_feature_local_fragment _ALPHATEST_ON
+            #pragma multi_compile_instancing
+            #include_with_pragmas "Packages/com.unity.render-pipelines.universal/ShaderLibrary/DOTS.hlsl"
+            #pragma multi_compile_fragment _ LOD_FADE_CROSSFADE
+            
+            #pragma vertex Vert
+            #pragma fragment FragmentDepthOnly
+            #define CAST_SHADOWS_PASS
+            #pragma multi_compile_vertex _ _CASTING_PUNCTUAL_LIGHT_SHADOW
+            
+            #include "../Librarys/Disslove/Disslove.hlsl"
+
+            ENDHLSL
+        }
     }
+    CustomEditor "URPShaderEditor.DissloveEditorGUI"
 }
