@@ -164,10 +164,14 @@ void InitializeMaterialData(float2 uv,out MaterialData mat,float noiseMap_R)
     float2 baseUV = uv * _BaseMap_ST.xy + _BaseMap_ST.zw;
 
     //基础贴图
-    float4 albedoMap =  SAMPLE_TEXTURE2D(_BaseMap,sampler_BaseMap, baseUV).rgba * _BaseColor;
+    float4 albedoMap = SAMPLE_TEXTURE2D(_BaseMap,sampler_BaseMap, baseUV).rgba * _BaseColor;
     mat.albedoAlpha = albedoMap;
-    mat.normalTS = float3(1,1,1);
-    mat.emission = _EdgeColor * _EdgeColorIntensity * step((noiseMap_R - _Amout),_EdgeWidth);
+    float4 normalMap = SAMPLE_TEXTURE2D(_NormalMap,sampler_NormalMap, baseUV).rgba;
+    float3 normalTS = UnpackNormal(normalMap);
+    normalTS = float3(normalTS.rg * 1, lerp(1, normalTS.b, saturate(1)));
+    normalTS = normalize(normalTS);
+    mat.normalTS = normalTS;
+    mat.emission = float3(0,0,0);
     //金属度
     mat.metalness = 0;
     mat.occlusion = 1;

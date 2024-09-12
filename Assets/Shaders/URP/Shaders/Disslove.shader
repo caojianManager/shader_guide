@@ -15,7 +15,7 @@
         _Surface("Surface", Float) = 0.0
         _Blend("Blend", Float) = 0.0
         _AlphaClip("Alpha Clip", Range(0.0, 1.0)) = 0.0
-        
+        [HideInInspector]_NormalMap ("Normal Map", 2D) = "bump" {}
         //Advanced Properties
         [Toggle(_ReceiveFogEnabled)] _ReceiveFogEnabled ("Receive Fog", Float) = 1
         [Toggle(_ReceiveShadowsEnabled)] _ReceiveShadowsEnabled ("Receive Shadow", Float) = 1
@@ -35,43 +35,43 @@
             
             HLSLPROGRAM
             
-            // // Render Paths
-            // #pragma multi_compile _ _FORWARD_PLUS
-            //
-            // // Fog, Decals, SSAO
-            // #pragma multi_compile_fog
-            // #pragma multi_compile_fragment _ _DBUFFER_MRT1 _DBUFFER_MRT2 _DBUFFER_MRT3
-            // #pragma multi_compile _ _SCREEN_SPACE_OCCLUSION
-            //
-            // // Transparency
-            // #pragma shader_feature_local_fragment _SURFACE_TYPE_TRANSPARENT
-            // #pragma shader_feature_local_fragment _ALPHATEST_ON
-            // #pragma shader_feature_local_fragment _ALPHAPREMULTIPLY_ON
-            //
-            // // Lighting
-            // #pragma multi_compile _ _MAIN_LIGHT_SHADOWS _MAIN_LIGHT_SHADOWS_CASCADE _MAIN_LIGHT_SHADOWS_SCREEN
-            // #pragma multi_compile _ _ADDITIONAL_LIGHTS_VERTEX _ADDITIONAL_LIGHTS
-            // #pragma multi_compile _ _ADDITIONAL_LIGHT_SHADOWS
-            // #pragma multi_compile _ _SHADOWS_SOFT
-            //
-            // // Unity stuff
-            // #pragma multi_compile_fragment _ _LIGHT_LAYERS
-            // #pragma multi_compile_fragment _ _LIGHT_COOKIES
-            // #include_with_pragmas "Packages/com.unity.render-pipelines.universal/ShaderLibrary/RenderingLayers.hlsl"
-            // #pragma multi_compile_fragment _ LOD_FADE_CROSSFADE
-            //
-            // // Lightmapping
-            // #pragma multi_compile _ LIGHTMAP_SHADOW_MIXING
-            // #pragma multi_compile _ SHADOWS_SHADOWMASK
-            // #pragma multi_compile _ DIRLIGHTMAP_COMBINED
-            // #pragma multi_compile _ LIGHTMAP_ON
-            // #pragma multi_compile _ DYNAMICLIGHTMAP_ON
-            //
-            // // Instancing
-            // #pragma multi_compile_instancing
-            // #pragma instancing_options renderinglayer
-            // #include_with_pragmas "Packages/com.unity.render-pipelines.universal/ShaderLibrary/DOTS.hlsl"
-            //
+            // Render Paths
+            #pragma multi_compile _ _FORWARD_PLUS
+            
+            // Fog, Decals, SSAO
+            #pragma multi_compile_fog
+            #pragma multi_compile_fragment _ _DBUFFER_MRT1 _DBUFFER_MRT2 _DBUFFER_MRT3
+            #pragma multi_compile _ _SCREEN_SPACE_OCCLUSION
+            
+            // Transparency
+            #pragma shader_feature_local_fragment _SURFACE_TYPE_TRANSPARENT
+            #pragma shader_feature_local_fragment _ALPHATEST_ON
+            #pragma shader_feature_local_fragment _ALPHAPREMULTIPLY_ON
+            
+            // Lighting
+            #pragma multi_compile _ _MAIN_LIGHT_SHADOWS _MAIN_LIGHT_SHADOWS_CASCADE _MAIN_LIGHT_SHADOWS_SCREEN
+            #pragma multi_compile _ _ADDITIONAL_LIGHTS_VERTEX _ADDITIONAL_LIGHTS
+            #pragma multi_compile _ _ADDITIONAL_LIGHT_SHADOWS
+            #pragma multi_compile _ _SHADOWS_SOFT
+            
+            // Unity stuff
+            #pragma multi_compile_fragment _ _LIGHT_LAYERS
+            #pragma multi_compile_fragment _ _LIGHT_COOKIES
+            #include_with_pragmas "Packages/com.unity.render-pipelines.universal/ShaderLibrary/RenderingLayers.hlsl"
+            #pragma multi_compile_fragment _ LOD_FADE_CROSSFADE
+            
+            // Lightmapping
+            #pragma multi_compile _ LIGHTMAP_SHADOW_MIXING
+            #pragma multi_compile _ SHADOWS_SHADOWMASK
+            #pragma multi_compile _ DIRLIGHTMAP_COMBINED
+            #pragma multi_compile _ LIGHTMAP_ON
+            #pragma multi_compile _ DYNAMICLIGHTMAP_ON
+            
+            // Instancing
+            #pragma multi_compile_instancing
+            #pragma instancing_options renderinglayer
+            #include_with_pragmas "Packages/com.unity.render-pipelines.universal/ShaderLibrary/DOTS.hlsl"
+            
             #pragma vertex Vert;
             #pragma fragment Frag;
             #include "../Librarys/Disslove/Disslove.hlsl"

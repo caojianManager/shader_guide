@@ -7,5 +7,7 @@ TEXTURE2D(_BaseMap);
 SAMPLER(sampler_BaseMap);
 TEXTURE2D(_NoiseMap);
 SAMPLER(sampler_NoiseMap);
+TEXTURE2D(_NormalMap);
+SAMPLER(sampler_NormalMap);
 
 #endif
