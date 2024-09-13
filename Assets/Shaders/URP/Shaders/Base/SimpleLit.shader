@@ -17,7 +17,7 @@
         [Normal] _NormalMap("NormalMap",2D) = "bump" {}
         _NormalStrength("Normal Strength",Range(0,1)) = 1
         _Roughness("Roughness",Range(0,1)) = 0.0
-
+        _AlphaScale("_AlphaScale",Float) = 1
         
         // Surface
         _Surface("Surface", Float) = 0.0

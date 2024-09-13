@@ -181,6 +181,7 @@ void InitializeMaterialData(float2 uv,out MaterialData mat)
     //基础贴图
     float4 albedoMap =  SAMPLE_TEXTURE2D(_BaseMap,sampler_BaseMap, baseUV).rgba * _BaseColor;
     mat.albedoAlpha = albedoMap;
+    mat.albedoAlpha.a *= _AlphaScale;
 
     //法线
     float4 normalMap = SAMPLE_TEXTURE2D(_NormalMap,sampler_NormalMap,baseUV);

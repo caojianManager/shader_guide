@@ -43,6 +43,7 @@ namespace URPShaderEditor
             MaterialProperty _BaseColor = FindProperty("_BaseColor", properties);
             MaterialProperty _NormalMap = FindProperty("_NormalMap", properties);
             MaterialProperty _NormalStrength = FindProperty("_NormalStrength", properties);
+            MaterialProperty _AlphaScale = FindProperty("_AlphaScale", properties);
           
             MaterialProperty _ReceiveFogEnabled = FindProperty("_ReceiveFogEnabled", properties);
             MaterialProperty _ReceiveShadowsEnabled = FindProperty("_ReceiveShadowsEnabled", properties);
@@ -205,6 +206,7 @@ namespace URPShaderEditor
                     }
                     EditorGUI.indentLevel += 2;
                     materialEditor.ShaderProperty(_EmissionMapMultiply,new GUIContent("Emission Multiply Enabled"));
+                    materialEditor.ShaderProperty(_AlphaScale,new GUIContent("Alpha Scale"));
                     EditorGUI.indentLevel -= 2;
                     EditorGUILayout.Space();
                     matEditor.TextureScaleOffsetProperty(_BaseMap);

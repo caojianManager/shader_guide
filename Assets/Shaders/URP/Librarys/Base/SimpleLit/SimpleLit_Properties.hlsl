@@ -12,6 +12,7 @@ float _HasEmissionMap;
 float _AlphaClip;
 float _EmissionMapMultiply;
 float _NormalStrength;
+float _AlphaScale;
 float _Metalness;
 float4 _BaseColor;
 float4 _EmissionColor;
@@ -24,7 +25,7 @@ CBUFFER_END
 #ifdef UNITY_DOTS_INSTANCING_ENABLED
 
 UNITY_DOTS_INSTANCING_START(MaterialPropertyMetadata)
-
+    UNITY_DOTS_INSTANCED_PROP(float, _AlphaScale)
     UNITY_DOTS_INSTANCED_PROP(float, _HasMRAMap)
     UNITY_DOTS_INSTANCED_PROP(float , _Roughness)
     UNITY_DOTS_INSTANCED_PROP(float , _ReceiveFogEnabled)
@@ -38,7 +39,7 @@ UNITY_DOTS_INSTANCING_START(MaterialPropertyMetadata)
     UNITY_DOTS_INSTANCED_PROP(float4 , _BaseMap_ST)
 UNITY_DOTS_INSTANCING_END(MaterialPropertyMetadata)
 
-
+#define _AlphaScale               UNITY_ACCESS_DOTS_INSTANCED_PROP_WITH_DEFAULT(float , _AlphaScale)
 #define _HasMRAMap               UNITY_ACCESS_DOTS_INSTANCED_PROP_WITH_DEFAULT(float , _HasMRAMap)
 #define _Roughness               UNITY_ACCESS_DOTS_INSTANCED_PROP_WITH_DEFAULT(float  , _Roughness)
 #define _ReceiveFogEnabled       UNITY_ACCESS_DOTS_INSTANCED_PROP_WITH_DEFAULT(float  , _ReceiveFogEnabled)
