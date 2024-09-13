@@ -25,6 +25,7 @@ namespace URPShaderEditor
             MaterialProperty _EdgeWidth = FindProperty("_EdgeWidth", properties);
             MaterialProperty _Amout = FindProperty("_Amout", properties);
             MaterialProperty _Spreed = FindProperty("_Spreed", properties);
+            MaterialProperty _AutoDisslove = FindProperty("_AutoDisslove", properties);
             
             DrawOptions();
 
@@ -37,6 +38,7 @@ namespace URPShaderEditor
                 materialEditor.ShaderProperty(_EdgeColorIntensity,new GUIContent("Edge Color Intensity"));
                 materialEditor.ShaderProperty(_EdgeWidth,new GUIContent("Edge Width"));
                 materialEditor.ShaderProperty(_Spreed,new GUIContent("Spreed"));
+                materialEditor.ShaderProperty(_AutoDisslove,new GUIContent("AutoDisslove"));
             }
         }
     }

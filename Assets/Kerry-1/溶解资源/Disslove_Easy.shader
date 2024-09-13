@@ -456,7 +456,7 @@ Shader "Disslove"
 				float staticSwitch41 = frac( _TimeParameters.x );
 				#endif
 				float Grident16 = ( ( tex2D( _Gradient, uv_Gradient ).r - (-_Spreed + (staticSwitch41 - 0.0) * (1.0 - -_Spreed) / (1.0 - 0.0)) ) / _Spreed );
-				float clampResult24 = clamp( ( 1.0 - ( distance( Grident16 , 0.5 ) / _EdgeWidth ) ) , 0.0 , 1.0 );
+				float clampResult24 = clamp( ( 1.0 - ( distance( Grident16 , 0.0 ) / _EdgeWidth ) ) , 0.0 , 1.0 );
 				float4 lerpResult27 = lerp( tex2DNode25 , ( tex2DNode25 * _EdgeColor * _EdgeIntensity ) , clampResult24);
 				
 				float3 BakedAlbedo = 0;
@@ -1879,7 +1879,7 @@ Node;AmplifyShaderEditor.CommentaryNode;30;1488,274;Inherit;False;1064.832;336.9
 Node;AmplifyShaderEditor.StepOpNode;33;1872.793,50.44876;Inherit;False;2;0;FLOAT;0;False;1;FLOAT;0;False;1;FLOAT;0
 Node;AmplifyShaderEditor.SamplerNode;25;1536,-640;Inherit;True;Property;_MainTex;MainTex;0;0;Create;True;0;0;0;False;0;False;-1;None;None;True;0;False;white;Auto;False;Object;-1;Auto;Texture2D;8;0;SAMPLER2D;;False;1;FLOAT2;0,0;False;2;FLOAT;0;False;3;FLOAT2;0,0;False;4;FLOAT2;0,0;False;5;FLOAT;1;False;6;FLOAT;0;False;7;SAMPLERSTATE;;False;6;COLOR;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4;FLOAT3;5
 Node;AmplifyShaderEditor.DistanceOpNode;18;1792,338;Inherit;False;2;0;FLOAT;0;False;1;FLOAT;0;False;1;FLOAT;0
-Node;AmplifyShaderEditor.RangedFloatNode;17;1552,402;Inherit;False;Constant;_Float0;Float 0;1;0;Create;True;0;0;0;False;0;False;0.5;0;0;0;0;1;FLOAT;0
+Node;AmplifyShaderEditor.RangedFloatNode;17;1552,402;Inherit;False;Constant;_Float0;Float 0;1;0;Create;True;0;0;0;False;0;False;0;0;0;0;0;1;FLOAT;0
 Node;AmplifyShaderEditor.SimpleDivideOpNode;20;2000,338;Inherit;False;2;0;FLOAT;0;False;1;FLOAT;0;False;1;FLOAT;0
 Node;AmplifyShaderEditor.ClampOpNode;24;2304,354;Inherit;False;3;0;FLOAT;0;False;1;FLOAT;0;False;2;FLOAT;1;False;1;FLOAT;0
 Node;AmplifyShaderEditor.SimpleMultiplyOpNode;29;1888,-288;Inherit;False;3;3;0;COLOR;0,0,0,0;False;1;COLOR;0,0,0,0;False;2;FLOAT;0;False;1;COLOR;0
@@ -1930,4 +1930,4 @@ WireConnection;47;2;27;0
 WireConnection;47;3;34;0
 WireConnection;47;4;38;0
 ASEEND*/
-//CHKSM=9B40656EA2726E0CC72E0314604919EE01F73462
+//CHKSM=290F4CFB29D588110B09A1363F84D008A4965A22
