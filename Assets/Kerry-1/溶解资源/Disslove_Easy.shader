@@ -8,7 +8,10 @@ Shader "Disslove"
 		[HideInInspector] _EmissionColor("Emission Color", Color) = (1,1,1,1)
 		_MainTex("MainTex", 2D) = "white" {}
 		_Gradient("Gradient", 2D) = "white" {}
+		_EdgeWidth("EdgeWidth", Range( 0 , 2)) = 0.1
 		_ChangeAmount("ChangeAmount", Range( 0 , 1.1)) = 0.52
+		_EdgeIntensity("EdgeIntensity", Float) = 2
+		_EdgeColor("EdgeColor", Color) = (0,0,0,0)
 		[Toggle(_AUTODISSLOVE_ON)] _AutoDisslove("AutoDisslove", Float) = 0
 		_Spreed("Spreed", Range( 0 , 1)) = 0
 		[HideInInspector] _texcoord( "", 2D ) = "white" {}
@@ -180,6 +183,7 @@ Shader "Disslove"
 			#pragma multi_compile _ LOD_FADE_CROSSFADE
 			#pragma multi_compile_fog
 			#define ASE_FOG 1
+			#define _ALPHATEST_ON 1
 			#define ASE_SRP_VERSION 140011
 
 
@@ -269,9 +273,12 @@ Shader "Disslove"
 
 			CBUFFER_START(UnityPerMaterial)
 			float4 _MainTex_ST;
+			float4 _EdgeColor;
 			float4 _Gradient_ST;
+			float _EdgeIntensity;
 			float _ChangeAmount;
 			float _Spreed;
+			float _EdgeWidth;
 			#ifdef ASE_TESSELLATION
 				float _TessPhongStrength;
 				float _TessValue;
@@ -449,12 +456,13 @@ Shader "Disslove"
 				float staticSwitch41 = frac( _TimeParameters.x );
 				#endif
 				float Grident16 = ( ( tex2D( _Gradient, uv_Gradient ).r - (-_Spreed + (staticSwitch41 - 0.0) * (1.0 - -_Spreed) / (1.0 - 0.0)) ) / _Spreed );
-				float3 temp_cast_0 = (( tex2DNode25.a * step( 0.0 , Grident16 ) )).xxx;
+				float clampResult24 = clamp( ( 1.0 - ( distance( Grident16 , 0.5 ) / _EdgeWidth ) ) , 0.0 , 1.0 );
+				float4 lerpResult27 = lerp( tex2DNode25 , ( tex2DNode25 * _EdgeColor * _EdgeIntensity ) , clampResult24);
 				
 				float3 BakedAlbedo = 0;
 				float3 BakedEmission = 0;
-				float3 Color = temp_cast_0;
-				float Alpha = 1;
+				float3 Color = lerpResult27.rgb;
+				float Alpha = ( tex2DNode25.a * step( 0.0 , Grident16 ) );
 				float AlphaClipThreshold = 0.5;
 				float AlphaClipThresholdShadow = 0.5;
 
@@ -503,6 +511,7 @@ Shader "Disslove"
 			#pragma multi_compile_instancing
 			#pragma multi_compile _ LOD_FADE_CROSSFADE
 			#define ASE_FOG 1
+			#define _ALPHATEST_ON 1
 			#define ASE_SRP_VERSION 140011
 
 
@@ -530,13 +539,14 @@ Shader "Disslove"
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/LODCrossFade.hlsl"
             #endif
 
-			
+			#pragma shader_feature_local _AUTODISSLOVE_ON
+
 
 			struct VertexInput
 			{
 				float4 positionOS : POSITION;
 				float3 normalOS : NORMAL;
-				
+				float4 ase_texcoord : TEXCOORD0;
 				UNITY_VERTEX_INPUT_INSTANCE_ID
 			};
 
@@ -549,16 +559,19 @@ Shader "Disslove"
 				#if defined(REQUIRES_VERTEX_SHADOW_COORD_INTERPOLATOR) && defined(ASE_NEEDS_FRAG_SHADOWCOORDS)
 					float4 shadowCoord : TEXCOORD1;
 				#endif
-				
+				float4 ase_texcoord2 : TEXCOORD2;
 				UNITY_VERTEX_INPUT_INSTANCE_ID
 				UNITY_VERTEX_OUTPUT_STEREO
 			};
 
 			CBUFFER_START(UnityPerMaterial)
 			float4 _MainTex_ST;
+			float4 _EdgeColor;
 			float4 _Gradient_ST;
+			float _EdgeIntensity;
 			float _ChangeAmount;
 			float _Spreed;
+			float _EdgeWidth;
 			#ifdef ASE_TESSELLATION
 				float _TessPhongStrength;
 				float _TessValue;
@@ -569,7 +582,9 @@ Shader "Disslove"
 			#endif
 			CBUFFER_END
 
-			
+			sampler2D _MainTex;
+			sampler2D _Gradient;
+
 
 			
 			float3 _LightDirection;
@@ -582,7 +597,10 @@ Shader "Disslove"
 				UNITY_TRANSFER_INSTANCE_ID(v, o);
 				UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO( o );
 
+				o.ase_texcoord2.xy = v.ase_texcoord.xy;
 				
+				//setting value to unused interpolator channels and avoid initialization warnings
+				o.ase_texcoord2.zw = 0;
 
 				#ifdef ASE_ABSOLUTE_VERTEX_POS
 					float3 defaultVertexValue = v.positionOS.xyz;
@@ -639,7 +657,8 @@ Shader "Disslove"
 			{
 				float4 vertex : INTERNALTESSPOS;
 				float3 normalOS : NORMAL;
-				
+				float4 ase_texcoord : TEXCOORD0;
+
 				UNITY_VERTEX_INPUT_INSTANCE_ID
 			};
 
@@ -656,7 +675,7 @@ Shader "Disslove"
 				UNITY_TRANSFER_INSTANCE_ID(v, o);
 				o.vertex = v.positionOS;
 				o.normalOS = v.normalOS;
-				
+				o.ase_texcoord = v.ase_texcoord;
 				return o;
 			}
 
@@ -695,7 +714,7 @@ Shader "Disslove"
 				VertexInput o = (VertexInput) 0;
 				o.positionOS = patch[0].vertex * bary.x + patch[1].vertex * bary.y + patch[2].vertex * bary.z;
 				o.normalOS = patch[0].normalOS * bary.x + patch[1].normalOS * bary.y + patch[2].normalOS * bary.z;
-				
+				o.ase_texcoord = patch[0].ase_texcoord * bary.x + patch[1].ase_texcoord * bary.y + patch[2].ase_texcoord * bary.z;
 				#if defined(ASE_PHONG_TESSELLATION)
 				float3 pp[3];
 				for (int i = 0; i < 3; ++i)
@@ -732,9 +751,18 @@ Shader "Disslove"
 					#endif
 				#endif
 
+				float2 uv_MainTex = IN.ase_texcoord2.xy * _MainTex_ST.xy + _MainTex_ST.zw;
+				float4 tex2DNode25 = tex2D( _MainTex, uv_MainTex );
+				float2 uv_Gradient = IN.ase_texcoord2.xy * _Gradient_ST.xy + _Gradient_ST.zw;
+				#ifdef _AUTODISSLOVE_ON
+				float staticSwitch41 = _ChangeAmount;
+				#else
+				float staticSwitch41 = frac( _TimeParameters.x );
+				#endif
+				float Grident16 = ( ( tex2D( _Gradient, uv_Gradient ).r - (-_Spreed + (staticSwitch41 - 0.0) * (1.0 - -_Spreed) / (1.0 - 0.0)) ) / _Spreed );
 				
 
-				float Alpha = 1;
+				float Alpha = ( tex2DNode25.a * step( 0.0 , Grident16 ) );
 				float AlphaClipThreshold = 0.5;
 				float AlphaClipThresholdShadow = 0.5;
 
@@ -773,6 +801,7 @@ Shader "Disslove"
 			#pragma multi_compile_instancing
 			#pragma multi_compile _ LOD_FADE_CROSSFADE
 			#define ASE_FOG 1
+			#define _ALPHATEST_ON 1
 			#define ASE_SRP_VERSION 140011
 
 
@@ -796,13 +825,14 @@ Shader "Disslove"
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/LODCrossFade.hlsl"
             #endif
 
-			
+			#pragma shader_feature_local _AUTODISSLOVE_ON
+
 
 			struct VertexInput
 			{
 				float4 positionOS : POSITION;
 				float3 normalOS : NORMAL;
-				
+				float4 ase_texcoord : TEXCOORD0;
 				UNITY_VERTEX_INPUT_INSTANCE_ID
 			};
 
@@ -816,16 +846,19 @@ Shader "Disslove"
 				#if defined(REQUIRES_VERTEX_SHADOW_COORD_INTERPOLATOR) && defined(ASE_NEEDS_FRAG_SHADOWCOORDS)
 				float4 shadowCoord : TEXCOORD2;
 				#endif
-				
+				float4 ase_texcoord3 : TEXCOORD3;
 				UNITY_VERTEX_INPUT_INSTANCE_ID
 				UNITY_VERTEX_OUTPUT_STEREO
 			};
 
 			CBUFFER_START(UnityPerMaterial)
 			float4 _MainTex_ST;
+			float4 _EdgeColor;
 			float4 _Gradient_ST;
+			float _EdgeIntensity;
 			float _ChangeAmount;
 			float _Spreed;
+			float _EdgeWidth;
 			#ifdef ASE_TESSELLATION
 				float _TessPhongStrength;
 				float _TessValue;
@@ -836,7 +869,9 @@ Shader "Disslove"
 			#endif
 			CBUFFER_END
 
-			
+			sampler2D _MainTex;
+			sampler2D _Gradient;
+
 
 			
 			VertexOutput VertexFunction( VertexInput v  )
@@ -846,7 +881,10 @@ Shader "Disslove"
 				UNITY_TRANSFER_INSTANCE_ID(v, o);
 				UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
 
+				o.ase_texcoord3.xy = v.ase_texcoord.xy;
 				
+				//setting value to unused interpolator channels and avoid initialization warnings
+				o.ase_texcoord3.zw = 0;
 
 				#ifdef ASE_ABSOLUTE_VERTEX_POS
 					float3 defaultVertexValue = v.positionOS.xyz;
@@ -884,7 +922,8 @@ Shader "Disslove"
 			{
 				float4 vertex : INTERNALTESSPOS;
 				float3 normalOS : NORMAL;
-				
+				float4 ase_texcoord : TEXCOORD0;
+
 				UNITY_VERTEX_INPUT_INSTANCE_ID
 			};
 
@@ -901,7 +940,7 @@ Shader "Disslove"
 				UNITY_TRANSFER_INSTANCE_ID(v, o);
 				o.vertex = v.positionOS;
 				o.normalOS = v.normalOS;
-				
+				o.ase_texcoord = v.ase_texcoord;
 				return o;
 			}
 
@@ -940,7 +979,7 @@ Shader "Disslove"
 				VertexInput o = (VertexInput) 0;
 				o.positionOS = patch[0].vertex * bary.x + patch[1].vertex * bary.y + patch[2].vertex * bary.z;
 				o.normalOS = patch[0].normalOS * bary.x + patch[1].normalOS * bary.y + patch[2].normalOS * bary.z;
-				
+				o.ase_texcoord = patch[0].ase_texcoord * bary.x + patch[1].ase_texcoord * bary.y + patch[2].ase_texcoord * bary.z;
 				#if defined(ASE_PHONG_TESSELLATION)
 				float3 pp[3];
 				for (int i = 0; i < 3; ++i)
@@ -980,9 +1019,18 @@ Shader "Disslove"
 					#endif
 				#endif
 
+				float2 uv_MainTex = IN.ase_texcoord3.xy * _MainTex_ST.xy + _MainTex_ST.zw;
+				float4 tex2DNode25 = tex2D( _MainTex, uv_MainTex );
+				float2 uv_Gradient = IN.ase_texcoord3.xy * _Gradient_ST.xy + _Gradient_ST.zw;
+				#ifdef _AUTODISSLOVE_ON
+				float staticSwitch41 = _ChangeAmount;
+				#else
+				float staticSwitch41 = frac( _TimeParameters.x );
+				#endif
+				float Grident16 = ( ( tex2D( _Gradient, uv_Gradient ).r - (-_Spreed + (staticSwitch41 - 0.0) * (1.0 - -_Spreed) / (1.0 - 0.0)) ) / _Spreed );
 				
 
-				float Alpha = 1;
+				float Alpha = ( tex2DNode25.a * step( 0.0 , Grident16 ) );
 				float AlphaClipThreshold = 0.5;
 
 				#ifdef _ALPHATEST_ON
@@ -1012,6 +1060,7 @@ Shader "Disslove"
 			
 
 			#define ASE_FOG 1
+			#define _ALPHATEST_ON 1
 			#define ASE_SRP_VERSION 140011
 
 
@@ -1053,29 +1102,33 @@ Shader "Disslove"
 			#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/ShaderGraphFunctions.hlsl"
 			#include "Packages/com.unity.render-pipelines.universal/Editor/ShaderGraph/Includes/ShaderPass.hlsl"
 
-			
+			#pragma shader_feature_local _AUTODISSLOVE_ON
+
 
 			struct VertexInput
 			{
 				float4 positionOS : POSITION;
 				float3 normalOS : NORMAL;
-				
+				float4 ase_texcoord : TEXCOORD0;
 				UNITY_VERTEX_INPUT_INSTANCE_ID
 			};
 
 			struct VertexOutput
 			{
 				float4 positionCS : SV_POSITION;
-				
+				float4 ase_texcoord : TEXCOORD0;
 				UNITY_VERTEX_INPUT_INSTANCE_ID
 				UNITY_VERTEX_OUTPUT_STEREO
 			};
 
 			CBUFFER_START(UnityPerMaterial)
 			float4 _MainTex_ST;
+			float4 _EdgeColor;
 			float4 _Gradient_ST;
+			float _EdgeIntensity;
 			float _ChangeAmount;
 			float _Spreed;
+			float _EdgeWidth;
 			#ifdef ASE_TESSELLATION
 				float _TessPhongStrength;
 				float _TessValue;
@@ -1086,7 +1139,9 @@ Shader "Disslove"
 			#endif
 			CBUFFER_END
 
-			
+			sampler2D _MainTex;
+			sampler2D _Gradient;
+
 
 			
 			int _ObjectId;
@@ -1107,7 +1162,10 @@ Shader "Disslove"
 				UNITY_TRANSFER_INSTANCE_ID(v, o);
 				UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
 
+				o.ase_texcoord.xy = v.ase_texcoord.xy;
 				
+				//setting value to unused interpolator channels and avoid initialization warnings
+				o.ase_texcoord.zw = 0;
 
 				#ifdef ASE_ABSOLUTE_VERTEX_POS
 					float3 defaultVertexValue = v.positionOS.xyz;
@@ -1137,7 +1195,8 @@ Shader "Disslove"
 			{
 				float4 vertex : INTERNALTESSPOS;
 				float3 normalOS : NORMAL;
-				
+				float4 ase_texcoord : TEXCOORD0;
+
 				UNITY_VERTEX_INPUT_INSTANCE_ID
 			};
 
@@ -1154,7 +1213,7 @@ Shader "Disslove"
 				UNITY_TRANSFER_INSTANCE_ID(v, o);
 				o.vertex = v.positionOS;
 				o.normalOS = v.normalOS;
-				
+				o.ase_texcoord = v.ase_texcoord;
 				return o;
 			}
 
@@ -1193,7 +1252,7 @@ Shader "Disslove"
 				VertexInput o = (VertexInput) 0;
 				o.positionOS = patch[0].vertex * bary.x + patch[1].vertex * bary.y + patch[2].vertex * bary.z;
 				o.normalOS = patch[0].normalOS * bary.x + patch[1].normalOS * bary.y + patch[2].normalOS * bary.z;
-				
+				o.ase_texcoord = patch[0].ase_texcoord * bary.x + patch[1].ase_texcoord * bary.y + patch[2].ase_texcoord * bary.z;
 				#if defined(ASE_PHONG_TESSELLATION)
 				float3 pp[3];
 				for (int i = 0; i < 3; ++i)
@@ -1215,9 +1274,18 @@ Shader "Disslove"
 			{
 				SurfaceDescription surfaceDescription = (SurfaceDescription)0;
 
+				float2 uv_MainTex = IN.ase_texcoord.xy * _MainTex_ST.xy + _MainTex_ST.zw;
+				float4 tex2DNode25 = tex2D( _MainTex, uv_MainTex );
+				float2 uv_Gradient = IN.ase_texcoord.xy * _Gradient_ST.xy + _Gradient_ST.zw;
+				#ifdef _AUTODISSLOVE_ON
+				float staticSwitch41 = _ChangeAmount;
+				#else
+				float staticSwitch41 = frac( _TimeParameters.x );
+				#endif
+				float Grident16 = ( ( tex2D( _Gradient, uv_Gradient ).r - (-_Spreed + (staticSwitch41 - 0.0) * (1.0 - -_Spreed) / (1.0 - 0.0)) ) / _Spreed );
 				
 
-				surfaceDescription.Alpha = 1;
+				surfaceDescription.Alpha = ( tex2DNode25.a * step( 0.0 , Grident16 ) );
 				surfaceDescription.AlphaClipThreshold = 0.5;
 
 				#if _ALPHATEST_ON
@@ -1248,6 +1316,7 @@ Shader "Disslove"
 			
 
 			#define ASE_FOG 1
+			#define _ALPHATEST_ON 1
 			#define ASE_SRP_VERSION 140011
 
 
@@ -1294,29 +1363,33 @@ Shader "Disslove"
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/LODCrossFade.hlsl"
             #endif
 
-			
+			#pragma shader_feature_local _AUTODISSLOVE_ON
+
 
 			struct VertexInput
 			{
 				float4 positionOS : POSITION;
 				float3 normalOS : NORMAL;
-				
+				float4 ase_texcoord : TEXCOORD0;
 				UNITY_VERTEX_INPUT_INSTANCE_ID
 			};
 
 			struct VertexOutput
 			{
 				float4 positionCS : SV_POSITION;
-				
+				float4 ase_texcoord : TEXCOORD0;
 				UNITY_VERTEX_INPUT_INSTANCE_ID
 				UNITY_VERTEX_OUTPUT_STEREO
 			};
 
 			CBUFFER_START(UnityPerMaterial)
 			float4 _MainTex_ST;
+			float4 _EdgeColor;
 			float4 _Gradient_ST;
+			float _EdgeIntensity;
 			float _ChangeAmount;
 			float _Spreed;
+			float _EdgeWidth;
 			#ifdef ASE_TESSELLATION
 				float _TessPhongStrength;
 				float _TessValue;
@@ -1327,7 +1400,9 @@ Shader "Disslove"
 			#endif
 			CBUFFER_END
 
-			
+			sampler2D _MainTex;
+			sampler2D _Gradient;
+
 
 			
 			float4 _SelectionID;
@@ -1347,7 +1422,10 @@ Shader "Disslove"
 				UNITY_TRANSFER_INSTANCE_ID(v, o);
 				UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
 
+				o.ase_texcoord.xy = v.ase_texcoord.xy;
 				
+				//setting value to unused interpolator channels and avoid initialization warnings
+				o.ase_texcoord.zw = 0;
 
 				#ifdef ASE_ABSOLUTE_VERTEX_POS
 					float3 defaultVertexValue = v.positionOS.xyz;
@@ -1375,7 +1453,8 @@ Shader "Disslove"
 			{
 				float4 vertex : INTERNALTESSPOS;
 				float3 normalOS : NORMAL;
-				
+				float4 ase_texcoord : TEXCOORD0;
+
 				UNITY_VERTEX_INPUT_INSTANCE_ID
 			};
 
@@ -1392,7 +1471,7 @@ Shader "Disslove"
 				UNITY_TRANSFER_INSTANCE_ID(v, o);
 				o.vertex = v.positionOS;
 				o.normalOS = v.normalOS;
-				
+				o.ase_texcoord = v.ase_texcoord;
 				return o;
 			}
 
@@ -1431,7 +1510,7 @@ Shader "Disslove"
 				VertexInput o = (VertexInput) 0;
 				o.positionOS = patch[0].vertex * bary.x + patch[1].vertex * bary.y + patch[2].vertex * bary.z;
 				o.normalOS = patch[0].normalOS * bary.x + patch[1].normalOS * bary.y + patch[2].normalOS * bary.z;
-				
+				o.ase_texcoord = patch[0].ase_texcoord * bary.x + patch[1].ase_texcoord * bary.y + patch[2].ase_texcoord * bary.z;
 				#if defined(ASE_PHONG_TESSELLATION)
 				float3 pp[3];
 				for (int i = 0; i < 3; ++i)
@@ -1453,9 +1532,18 @@ Shader "Disslove"
 			{
 				SurfaceDescription surfaceDescription = (SurfaceDescription)0;
 
+				float2 uv_MainTex = IN.ase_texcoord.xy * _MainTex_ST.xy + _MainTex_ST.zw;
+				float4 tex2DNode25 = tex2D( _MainTex, uv_MainTex );
+				float2 uv_Gradient = IN.ase_texcoord.xy * _Gradient_ST.xy + _Gradient_ST.zw;
+				#ifdef _AUTODISSLOVE_ON
+				float staticSwitch41 = _ChangeAmount;
+				#else
+				float staticSwitch41 = frac( _TimeParameters.x );
+				#endif
+				float Grident16 = ( ( tex2D( _Gradient, uv_Gradient ).r - (-_Spreed + (staticSwitch41 - 0.0) * (1.0 - -_Spreed) / (1.0 - 0.0)) ) / _Spreed );
 				
 
-				surfaceDescription.Alpha = 1;
+				surfaceDescription.Alpha = ( tex2DNode25.a * step( 0.0 , Grident16 ) );
 				surfaceDescription.AlphaClipThreshold = 0.5;
 
 				#if _ALPHATEST_ON
@@ -1492,6 +1580,7 @@ Shader "Disslove"
         	#pragma multi_compile_instancing
         	#pragma multi_compile _ LOD_FADE_CROSSFADE
         	#define ASE_FOG 1
+        	#define _ALPHATEST_ON 1
         	#define ASE_SRP_VERSION 140011
 
 
@@ -1543,13 +1632,14 @@ Shader "Disslove"
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/LODCrossFade.hlsl"
             #endif
 
-			
+			#pragma shader_feature_local _AUTODISSLOVE_ON
+
 
 			struct VertexInput
 			{
 				float4 positionOS : POSITION;
 				float3 normalOS : NORMAL;
-				
+				float4 ase_texcoord : TEXCOORD0;
 				UNITY_VERTEX_INPUT_INSTANCE_ID
 			};
 
@@ -1558,16 +1648,19 @@ Shader "Disslove"
 				float4 positionCS : SV_POSITION;
 				float4 clipPosV : TEXCOORD0;
 				float3 normalWS : TEXCOORD1;
-				
+				float4 ase_texcoord2 : TEXCOORD2;
 				UNITY_VERTEX_INPUT_INSTANCE_ID
 				UNITY_VERTEX_OUTPUT_STEREO
 			};
 
 			CBUFFER_START(UnityPerMaterial)
 			float4 _MainTex_ST;
+			float4 _EdgeColor;
 			float4 _Gradient_ST;
+			float _EdgeIntensity;
 			float _ChangeAmount;
 			float _Spreed;
+			float _EdgeWidth;
 			#ifdef ASE_TESSELLATION
 				float _TessPhongStrength;
 				float _TessValue;
@@ -1578,7 +1671,9 @@ Shader "Disslove"
 			#endif
 			CBUFFER_END
 
-			
+			sampler2D _MainTex;
+			sampler2D _Gradient;
+
 
 			
 			struct SurfaceDescription
@@ -1596,7 +1691,10 @@ Shader "Disslove"
 				UNITY_TRANSFER_INSTANCE_ID(v, o);
 				UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
 
+				o.ase_texcoord2.xy = v.ase_texcoord.xy;
 				
+				//setting value to unused interpolator channels and avoid initialization warnings
+				o.ase_texcoord2.zw = 0;
 
 				#ifdef ASE_ABSOLUTE_VERTEX_POS
 					float3 defaultVertexValue = v.positionOS.xyz;
@@ -1627,7 +1725,8 @@ Shader "Disslove"
 			{
 				float4 vertex : INTERNALTESSPOS;
 				float3 normalOS : NORMAL;
-				
+				float4 ase_texcoord : TEXCOORD0;
+
 				UNITY_VERTEX_INPUT_INSTANCE_ID
 			};
 
@@ -1644,7 +1743,7 @@ Shader "Disslove"
 				UNITY_TRANSFER_INSTANCE_ID(v, o);
 				o.vertex = v.positionOS;
 				o.normalOS = v.normalOS;
-				
+				o.ase_texcoord = v.ase_texcoord;
 				return o;
 			}
 
@@ -1683,7 +1782,7 @@ Shader "Disslove"
 				VertexInput o = (VertexInput) 0;
 				o.positionOS = patch[0].vertex * bary.x + patch[1].vertex * bary.y + patch[2].vertex * bary.z;
 				o.normalOS = patch[0].normalOS * bary.x + patch[1].normalOS * bary.y + patch[2].normalOS * bary.z;
-				
+				o.ase_texcoord = patch[0].ase_texcoord * bary.x + patch[1].ase_texcoord * bary.y + patch[2].ase_texcoord * bary.z;
 				#if defined(ASE_PHONG_TESSELLATION)
 				float3 pp[3];
 				for (int i = 0; i < 3; ++i)
@@ -1711,9 +1810,18 @@ Shader "Disslove"
 				float4 ClipPos = IN.clipPosV;
 				float4 ScreenPos = ComputeScreenPos( IN.clipPosV );
 
+				float2 uv_MainTex = IN.ase_texcoord2.xy * _MainTex_ST.xy + _MainTex_ST.zw;
+				float4 tex2DNode25 = tex2D( _MainTex, uv_MainTex );
+				float2 uv_Gradient = IN.ase_texcoord2.xy * _Gradient_ST.xy + _Gradient_ST.zw;
+				#ifdef _AUTODISSLOVE_ON
+				float staticSwitch41 = _ChangeAmount;
+				#else
+				float staticSwitch41 = frac( _TimeParameters.x );
+				#endif
+				float Grident16 = ( ( tex2D( _Gradient, uv_Gradient ).r - (-_Spreed + (staticSwitch41 - 0.0) * (1.0 - -_Spreed) / (1.0 - 0.0)) ) / _Spreed );
 				
 
-				float Alpha = 1;
+				float Alpha = ( tex2DNode25.a * step( 0.0 , Grident16 ) );
 				float AlphaClipThreshold = 0.5;
 
 				#if _ALPHATEST_ON
@@ -1755,7 +1863,6 @@ Shader "Disslove"
 /*ASEBEGIN
 Version=19603
 Node;AmplifyShaderEditor.CommentaryNode;14;-1104,-400;Inherit;False;1658.301;802.0532;Gradient;11;16;45;11;13;12;44;42;41;10;40;39;Gradient;1,1,1,1;0;0
-Node;AmplifyShaderEditor.CommentaryNode;30;1488,274;Inherit;False;1064.832;336.9433;EdgeColor;6;21;24;22;20;17;18;EdgeColor;1,1,1,1;0;0
 Node;AmplifyShaderEditor.SimpleTimeNode;39;-1040,32;Inherit;False;1;0;FLOAT;1;False;1;FLOAT;0
 Node;AmplifyShaderEditor.FractNode;40;-848,32;Inherit;False;1;0;FLOAT;0;False;1;FLOAT;0
 Node;AmplifyShaderEditor.RangedFloatNode;10;-1040,144;Inherit;False;Property;_ChangeAmount;ChangeAmount;3;0;Create;True;0;0;0;False;0;False;0.52;0.52;0;1.1;0;1;FLOAT;0
@@ -1768,6 +1875,7 @@ Node;AmplifyShaderEditor.SimpleSubtractOpNode;13;-112,-112;Inherit;False;2;0;FLO
 Node;AmplifyShaderEditor.SimpleDivideOpNode;45;48,48;Inherit;False;2;0;FLOAT;0;False;1;FLOAT;0;False;1;FLOAT;0
 Node;AmplifyShaderEditor.RegisterLocalVarNode;16;192,48;Inherit;False;Grident;-1;True;1;0;FLOAT;0;False;1;FLOAT;0
 Node;AmplifyShaderEditor.GetLocalVarNode;19;1488,82;Inherit;False;16;Grident;1;0;OBJECT;;False;1;FLOAT;0
+Node;AmplifyShaderEditor.CommentaryNode;30;1488,274;Inherit;False;1064.832;336.9433;EdgeColor;6;21;24;22;20;17;18;EdgeColor;1,1,1,1;0;0
 Node;AmplifyShaderEditor.StepOpNode;33;1872.793,50.44876;Inherit;False;2;0;FLOAT;0;False;1;FLOAT;0;False;1;FLOAT;0
 Node;AmplifyShaderEditor.SamplerNode;25;1536,-640;Inherit;True;Property;_MainTex;MainTex;0;0;Create;True;0;0;0;False;0;False;-1;None;None;True;0;False;white;Auto;False;Object;-1;Auto;Texture2D;8;0;SAMPLER2D;;False;1;FLOAT2;0,0;False;2;FLOAT;0;False;3;FLOAT2;0,0;False;4;FLOAT2;0,0;False;5;FLOAT;1;False;6;FLOAT;0;False;7;SAMPLERSTATE;;False;6;COLOR;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4;FLOAT3;5
 Node;AmplifyShaderEditor.DistanceOpNode;18;1792,338;Inherit;False;2;0;FLOAT;0;False;1;FLOAT;0;False;1;FLOAT;0
@@ -1777,11 +1885,11 @@ Node;AmplifyShaderEditor.ClampOpNode;24;2304,354;Inherit;False;3;0;FLOAT;0;False
 Node;AmplifyShaderEditor.SimpleMultiplyOpNode;29;1888,-288;Inherit;False;3;3;0;COLOR;0,0,0,0;False;1;COLOR;0,0,0,0;False;2;FLOAT;0;False;1;COLOR;0
 Node;AmplifyShaderEditor.ColorNode;26;1568,-320;Inherit;False;Property;_EdgeColor;EdgeColor;5;0;Create;True;0;0;0;False;0;False;0,0,0,0;0,0,0,0;True;True;0;6;COLOR;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4;FLOAT3;5
 Node;AmplifyShaderEditor.RangedFloatNode;28;1584,-96;Inherit;False;Property;_EdgeIntensity;EdgeIntensity;4;0;Create;True;0;0;0;False;0;False;2;0;0;0;0;1;FLOAT;0
-Node;AmplifyShaderEditor.LerpOp;27;2432,-640;Inherit;False;3;0;COLOR;0,0,0,0;False;1;COLOR;0,0,0,0;False;2;COLOR;0,0,0,0;False;1;COLOR;0
+Node;AmplifyShaderEditor.LerpOp;27;2432,-640;Inherit;False;3;0;COLOR;0,0,0,0;False;1;COLOR;0,0,0,0;False;2;FLOAT;0;False;1;COLOR;0
 Node;AmplifyShaderEditor.SimpleMultiplyOpNode;34;2160,-224;Inherit;False;2;2;0;FLOAT;0;False;1;FLOAT;0;False;1;FLOAT;0
 Node;AmplifyShaderEditor.OneMinusNode;22;2144,354;Inherit;True;1;0;FLOAT;0;False;1;FLOAT;0
 Node;AmplifyShaderEditor.RangedFloatNode;21;1664,496;Inherit;False;Property;_EdgeWidth;EdgeWidth;2;0;Create;True;0;0;0;False;0;False;0.1;0.1;0;2;0;1;FLOAT;0
-Node;AmplifyShaderEditor.RangedFloatNode;38;2224,-32;Inherit;False;Constant;_Float1;Float 1;6;0;Create;True;0;0;0;False;0;False;0.001;0;0;0;0;1;FLOAT;0
+Node;AmplifyShaderEditor.RangedFloatNode;38;2224,-32;Inherit;False;Constant;_Float1;Float 1;6;0;Create;True;0;0;0;False;0;False;0.5;0;0;0;0;1;FLOAT;0
 Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;46;2784,-176;Float;False;False;-1;2;UnityEditor.ShaderGraphUnlitGUI;0;1;New Amplify Shader;2992e84f91cbeb14eab234972e07ea9d;True;ExtraPrePass;0;0;ExtraPrePass;5;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;True;0;False;;False;False;False;False;False;False;False;False;False;True;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;False;False;False;True;4;RenderPipeline=UniversalPipeline;RenderType=Opaque=RenderType;Queue=Geometry=Queue=0;UniversalMaterialType=Unlit;True;5;True;12;all;0;False;True;1;1;False;;0;False;;0;1;False;;0;False;;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;True;True;True;True;True;0;False;;False;False;False;False;False;False;False;True;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;True;1;False;;True;3;False;;True;True;0;False;;0;False;;True;0;False;False;0;;0;0;Standard;0;False;0
 Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;48;2784,-176;Float;False;False;-1;2;UnityEditor.ShaderGraphUnlitGUI;0;1;New Amplify Shader;2992e84f91cbeb14eab234972e07ea9d;True;ShadowCaster;0;2;ShadowCaster;0;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;True;0;False;;False;False;False;False;False;False;False;False;False;True;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;False;False;False;True;4;RenderPipeline=UniversalPipeline;RenderType=Opaque=RenderType;Queue=Geometry=Queue=0;UniversalMaterialType=Unlit;True;5;True;12;all;0;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;False;False;True;False;False;False;False;0;False;;False;False;False;False;False;False;False;False;False;True;1;False;;True;3;False;;False;True;1;LightMode=ShadowCaster;False;False;0;;0;0;Standard;0;False;0
 Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;49;2784,-176;Float;False;False;-1;2;UnityEditor.ShaderGraphUnlitGUI;0;1;New Amplify Shader;2992e84f91cbeb14eab234972e07ea9d;True;DepthOnly;0;3;DepthOnly;0;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;True;0;False;;False;False;False;False;False;False;False;False;False;True;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;False;False;False;True;4;RenderPipeline=UniversalPipeline;RenderType=Opaque=RenderType;Queue=Geometry=Queue=0;UniversalMaterialType=Unlit;True;5;True;12;all;0;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;False;False;True;True;False;False;False;0;False;;False;False;False;False;False;False;False;False;False;True;1;False;;False;False;True;1;LightMode=DepthOnly;False;False;0;;0;0;Standard;0;False;0
@@ -1814,9 +1922,12 @@ WireConnection;29;1;26;0
 WireConnection;29;2;28;0
 WireConnection;27;0;25;0
 WireConnection;27;1;29;0
+WireConnection;27;2;24;0
 WireConnection;34;0;25;4
 WireConnection;34;1;33;0
 WireConnection;22;0;20;0
-WireConnection;47;2;34;0
+WireConnection;47;2;27;0
+WireConnection;47;3;34;0
+WireConnection;47;4;38;0
 ASEEND*/
-//CHKSM=96D9C561DF2A1B226ED884AD4E18C5674E049469
+//CHKSM=9B40656EA2726E0CC72E0314604919EE01F73462

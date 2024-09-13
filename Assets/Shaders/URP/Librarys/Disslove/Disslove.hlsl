@@ -179,10 +179,8 @@ void InitializeMaterialData(float2 uv,out MaterialData mat)
     float4 albedoMap = SAMPLE_TEXTURE2D(_BaseMap,sampler_BaseMap, baseUV).rgba * _BaseColor;
     float noiseValue = NoiseValue(uv);
     float colorLerp = ColorLerp(noiseValue);
-    // albedoMap.rgb = lerp(albedoMap.rgb,albedoMap.rgb*_EdgeColor*_EdgeColorIntensity,0.5);
-    albedoMap.rgb = clamp(1-(distance(normalize(noiseValue),0.5)/_EdgeWidth),0,1);
+    albedoMap.rgb = lerp(albedoMap.rgb,albedoMap.rgb*_EdgeColor*_EdgeColorIntensity,colorLerp);
     albedoMap.a *= step(0.5,noiseValue);
-    albedoMap = noiseValue;
     mat.albedoAlpha = albedoMap;
     float4 normalMap = SAMPLE_TEXTURE2D(_NormalMap,sampler_NormalMap, baseUV).rgba;
     float3 normalTS = UnpackNormal(normalMap);
@@ -220,8 +218,6 @@ float4 Frag(Varyings IN) : SV_TARGET
     
     //噪声贴图
     InitializeMaterialData(IN.uv,mat);
-    float noiseValue = NoiseValue(IN.uv);
-    return clamp(1-(distance(noiseValue,0.5)/_EdgeWidth),0,1);
     clip(mat.albedoAlpha.a-0.0001);
     
     // Setup Normals
