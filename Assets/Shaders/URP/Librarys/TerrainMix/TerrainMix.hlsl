@@ -208,11 +208,11 @@ void InitializeMaterialData(float2 uv,out MaterialData mat)
     float2 uv4 = uv * _Layer4_BaseMap_ST.xy + _Layer4_BaseMap_ST.zw;
     
     //计算混合因子
-    float4 layer1_mrah = SAMPLE_TEXTURE2D(_Layer1_MRAH,sampler_Layer1_MRAH, uv1);
+    float4 layer1_mrah = SAMPLE_TEXTURE2D(_Layer1_MRAH,sampler_Layer1_BaseMap, uv1);
     float layer1_height = CheapContrast(layer1_mrah.w, _Layer1_HeightContrast);
     float layer1_w = blendMap.x + layer1_height;
 
-    float4 layer2_mrah = SAMPLE_TEXTURE2D(_Layer2_MRAH,sampler_Layer2_MRAH, uv2);
+    float4 layer2_mrah = SAMPLE_TEXTURE2D(_Layer2_MRAH,sampler_Layer2_BaseMap, uv2);
     float layer2_height = 0;
     float layer2_w = 0;
     if(_Layer2_Enable)
@@ -221,7 +221,7 @@ void InitializeMaterialData(float2 uv,out MaterialData mat)
         layer2_w = blendMap.y + layer2_height;
     }
 
-    float4 layer3_mrah = SAMPLE_TEXTURE2D(_Layer3_MRAH,sampler_Layer3_MRAH, uv3);
+    float4 layer3_mrah = SAMPLE_TEXTURE2D(_Layer3_MRAH,sampler_Layer3_BaseMap, uv3);
     float layer3_height = 0;
     float layer3_w = 0;
     if(_Layer3_Enable)
@@ -230,7 +230,7 @@ void InitializeMaterialData(float2 uv,out MaterialData mat)
         layer3_w =  blendMap.z + layer3_height;
     }
 
-    float4 layer4_mrah = SAMPLE_TEXTURE2D(_Layer4_MRAH,sampler_Layer4_MRAH, uv4);
+    float4 layer4_mrah = SAMPLE_TEXTURE2D(_Layer4_MRAH,sampler_Layer4_BaseMap, uv4);
     float layer4_height = 0;
     float layer4_w = 0;
     if(_Layer4_Enable)
@@ -264,23 +264,23 @@ void InitializeMaterialData(float2 uv,out MaterialData mat)
     mat.albedoAlpha = albedo;
 
     //法线
-    float4 normalMap = SAMPLE_TEXTURE2D(_Layer1_NormalMap,sampler_Layer1_NormalMap, uv1);
+    float4 normalMap = SAMPLE_TEXTURE2D(_Layer1_NormalMap,sampler_Layer1_BaseMap, uv1);
     normalMap *= blendWieght.x;
     normalMap *= _Layer1_NormalScale;
     
     if(_Layer2_Enable)
     {
-        float4 layer2_normal = SAMPLE_TEXTURE2D(_Layer2_NormalMap,sampler_Layer2_NormalMap, uv2);
+        float4 layer2_normal = SAMPLE_TEXTURE2D(_Layer2_NormalMap,sampler_Layer2_BaseMap, uv2);
         normalMap += layer2_normal * blendWieght.y;
     }
     if(_Layer3_Enable)
     {
-        float4 layer3_normal = SAMPLE_TEXTURE2D(_Layer3_NormalMap,sampler_Layer3_NormalMap, uv3);
+        float4 layer3_normal = SAMPLE_TEXTURE2D(_Layer3_NormalMap,sampler_Layer3_BaseMap, uv3);
         normalMap += layer3_normal * blendWieght.z;
     }
     if(_Layer4_Enable)
     {
-        float4 layer4_normal = SAMPLE_TEXTURE2D(_Layer4_NormalMap,sampler_Layer4_NormalMap, uv4);
+        float4 layer4_normal = SAMPLE_TEXTURE2D(_Layer4_NormalMap,sampler_Layer4_BaseMap, uv4);
         normalMap += layer4_normal * blendWieght.w;
     }
 

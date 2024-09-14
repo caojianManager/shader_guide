@@ -190,7 +190,7 @@ Material:
     - _HasMRAMap: 0
     - _Layer1_HeightContrast: 0
     - _Layer1_Metalness: 1
-    - _Layer1_NormalScale: 1
+    - _Layer1_NormalScale: 0.93
     - _Layer1_Roughness: 3
     - _Layer2_Enable: 1
     - _Layer2_HeightContrast: 0
