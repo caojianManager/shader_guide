@@ -29,6 +29,8 @@ namespace URPShaderEditor
             MaterialProperty _DirtMap = FindProperty("_DirtMap", properties);
             MaterialProperty _LightEdgeMin = FindProperty("_LightEdgeMin", properties);
             MaterialProperty _LightEdgeMax = FindProperty("_LightEdgeMax", properties);
+            MaterialProperty _MatcapUVIntensity = FindProperty("_MatcapUVIntensity", properties);
+            MaterialProperty _MatcapIntensity = FindProperty("_MatcapIntensity", properties);
          
             //Surface
             
@@ -75,6 +77,8 @@ namespace URPShaderEditor
                     materialEditor.TexturePropertySingleLine(new GUIContent("Dirt Map"), _DirtMap);
                     materialEditor.ShaderProperty(_LightEdgeMin,new GUIContent("Edge Min"));
                     materialEditor.ShaderProperty(_LightEdgeMax,new GUIContent("Edge Max"));
+                    materialEditor.ShaderProperty(_MatcapUVIntensity,new GUIContent("UV Intensity"));
+                    materialEditor.ShaderProperty(_MatcapIntensity,new GUIContent("Matcap Intensity"));
                 }
                 EditorGUILayout.EndFoldoutHeaderGroup();
             }

@@ -8,6 +8,8 @@ float4 _RefractColor;
 float _RefractIntensity;
 float _LightEdgeMin;
 float _LightEdgeMax;
+float _MatcapUVIntensity;
+float _MatcapIntensity;
 CBUFFER_END
 
 #ifdef UNITY_DOTS_INSTANCING_ENABLED
@@ -16,13 +18,16 @@ UNITY_DOTS_INSTANCING_START(MaterialPropertyMetadata)
     UNITY_DOTS_INSTANCED_PROP(float, _RefractIntensity)
     UNITY_DOTS_INSTANCED_PROP(float , _LightEdgeMin)
     UNITY_DOTS_INSTANCED_PROP(float , _LightEdgeMax)
+    UNITY_DOTS_INSTANCED_PROP(float , _MatcapUVIntensity)
+    UNITY_DOTS_INSTANCED_PROP(float , _MatcapIntensity)
 UNITY_DOTS_INSTANCING_END(MaterialPropertyMetadata)
 
 #define _RefractColor      UNITY_ACCESS_DOTS_INSTANCED_PROP_WITH_DEFAULT(float4  , _RefractColor)
 #define _RefractIntensity      UNITY_ACCESS_DOTS_INSTANCED_PROP_WITH_DEFAULT(float  , _RefractIntensity)
 #define _LightEdgeMin      UNITY_ACCESS_DOTS_INSTANCED_PROP_WITH_DEFAULT(float  , _LightEdgeMin)
 #define _LightEdgeMax      UNITY_ACCESS_DOTS_INSTANCED_PROP_WITH_DEFAULT(float  , _LightEdgeMax)
-
+#define _MatcapUVIntensity      UNITY_ACCESS_DOTS_INSTANCED_PROP_WITH_DEFAULT(float  , _MatcapUVIntensity)
+#define _MatcapIntensity      UNITY_ACCESS_DOTS_INSTANCED_PROP_WITH_DEFAULT(float  , _MatcapIntensity)
 #endif
 
 #endif

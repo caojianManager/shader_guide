@@ -8,6 +8,8 @@ Shader "CURP/Glass"
         _RefractMap("_RefractMap",2D) = "white" {}
         _RefractColor("_RefractColor",Color) = (1,1,1,1)
         _RefractIntensity("_RefractIntensity",Float) = 1.0
+        _MatcapUVIntensity("_MatcapUVIntensity",Float) = 0
+        _MatcapIntensity("Matcap Intensity",Range(0.1,1)) = 1
         //厚度贴图
         _ThickMap("Thick Map",2D) = "white" {}
         _ObjectPivotOffset("_ObjectPivotOffset",Float) = 0

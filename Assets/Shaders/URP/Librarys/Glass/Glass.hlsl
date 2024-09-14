@@ -49,7 +49,7 @@ float2 MatcapUV2(float3 normalWS,float3 positionWS)
     positionVS = normalize(positionVS);
     float3 NcP = cross(positionVS, normalVS);
     float2 matcapUV = float2(-NcP.y, NcP.x);
-    return matcapUV * 0.175 + 0.5;
+    return matcapUV * _MatcapUVIntensity + 0.5;
 }
 
 //边缘光
@@ -89,7 +89,7 @@ float4 Frag(Varyings IN) : SV_Target
     
     //matcap map采样
     float2 matcapUV = MatcapUV2(IN.normalWS,IN.positionWS)*1;
-    float4 matcapMap = SAMPLE_TEXTURE2D(_MatcapMap,sampler_MatcapMap, matcapUV);
+    float4 matcapMap = SAMPLE_TEXTURE2D(_MatcapMap,sampler_MatcapMap, matcapUV) * _MatcapIntensity;
     //厚度贴图
     float4 thickMap = SAMPLE_TEXTURE2D(_ThickMap,sampler_ThickMap,IN.uv);
     //dirt map采样
