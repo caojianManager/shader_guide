@@ -28,7 +28,7 @@ Shader "ShaderLab_Learning/URP/NormalMapWorldSpace"
             TEXTURE2D(_NormalMap);
             SAMPLER(sampler_NormalMap);
 
-            CBUFFER_START(UnityMatVar)
+            CBUFFER_START(Unity)
                 float4 _Color;
                 float _NormalScale;
                 float4 _Specular;
