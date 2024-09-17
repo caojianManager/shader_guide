@@ -1,4 +1,4 @@
-Shader "ShaderLab_Learning/URP/DiffusePixelLevel"
+Shader "ShaderLab_Learning/URP/HalfLambert"
 {
     Properties
     {
@@ -33,25 +33,25 @@ Shader "ShaderLab_Learning/URP/DiffusePixelLevel"
             struct Varyings
             {
                 float4 positionCS:SV_POSITION;
-                float3 normalWS: TEXCOORD0;
+                float3 color: TEXCOORD0;
             };
 
             Varyings Vert(Attributes IN)
             {
                 Varyings OUT;
                 OUT.positionCS = TransformObjectToHClip(IN.positionOS);
-                OUT.normalWS = TransformObjectToWorld(IN.normalOS); //世界法线
+                float3 ambient = UNITY_LIGHTMODEL_AMBIENT.xyz; //场景中的环境光
+                float3 normalWS = TransformObjectToWorld(IN.normalOS); //世界法线
+                float3 lightDirWS = half3(_MainLightPosition.xyz);     //光照方向
+                float3 halfLambert = saturate(dot(normalWS,lightDirWS))*0.5 +0.5;
+                float3 diffuse = _MainLightColor.rgb * _DiffuseColor * halfLambert; //漫反射光照
+                OUT.color = ambient + diffuse; //半兰伯特光照模型
                 return OUT;
             }
 
             float4 Frag(Varyings IN):SV_TARGET
             {
-                float3 ambient = UNITY_LIGHTMODEL_AMBIENT.xyz;
-                float3 normalWS = normalize(IN.normalWS);
-                float3 lightDir = half3(_MainLightPosition.xyz);
-                float3 diffuse = _MainLightColor * _DiffuseColor * saturate(dot(normalWS,lightDir));
-                float3 color = ambient + diffuse; //兰伯特光照模型  环境光+漫反射
-                return float4(color,1);
+                return float4(IN.color,1);
             }
 
             ENDHLSL
