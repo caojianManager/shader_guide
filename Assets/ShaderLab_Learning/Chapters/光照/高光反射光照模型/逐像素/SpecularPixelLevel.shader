@@ -1,4 +1,4 @@
-Shader "ShaderLab_Learning/URP/DiffusePixelLevel"
+Shader "ShaderLab_Learning/URP/BlinnPhong"
 {
     Properties
     {
