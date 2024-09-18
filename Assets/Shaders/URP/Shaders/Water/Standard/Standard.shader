@@ -79,6 +79,10 @@
                 float4 _FresnelColor;
             CBUFFER_END
 
+////////////////////////////////////////////////////////////////////////////////////////////
+///                                 Water Color                                         ///
+///////////////////////////////////////////////////////////////////////////////////////////
+
             //从深度纹理重建像素的世界空间位置
             //https://docs.unity3d.com/Packages/com.unity.render-pipelines.universal@11.0/manual/writing-shaders-urp-reconstruct-world-position.html
             float3 ReconstructWorldPositionFromDepth(float2 positionHCS)
@@ -98,6 +102,18 @@
             {
                 return positionWS_Y - reconstructPositionWS_Y_FromDepth;
             }
+
+            float4 WaterColor(float3 normalWS, float3 viewDirectionWS,float4 positionHCS,float3 positionWS)
+            {
+                 //计算WaterColor
+                float waterDepth = GetWaterDepth(positionWS.y, ReconstructWorldPositionFromDepth(positionHCS).y);
+                float depthLerp = clamp(exp(-waterDepth/_DeepRange),0,1);
+                float4 waterColor = lerp(_DeepColor, _ShallowColor,depthLerp);
+                float fresnelLerp = Fresnel(normalWS,normalize(viewDirectionWS),_FresnelPower);//菲尼系数-水平面颜色
+                waterColor = lerp(waterColor, _FresnelColor,fresnelLerp);
+                return waterColor;
+            }
+            
 
             Varyings Vert(Attributes IN)
             {
@@ -121,12 +137,7 @@
 
             half4 Frag(Varyings IN) : SV_Target
             {
-                //计算WaterColor
-                float waterDepth = GetWaterDepth(IN.positionWS.y, ReconstructWorldPositionFromDepth(IN.positionHCS).y);
-                float depthLerp = clamp(exp(-waterDepth/_DeepRange),0,1);
-                float4 waterColor = lerp(_DeepColor, _ShallowColor,depthLerp);
-                float fresnelLerp = Fresnel(IN.normalWS,IN.viewDirectionWS,_FresnelPower);//菲尼系数-水平面颜色
-                waterColor = lerp(waterColor, _FresnelColor,fresnelLerp);
+               float4 waterColor = WaterColor(IN.normalWS,IN.viewDirectionWS,IN.positionHCS,IN.positionWS);
                 // float3 normalUV = clamp()
                 
                 return waterColor;
