@@ -132,6 +132,7 @@
                 return waterColor;
             }
 
+
 ////////////////////////////////////////////////////////////////////////////////////////////
 ///                                 Water Color                                         ///
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -258,6 +259,7 @@
                 // mat.specularity = GetSpecularity();
                 
             }
+
             
 
             Varyings Vert(Attributes IN)
@@ -284,6 +286,7 @@
             {
                  UNITY_SETUP_INSTANCE_ID(IN);  // --- 仅当要在片元着色器中访问任何实例化属性时才需要
                 UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(IN);
+
                 
                 #ifdef LOD_FADE_CROSSFADE
                     LODFadeCrossFade(IN.positionHCS);
