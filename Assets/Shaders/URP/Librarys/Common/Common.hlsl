@@ -1,6 +1,9 @@
 #ifndef COMMON_INCLUDED
 #define COMMON_INCLUDED
 
+#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
+#include "Packages/com.unity.render-pipelines.core/ShaderLibrary/SpaceTransforms.hlsl"
+
 /**
  * \brief 菲涅耳效应 (Fresnel Effect) 是根据视角不同而在表面上产生不同反射率（接近掠射角时的反射光增多）的效果
  * Fresnel Effect 节点通过计算表面法线和视图方向之间的角度来模拟这一点。该角度越宽，返回值越大。这种效果通常用于实现在许多艺术风格中很常见的边缘光照。
@@ -51,6 +54,13 @@ float3 DoubleSidedNormal(float model, float3 normalTS, float3 viewDirectionTS)
         return MirrorNormal(normalTS,viewDirectionTS);
     }
     return normalTS;
+}
+
+//法线切线空间转换到世界空间
+float3 TranformNormalTangentToWorld(float3 normalTS, float3 normalWS, float4 tangentWS)
+{
+    float3x3 tangentToWorld = CreateTangentToWorld(normalWS, tangentWS.xyz, tangentWS.w);
+    return TransformTangentToWorld(normalTS, tangentToWorld);
 }
 
 #endif
