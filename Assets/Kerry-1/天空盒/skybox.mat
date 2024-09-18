@@ -75,7 +75,7 @@ Material:
     m_Ints: []
     m_Floats:
     - _BumpScale: 1
-    - _CubemapExposure: 0.14
+    - _CubemapExposure: 0.12
     - _CubemapPosition: 0
     - _CubemapTransition: 0
     - _Cubemapp: 1
