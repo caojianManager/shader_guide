@@ -5,7 +5,12 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/SampleScene.unity
     guid: 9fc0d4010bbf28b4594072e72b8655ab
-  m_configObjects: {}
+  - enabled: 1
+    path: Assets/Kerry-1/Water/CS18/CS18.unity
+    guid: 86f34dcc2d2115e48803fad5ca2df982
+  m_configObjects:
+    Unity.XR.PXR.Settings: {fileID: 11400000, guid: 404e8ab81723d624a868c1da48674a4f, type: 2}
+    com.unity.xr.management.loader_settings: {fileID: 11400000, guid: 8a1afc6823f6f4141970ee9fc486520a, type: 2}

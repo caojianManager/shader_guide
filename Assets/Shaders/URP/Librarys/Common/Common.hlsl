@@ -63,4 +63,10 @@ float3 TranformNormalTangentToWorld(float3 normalTS, float3 normalWS, float4 tan
     return TransformTangentToWorld(normalTS, tangentToWorld);
 }
 
+//菲涅尔效应
+float FresnelEffect(float3 Normal, float3 ViewDir, float Power)
+{
+    return pow(max((1.0 - saturate(dot(normalize(Normal), normalize(ViewDir)))),0.001), Power);
+}
+
 #endif

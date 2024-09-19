@@ -71,4 +71,9 @@ crashlytics-build.properties
 /[Aa]ssets/[Ss]treamingAssets/aa.meta
 /[Aa]ssets/[Ss]treamingAssets/aa/*
 
+/[Aa]ssets/XRI/*
+/[Aa]ssets/XR/*
+/[Aa]ssets/XR*
+/[Aa]ssets/Resources/PXR_*
 /PICO Unity Integration  SDK-3.0.2/
+ProjectSettings/XRPackageSettings.asset

@@ -71,6 +71,10 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _EmissionMap2:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _FlowMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -79,7 +83,19 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _HeightMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _HeightMap2:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _MainTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MainTex2:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
@@ -91,8 +107,20 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _MetalnessMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MetalnessMap2:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _NormalMap:
-        m_Texture: {fileID: 2800000, guid: f0e6996b2e33ff24c8b21e32a481de64, type: 3}
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _NormalMap2:
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _NormalMapA:
@@ -108,6 +136,10 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _OcclusionMap:
+        m_Texture: {fileID: 2800000, guid: cda33e31978b09043a9bb90796c51333, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _OcclusionMap2:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
@@ -123,7 +155,19 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _RoughnessMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _RoughnessMap2:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _SpecGlossMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _SubsurfaceThicknessMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
@@ -163,6 +207,7 @@ Material:
     m_Floats:
     - _AddFoam: 0
     - _AlphaClip: 0
+    - _AlphaClipEnabled: 0
     - _AlphaCutoff: 0.5
     - _AlphaMask: 0
     - _AlphaToMask: 0
@@ -195,8 +240,9 @@ Material:
     - _CubemapPosition: 1
     - _Cull: 2
     - _CullMode: 2
+    - _Culling: 2
     - _Cutoff: 0.5
-    - _DeepRange: 17.2
+    - _DeepRange: 1
     - _DepthEnd: -1.66
     - _DepthStart: 8.89
     - _DetailAlbedoMapScale: 1
@@ -215,6 +261,7 @@ Material:
     - _EdgeSize: 1
     - _EnvironmentReflections: 1
     - _Exposure: 1
+    - _Float4: 0
     - _FlowIntensity: 0.1
     - _FlowSpeed: 5
     - _Foam: 0
@@ -238,7 +285,24 @@ Material:
     - _GlossMapScale: 0
     - _Glossiness: 0
     - _GlossyReflections: 0
+    - _HasEmissionMap: 0
+    - _HasEmissionMap2: 0
+    - _HasHeightMap: 0
+    - _HasHeightMap2: 0
+    - _HasMetalnessMap: 0
+    - _HasMetalnessMap2: 0
+    - _HasNormalMap: 0
+    - _HasNormalMap2: 0
+    - _HasRoughnessMap: 0
+    - _HasRoughnessMap2: 0
+    - _HasSubsurfaceMap: 0
+    - _HeightStrength: 0.02
+    - _HeightStrength2: 0.02
     - _Metallic: 0
+    - _Metalness: 0
+    - _Metalness2: 0
+    - _MetalnessMapExposure: 0
+    - _MetalnessMapExposure2: 0
     - _NormalFar: 0
     - _NormalFarDistance: 200
     - _NormalIntensity: 1
@@ -247,17 +311,22 @@ Material:
     - _NormalMapFarIntensity: 1
     - _NormalScale: 3
     - _NormalSpeed: 1
+    - _NormalStrength: 1
+    - _NormalStrength2: 1
     - _NormalTilling: 8
     - _NormalsMode: 0
-    - _OcclusionStrength: 1
+    - _OcclusionStrength: 0
+    - _OcclusionStrength2: 1
     - _Orthographic: 0
     - _Parallax: 0.005
     - _QueueControl: 0
     - _QueueOffset: 0
+    - _ReceiveFogEnabled: 1
     - _ReceiveShadows: 1
+    - _ReceiveShadowsEnabled: 1
     - _ReflectDistort: 1
     - _ReflectIntensity: 1
-    - _ReflectPower: 1
+    - _ReflectPower: -0
     - _ReflectionDistortion: 0.5
     - _ReflectionFresnel: 4
     - _ReflectionFresnelNormal: 0.25
@@ -267,6 +336,10 @@ Material:
     - _Rotation: 0
     - _RotationEnable: 0
     - _RotationSpeed: 1
+    - _Roughness: 0.5
+    - _Roughness2: 0.5
+    - _RoughnessMapExposure: 0
+    - _RoughnessMapExposure2: 0
     - _Scattering: 0
     - _ScatteringIntensity: 1
     - _ScatteringRangeMax: 1
@@ -276,17 +349,26 @@ Material:
     - _ShoreRange: 1
     - _Smoothness: 0.5
     - _SmoothnessTextureChannel: 0
+    - _SortPriority: 0
     - _SpecEnd: 200
     - _SpecIntensity: 0.7
     - _SpecStart: 0
     - _SpeceSmoothness: 0.01
     - _SpecularHighlights: 1
+    - _Specularity: 0.5
+    - _Specularity2: 0.5
     - _SpeedMul: 0
     - _SrcBlend: 1
     - _SrcBlendAlpha: 1
+    - _SubsurfaceAmbient: 0.2
+    - _SubsurfaceDistortion: 0.3
+    - _SubsurfaceEnabled: 0
+    - _SubsurfaceFalloff: 2
+    - _SubsurfaceThickness: 0.8
     - _Surface: 0
     - _UnderWaterDistort: 1
     - _UnderWaterTilling: 1
+    - _UseVertexColors: 0
     - _WaterDepth: -1
     - _WaterNoise: 6.32
     - _WaterSpeed: 0.7
@@ -302,10 +384,12 @@ Material:
     - _WaveSteepness: 0.5
     - _WorkflowMode: 1
     - _WorldUV: 0
+    - _ZTest: 4
     - _ZWrite: 1
     - __dirty: 0
     m_Colors:
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
+    - _BaseColor2: {r: 0.5, g: 0.5, b: 0.5, a: 1}
     - _CausticsSpeed: {r: 1, g: 1, b: -1, a: -1}
     - _CausticsSpeed3D: {r: 1, g: 1, b: 1, a: 1}
     - _CausticsTiling: {r: 1, g: 1, b: 1, a: 1}
@@ -314,6 +398,8 @@ Material:
     - _CubemapTintColor: {r: 1, g: 1, b: 1, a: 1}
     - _DeepColor: {r: 0.041358035, g: 0.034966815, b: 0.8553459, a: 1}
     - _DepthColor: {r: 0.20705765, g: 0.3973522, b: 0.4433962, a: 1}
+    - _Emission: {r: 0, g: 0, b: 0, a: 1}
+    - _Emission2: {r: 0, g: 0, b: 0, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _FlowTiling: {r: 1, g: 1, b: 0, a: 0}
     - _FoamColor: {r: 1, g: 1, b: 1, a: 1}
@@ -342,6 +428,7 @@ Material:
     - _ShoreColor: {r: 1, g: 1, b: 1, a: 1}
     - _SpecColor: {r: 1, g: 1, b: 1, a: 1}
     - _SpecTint: {r: 1, g: 1, b: 1, a: 0}
+    - _SubsurfaceColor: {r: 1, g: 1, b: 1, a: 1}
     - _Tint: {r: 0.5, g: 0.5, b: 0.5, a: 0.5}
     - _UnderWaterColor: {r: 0.24999997, g: 0.32999998, b: 0.45, a: 0.25}
   m_BuildTextureStacks: []

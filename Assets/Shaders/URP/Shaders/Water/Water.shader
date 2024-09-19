@@ -14,23 +14,23 @@
         _NormalSpeed("Normal Speed",Vector) = (1,1,1,1)
         _NormalScale("Normal Scale",Float) = 1
         
-        _SpecularColor("Specular Color",Color) = (1,1,1,1)
-        _DiffuseColor("Diffuse Color",Color) = (1,1,1,1)
+        _ReflectDistortion("Reflect Distortion",Range(0,1)) = 1
+        _ReflectPower("Reflect Power",Float) = 1
+        _ReflectIntensity("Reflect Intensity",Float) = 1
+
     }
     SubShader
     {
-        Tags {"RenderType" = "Transparency" "RenderPipeline" = "UniversalPipeline"
-        }
+        Tags {"RenderType"="Transparent" "RenderPipeline" = "UniversalPipeline"}
 
+        Cull Off
+        ZWrite Off
+        ZTest LEqual
+        Blend SrcAlpha OneMinusSrcAlpha
+        
         Pass
         {
-            Tags {"LightMode" = "UniversalForwardOnly"}
-            
-            Blend SrcAlpha OneMinusSrcAlpha
-            Cull Off
-            ZWrite Off
-            ZTest LEqual
-            ZClip Off
+            Tags {"LightMode" = "UniversalForwardOnly" "RenderQueue" = "Transparent" }
             
             HLSLPROGRAM
             #include "../../Librarys/Water/Water.hlsl"
