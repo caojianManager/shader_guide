@@ -99,7 +99,7 @@ float3 SurfaceNormal(float2 uv)
     float4 normalMap1 = SAMPLE_TEXTURE2D(_NormalMap,sampler_NormalMap,normalMapUV1);
     float4 normalMap2 = SAMPLE_TEXTURE2D(_NormalMap,sampler_NormalMap,normalMapUV2);
     float3 blendNormals = NormalBlendReoriented(UnpackNormal(normalMap1),UnpackNormal(normalMap2));
-    return blendNormals;
+    return saturate(blendNormals * _NormalScale);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
