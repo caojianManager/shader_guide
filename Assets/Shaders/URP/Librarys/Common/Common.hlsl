@@ -3,6 +3,7 @@
 
 #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
 #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/SpaceTransforms.hlsl"
+#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
 
 /**
  * \brief 菲涅耳效应 (Fresnel Effect) 是根据视角不同而在表面上产生不同反射率（接近掠射角时的反射光增多）的效果
@@ -66,7 +67,24 @@ float3 TranformNormalTangentToWorld(float3 normalTS, float3 normalWS, float4 tan
 //菲涅尔效应
 float FresnelEffect(float3 Normal, float3 ViewDir, float Power)
 {
-    return pow(max((1.0 - saturate(dot(normalize(Normal), normalize(ViewDir)))),0.001), Power);
+    return pow((1.0 - saturate(dot(normalize(Normal), normalize(ViewDir)))), Power);
+}
+
+float4 MainLightShadowCoord(float3 PositionWS)
+{
+    #if defined(_MAIN_LIGHT_SHADOWS_SCREEN)
+    float4 clipPos = TransformWorldToHClip(PositionWS);
+    return ComputeScreenPos(clipPos);
+    #else
+    return TransformWorldToShadowCoord(PositionWS);
+    #endif
+}
+
+Light GetMainLightData(float3 PositionWS, float4 shadowMask)
+{
+    float4 shadowCoord = MainLightShadowCoord(PositionWS);
+    Light light = GetMainLight(shadowCoord, PositionWS, shadowMask);
+    return light;
 }
 
 #endif

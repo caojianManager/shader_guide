@@ -13,6 +13,8 @@ CBUFFER_START(UnityPerMaterial)
     float4 _ShallowColor;
     float4 _FresnelColor;
     float4 _NormalMap_ST;
+    float4 _DiffuseColor;
+    float4 _SpecularColor;
 CBUFFER_END
 
 #endif

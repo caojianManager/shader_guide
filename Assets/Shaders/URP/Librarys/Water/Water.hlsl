@@ -2,8 +2,12 @@
 #define WATER_INCLUDED
 
 #include "../../Librarys/Common/Common.hlsl"
-#include "../../Librarys/Common/PBRCommon.hlsl"
 #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/DeclareDepthTexture.hlsl"
+#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
+#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
+#include "Packages/com.unity.render-pipelines.core/ShaderLibrary/ParallaxMapping.hlsl"
+#include "Packages/com.unity.render-pipelines.core/ShaderLibrary/SpaceTransforms.hlsl"
+#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Shadows.hlsl"
 #include "Water_Maps.hlsl"
 #include "Water_Properties.hlsl"
 
@@ -39,13 +43,15 @@ struct Varyings
     float3 viewDirectionTS : TEXCOORD5;
     float3 color           : TEXCOORD6;
 
-    DECLARE_LIGHTMAP_OR_SH(staticLightmapUV, vertexSH, 8);
-#ifdef DYNAMICLIGHTMAP_ON
-    float2  dynamicLightmapUV : TEXCOORD9;
-#endif
-
 	UNITY_VERTEX_INPUT_INSTANCE_ID
     UNITY_VERTEX_OUTPUT_STEREO
+};
+
+struct BRDF
+{
+    float3 diffuse;
+    float3 specular;
+    float3 subsurface;
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////
@@ -121,7 +127,15 @@ float3 ReflectNormalLerp(float3 surfaceNormal)
 
 float GetOcclusion(float3 normalWS,float3 viewDir)
 {
-   return clamp(_ReflectIntensity*FresnelEffect(normalWS,viewDir,_FresnelPower),0,1);
+    float fresnel = pow(max(1-dot(normalize(normalWS),normalize(viewDir)),0.0001), _ReflectPower);
+    return clamp(_ReflectIntensity*fresnel,0,1);
+}
+
+float3 GetReflection(float3 viewDirectionWS, float3 normalWS,float3 positionWS)
+{
+    float occulsion = GetOcclusion(normalWS,viewDirectionWS);
+    float3 reflection = reflect(-viewDirectionWS, normalWS);
+    return GlossyEnvironmentReflection(half3(reflection), positionWS, 0.05, half(occulsion));
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -150,12 +164,7 @@ Varyings Vert(Attributes IN)
 
     OUT.tangentWS = float4(TransformObjectToWorldDir(IN.tangentOS.xyz), IN.tangentOS.w);
     OUT.viewDirectionTS = GetViewDirectionTangentSpace(OUT.tangentWS, OUT.normalWS, OUT.viewDirectionWS);
-    OUTPUT_LIGHTMAP_UV(IN.staticLightmapUV, unity_LightmapST, OUT.staticLightmapUV);
-#ifdef DYNAMICLIGHTMAP_ON
-    OUT.dynamicLightmapUV = IN.dynamicLightmapUV.xy * unity_DynamicLightmapST.xy + unity_DynamicLightmapST.zw;
-#endif
-    OUTPUT_SH(OUT.normalWS.xyz, OUT.vertexSH);
-
+    
     OUT.color = IN.color;
     
     return OUT;
@@ -170,11 +179,6 @@ struct MaterialData
 {
     float4 albedoAlpha;              //基础颜色-数值
     float3 normalTS;
-    float metalness;                //金属度
-    float perceptualRoughness;      //粗糙度
-    float occlusion;                //AO
-    float3 emission;
-    float specularity;              //镜面值
 };
 
 void InitializeMaterialData(Varyings IN,out MaterialData mat)
@@ -187,11 +191,6 @@ void InitializeMaterialData(Varyings IN,out MaterialData mat)
 
     mat.albedoAlpha = waterColor;
     mat.normalTS = normalTS;
-    mat.emission =  float3(0,0,0);
-    mat.metalness = 0;
-    mat.occlusion = GetOcclusion(IN.normalWS,IN.viewDirectionWS);
-    mat.perceptualRoughness = 0.05;
-    mat.specularity = 1;
 }
 
 float2 GetBlendFactors(float height1, float a1, float height2, float a2)
@@ -216,109 +215,33 @@ float4 Frag(Varyings IN) : SV_TARGET
 
     MaterialData mat;
     InitializeMaterialData(IN,mat);
-    
-    
-    ///////////////////////////////
-    //   SETUP                   //
-    ///////////////////////////////
 
     // Setup Normals
-    IN.normalWS = NormalTangentToWorld(mat.normalTS, IN.normalWS, IN.tangentWS);
+    IN.normalWS = TranformNormalTangentToWorld(mat.normalTS, IN.normalWS, IN.tangentWS);
     IN.normalWS = normalize(IN.normalWS);
     
     // Setup View direction
     IN.viewDirectionWS = normalize(IN.viewDirectionWS);
     float2 normalizedScreenSpaceUV = GetNormalizedScreenSpaceUV(IN.positionHCS);
-
     
-    ///////////////////////////////
-    //   LIGHTING                //
-    ///////////////////////////////
-
+    //Lighting
     Light mainLight;
     float4 shadowMask = SAMPLE_SHADOWMASK(IN.staticLightmapUV);
-    GetMainLightData(IN.positionWS, shadowMask, mainLight);
+    mainLight = GetMainLightData(IN.positionWS, shadowMask);
     
     // Albedo
     float3 albedo = mat.albedoAlpha.rgb;
-    float3 emission = mat.emission;
-    // Occlusion
-    float occlusion = mat.occlusion;
-    // Roughness
-    float perceptualRoughness = mat.perceptualRoughness;
-    // Metalness
-    float metalness = mat.metalness;
-    float specularity = mat.specularity;
-    float subsurfaceThickness = 1;
     
-    // Lighting--固定接受阴影
-    // if(_ReceiveShadowsEnabled == 0)
-    // {
-    //     mainLight.shadowAttenuation = 1;
-    // }
-
-    float3 lightingModel;
-    float NoV, NoL, NoH, VoH, VoL, LoH;
-
-    NoV = dot01(IN.normalWS, IN.viewDirectionWS);
-    
-    ///////////////////////////////
-    //   CALCULATE COLOR         //
-    ///////////////////////////////
-
-// Apply Decals to Albedo
-#if defined(_DBUFFER)
-    ApplyDecalToBaseColor(IN.positionHCS, albedo);
-#endif
-
     // BRDF
     BRDF brdf;
     brdf.diffuse = 0;
     brdf.specular = 0;
     brdf.subsurface = float3(0,0,0);
-
-    float3 f0 = F0(albedo, specularity, metalness);
     
-    EvaluateLighting(albedo, specularity, perceptualRoughness, metalness, subsurfaceThickness, f0, NoV, IN.normalWS, IN.viewDirectionWS, mainLight, brdf);
-    GetAdditionalLightData(albedo, specularity, perceptualRoughness, metalness, subsurfaceThickness, f0, NoV, normalizedScreenSpaceUV, IN.positionWS, IN.normalWS, IN.viewDirectionWS, brdf);
+    brdf.diffuse += mainLight.color * albedo * saturate(dot(IN.normalWS,mainLight.direction)); //漫反射光照
+    brdf.specular += GetReflection(IN.viewDirectionWS,IN.normalWS,IN.positionWS);
     
-    
-    // IBL
-    LightInputs lightInputs = GetLightInputs(IN.normalWS, IN.viewDirectionWS, mainLight.direction);
-    OcclusionData occlusionData = GetAmbientOcclusionData(GetNormalizedScreenSpaceUV(IN.positionHCS));
-    ApplyDirectOcclusion(occlusionData, brdf);
-
-    float3 bakedGI;
-    #if defined(DYNAMICLIGHTMAP_ON)
-    bakedGI = SAMPLE_GI(IN.staticLightmapUV, IN.dynamicLightmapUV, IN.vertexSH, IN.normalWS);
-    #else
-    bakedGI = SAMPLE_GI(IN.staticLightmapUV, IN.vertexSH, IN.normalWS);
-    #endif
-    
-    MixRealtimeAndBakedGI(mainLight, IN.normalWS, bakedGI);
-    
-    float indirectSpecularOcclusion = lerp(1, (NoV + 1.0) * 0.5, perceptualRoughness);
-    float fresnel = Fresnel(f0, NoV, perceptualRoughness).x;
-    
-    float3 indirectSpecular = GetReflection(IN.viewDirectionWS, IN.normalWS, IN.positionWS, perceptualRoughness, normalizedScreenSpaceUV) * (1.0 - perceptualRoughness) * indirectSpecularOcclusion;
-    float3 indirectDiffuse = bakedGI * albedo * lerp(1, 0, metalness);
-    brdf.specular += indirectSpecular * occlusionData.indirect * occlusion * lerp(1.0, albedo, metalness * (1.0 - fresnel)) * lerp(fresnel, 1.0, metalness);
-    brdf.diffuse += indirectDiffuse * occlusionData.indirect * occlusion;
-    return float4(brdf.diffuse + indirectSpecular,mat.albedoAlpha.a);
-    //最终输出的颜色 漫反射 + 镜面反射
-    float3 color = (brdf.diffuse + brdf.specular);
-    // Subsurface Lighting
-    color += brdf.subsurface;
-    // Emission
-    color += emission;
-    
-    // Mix Fog
-    // if (_ReceiveFogEnabled == 1)
-    // {
-    //     float fogFactor = InitializeInputDataFog(float4(IN.positionWS, 1), 0);
-    //     color = MixFog(color, fogFactor);
-    // }
-    
+    float3 color = brdf.diffuse + brdf.specular;
     return float4(color, mat.albedoAlpha.a);
 }
 

@@ -14,6 +14,8 @@
         _NormalSpeed("Normal Speed",Vector) = (1,1,1,1)
         _NormalScale("Normal Scale",Float) = 1
         
+        _DiffuseColor("Diffuse Color",Color) = (1,1,1,1)
+        _SpecularColor("Specular Color",Color) = (1,1,1,1)
         _ReflectDistortion("Reflect Distortion",Range(0,1)) = 1
         _ReflectPower("Reflect Power",Float) = 1
         _ReflectIntensity("Reflect Intensity",Float) = 1
