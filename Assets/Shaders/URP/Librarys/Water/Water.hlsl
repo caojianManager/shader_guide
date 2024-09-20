@@ -79,8 +79,9 @@ float GetWaterDepth(float positionWS_Y, float reconstructPositionWS_Y_FromDepth)
     return positionWS_Y - reconstructPositionWS_Y_FromDepth;
 }
 
-float4 WaterColor(float3 normalWS, float3 viewDirectionWS,float4 positionHCS,float3 positionWS,float waterDepth)
+float4 WaterColor(float3 normalWS, float3 viewDirectionWS,float4 positionHCS,float3 positionWS,float3 reconstructPositionWSFromDepth)
 {
+    float waterDepth = GetWaterDepth(positionWS.y,reconstructPositionWSFromDepth.y);
     float depthLerp = clamp(exp(-waterDepth/_DeepRange),0,1);
     float4 waterColor = lerp(_DeepColor, _ShallowColor,depthLerp);
     float fresnelLerp = Fresnel(normalWS,normalize(viewDirectionWS),_FresnelPower);//菲尼系数-水平面颜色
@@ -152,6 +153,23 @@ float4 UnderWaterColor(float3 surfaceNormal,float4 clipPosition)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+//                     Caustics Color                                       //
+///////////////////////////////////////////////////////////////////////////////
+
+float4 CausticsColor(float3 reconstructPositionWSFromDepth,float3 positionWS)
+{
+    float waterDepth = GetWaterDepth(positionWS.y,reconstructPositionWSFromDepth.y);
+    float2 causticsSpeed = float2(_CausticsSpeed.x - 8,_CausticsSpeed.y);
+    float2 causticsMapUV1 = (reconstructPositionWSFromDepth.xz / _CausticsScale) + (causticsSpeed * _Time.y * 0.001);
+    float2 causticsMapUV2 = -1*(reconstructPositionWSFromDepth.xz / _CausticsScale) + (causticsSpeed * _Time.y * 0.001);
+    float4 causticsMap1 = SAMPLE_TEXTURE2D(_CausticsMap,sampler_CausticsMap,causticsMapUV1);
+    float4 causticsMap2 = SAMPLE_TEXTURE2D(_CausticsMap,sampler_CausticsMap,causticsMapUV2);
+    float4 causticsMap = min(causticsMap1,causticsMap2) * _CausticsIntensity;
+    float causticsMask = clamp(exp(-waterDepth/_CausticsRange),0,1);
+    return causticsMap * causticsMask;
+}
+
+///////////////////////////////////////////////////////////////////////////////
 //                      Vertex                                               //
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -192,18 +210,23 @@ struct MaterialData
 
 void InitializeMaterialData(Varyings IN,out MaterialData mat)
 {
+    float3 reconstructPositionWSFromDepth = ReconstructWorldPositionFromDepth(IN.positionHCS);
     //计算WaterColor
-    float waterDepth = GetWaterDepth(IN.positionWS.y, ReconstructWorldPositionFromDepth(IN.positionHCS).y);
-    float4 waterColor = WaterColor(IN.normalWS,IN.viewDirectionWS,IN.positionHCS,IN.positionWS,waterDepth);
+    float4 waterColor = WaterColor(IN.normalWS,IN.viewDirectionWS,IN.positionHCS,IN.positionWS,reconstructPositionWSFromDepth);
     mat.albedoAlpha = waterColor;
     float2 normalUV = IN.uv * _NormalMap_ST.xy + _NormalMap_ST.zw;
     float3 normalTS = SurfaceNormal(normalUV);
+    
     float4 underWater = UnderWaterColor(normalTS,IN.clipPosition);
     mat.underWaterColor = underWater;
-    normalTS = ReflectNormalLerp(normalTS);
-    normalTS = normalize(normalTS);
+
+    //焦散
+    float4 causticsColor = CausticsColor(reconstructPositionWSFromDepth,IN.positionWS);
+    mat.underWaterColor += causticsColor;
     
-    mat.normalTS = normalTS;
+    float3 reflectNormal = ReflectNormalLerp(normalTS);
+    reflectNormal = normalize(normalTS);
+    mat.normalTS = reflectNormal;
 }
 
 float2 GetBlendFactors(float height1, float a1, float height2, float a2)
@@ -240,10 +263,8 @@ float4 Frag(Varyings IN) : SV_TARGET
     float4 shadowMask = SAMPLE_SHADOWMASK(IN.staticLightmapUV);
     mainLight = GetMainLightData(IN.positionWS, shadowMask);
     
-    
     float3 indirectSpecular = GetReflection(IN.viewDirectionWS,IN.normalWS,IN.positionWS);
     float3 color = lerp(mat.albedoAlpha + indirectSpecular,mat.underWaterColor,1 - mat.albedoAlpha.a);
-    
     return float4(color,mat.albedoAlpha.a);
 }
 

@@ -3,5 +3,7 @@
 
 TEXTURE2D(_NormalMap);
 SAMPLER(sampler_NormalMap);
+TEXTURE2D(_CausticsMap);
+SAMPLER(sampler_CausticsMap);
 
 #endif

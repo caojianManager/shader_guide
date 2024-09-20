@@ -21,6 +21,13 @@
         _ReflectIntensity("Reflect Intensity",Float) = 1
         
         _UnderWaterDistort("UnderWater Distort",Float) = 1
+        
+        //焦散效果
+        _CausticsMap("Caustics Map",2D) = "white" {}
+        _CausticsScale("Caustics Scale",Float) = 1
+        _CausticsSpeed("Caustics Speed",Vector) = (0,0,0,0)
+        _CausticsIntensity("Caustics Intensity",Float) = 1
+        _CausticsRange("Caustics Range",Range(0,100)) = 1
 
     }
     SubShader

@@ -8,7 +8,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Water 1
-  m_Shader: {fileID: 4800000, guid: b5ab4cdb028f047499bac79b440279a2, type: 3}
+  m_Shader: {fileID: 4800000, guid: 9d617287fc253cb4c899223e36c02f96, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -196,7 +196,7 @@ Material:
     - _Cull: 2
     - _CullMode: 2
     - _Cutoff: 0.5
-    - _DeepRange: 8.07
+    - _DeepRange: 1
     - _DepthEnd: -1.66
     - _DepthStart: 8.89
     - _DetailAlbedoMapScale: 1
@@ -339,7 +339,7 @@ Material:
     - _RefractionKey7: {r: -1, g: -1, b: -1, a: -1}
     - _RefractionKey8: {r: -1, g: -1, b: -1, a: -1}
     - _ScatteringColor: {r: 1, g: 1, b: 1, a: 1}
-    - _ShallowColor: {r: 1, g: 0.008840945, b: 0, a: 1}
+    - _ShallowColor: {r: 0, g: 0.8553459, b: 0.8106219, a: 0}
     - _ShoreColor: {r: 1, g: 1, b: 1, a: 1}
     - _SpecColor: {r: 1, g: 1, b: 1, a: 1}
     - _SpecTint: {r: 1, g: 1, b: 1, a: 0}
