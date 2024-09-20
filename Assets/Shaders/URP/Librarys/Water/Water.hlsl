@@ -8,6 +8,7 @@
 #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/ParallaxMapping.hlsl"
 #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/SpaceTransforms.hlsl"
 #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Shadows.hlsl"
+#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/ShaderGraphFunctions.hlsl"
 #include "Water_Maps.hlsl"
 #include "Water_Properties.hlsl"
 
@@ -78,10 +79,8 @@ float GetWaterDepth(float positionWS_Y, float reconstructPositionWS_Y_FromDepth)
     return positionWS_Y - reconstructPositionWS_Y_FromDepth;
 }
 
-float4 WaterColor(float3 normalWS, float3 viewDirectionWS,float4 positionHCS,float3 positionWS)
+float4 WaterColor(float3 normalWS, float3 viewDirectionWS,float4 positionHCS,float3 positionWS,float waterDepth)
 {
-     //计算WaterColor
-    float waterDepth = GetWaterDepth(positionWS.y, ReconstructWorldPositionFromDepth(positionHCS).y);
     float depthLerp = clamp(exp(-waterDepth/_DeepRange),0,1);
     float4 waterColor = lerp(_DeepColor, _ShallowColor,depthLerp);
     float fresnelLerp = Fresnel(normalWS,normalize(viewDirectionWS),_FresnelPower);//菲尼系数-水平面颜色
@@ -147,7 +146,8 @@ float4 UnderWaterColor(float3 surfaceNormal,float4 clipPosition)
     float4 grabScreenPosition = ComputeGrabScreenPos(ComputeScreenPos(clipPosition)); //
     grabScreenPosition = grabScreenPosition / grabScreenPosition.w;
     float3 normalDistort = surfaceNormal*_UnderWaterDistort*0.01;
-    float4 underWaterColor = float4(Co_SampleSceneColor((grabScreenPosition + normalDistort).xy),1);
+    float3 grabScreenColorUV = (grabScreenPosition + normalDistort).xyz;
+    float4 underWaterColor = float4(SHADERGRAPH_SAMPLE_SCENE_COLOR(grabScreenColorUV),1.0);
     return underWaterColor;
 }
 
@@ -185,20 +185,24 @@ Varyings Vert(Attributes IN)
 //PBR-材质基础颜色
 struct MaterialData
 {
-    float4 albedoAlpha;              //基础颜色-数值
+    float4 albedoAlpha;             //水的基础颜色
+    float4 underWaterColor;         //水底颜色
     float3 normalTS;
 };
 
 void InitializeMaterialData(Varyings IN,out MaterialData mat)
 {
-    float4 waterColor = WaterColor(IN.normalWS,IN.viewDirectionWS,IN.positionHCS,IN.positionWS);
+    //计算WaterColor
+    float waterDepth = GetWaterDepth(IN.positionWS.y, ReconstructWorldPositionFromDepth(IN.positionHCS).y);
+    float4 waterColor = WaterColor(IN.normalWS,IN.viewDirectionWS,IN.positionHCS,IN.positionWS,waterDepth);
+    mat.albedoAlpha = waterColor;
     float2 normalUV = IN.uv * _NormalMap_ST.xy + _NormalMap_ST.zw;
     float3 normalTS = SurfaceNormal(normalUV);
-    float4 underWater = UnderWaterColor(normalTS,IN.positionHCS);
+    float4 underWater = UnderWaterColor(normalTS,IN.clipPosition);
+    mat.underWaterColor = underWater;
     normalTS = ReflectNormalLerp(normalTS);
     normalTS = normalize(normalTS);
-   
-    mat.albedoAlpha = waterColor;
+    
     mat.normalTS = normalTS;
 }
 
@@ -220,7 +224,6 @@ float4 Frag(Varyings IN) : SV_TARGET
     #ifdef LOD_FADE_CROSSFADE
         LODFadeCrossFade(IN.positionHCS);
     #endif
-
     MaterialData mat;
     InitializeMaterialData(IN,mat);
 
@@ -237,14 +240,10 @@ float4 Frag(Varyings IN) : SV_TARGET
     float4 shadowMask = SAMPLE_SHADOWMASK(IN.staticLightmapUV);
     mainLight = GetMainLightData(IN.positionWS, shadowMask);
     
-    // Albedo
-    float3 albedo = mat.albedoAlpha.rgb;
     
     float3 indirectSpecular = GetReflection(IN.viewDirectionWS,IN.normalWS,IN.positionWS);
-    float4 underWater = UnderWaterColor(IN.normalWS,IN.clipPosition);
-    float3 color = lerp(albedo + indirectSpecular,underWater,1 - mat.albedoAlpha.a);
-
-    return underWater;
+    float3 color = lerp(mat.albedoAlpha + indirectSpecular,mat.underWaterColor,1 - mat.albedoAlpha.a);
+    
     return float4(color,mat.albedoAlpha.a);
 }
 

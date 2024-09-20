@@ -6,6 +6,7 @@ Shader "Water"
 	{
 		[HideInInspector] _AlphaCutoff("Alpha Cutoff ", Range(0, 1)) = 0.5
 		[HideInInspector] _EmissionColor("Emission Color", Color) = (1,1,1,1)
+		_UnderWaterDistort("UnderWaterDistort", Float) = 1
 
 
 		//_TessPhongStrength( "Tess Phong Strength", Range( 0, 1 ) ) = 0.5
@@ -176,6 +177,7 @@ Shader "Water"
 			#define ASE_FOG 1
 			#define _SURFACE_TYPE_TRANSPARENT 1
 			#define ASE_SRP_VERSION 140011
+			#define REQUIRE_OPAQUE_TEXTURE 1
 
 
 			
@@ -263,7 +265,8 @@ Shader "Water"
 			};
 
 			CBUFFER_START(UnityPerMaterial)
-						#ifdef ASE_TESSELLATION
+			float _UnderWaterDistort;
+			#ifdef ASE_TESSELLATION
 				float _TessPhongStrength;
 				float _TessValue;
 				float _TessMin;
@@ -298,35 +301,35 @@ Shader "Water"
 
 				
 
-				// #ifdef ASE_ABSOLUTE_VERTEX_POS
-				// 	float3 defaultVertexValue = v.positionOS.xyz;
-				// #else
-				// 	float3 defaultVertexValue = float3(0, 0, 0);
-				// #endif
-				//
-				// float3 vertexValue = defaultVertexValue;
-				//
-				// #ifdef ASE_ABSOLUTE_VERTEX_POS
-				// 	v.positionOS.xyz = vertexValue;
-				// #else
-				// 	v.positionOS.xyz += vertexValue;
-				// #endif
-				//
-				// v.normalOS = v.normalOS;
+				#ifdef ASE_ABSOLUTE_VERTEX_POS
+					float3 defaultVertexValue = v.positionOS.xyz;
+				#else
+					float3 defaultVertexValue = float3(0, 0, 0);
+				#endif
+
+				float3 vertexValue = defaultVertexValue;
+
+				#ifdef ASE_ABSOLUTE_VERTEX_POS
+					v.positionOS.xyz = vertexValue;
+				#else
+					v.positionOS.xyz += vertexValue;
+				#endif
+
+				v.normalOS = v.normalOS;
 
 				VertexPositionInputs vertexInput = GetVertexPositionInputs( v.positionOS.xyz );
 
-				// #if defined(ASE_NEEDS_FRAG_WORLD_POSITION)
-				// 	o.positionWS = vertexInput.positionWS;
-				// #endif
-				//
-				// #ifdef ASE_FOG
-				// 	o.fogFactor = ComputeFogFactor( vertexInput.positionCS.z );
-				// #endif
-				//
-				// #if defined(REQUIRES_VERTEX_SHADOW_COORD_INTERPOLATOR) && defined(ASE_NEEDS_FRAG_SHADOWCOORDS)
-				// 	o.shadowCoord = GetShadowCoord( vertexInput );
-				// #endif
+				#if defined(ASE_NEEDS_FRAG_WORLD_POSITION)
+					o.positionWS = vertexInput.positionWS;
+				#endif
+
+				#ifdef ASE_FOG
+					o.fogFactor = ComputeFogFactor( vertexInput.positionCS.z );
+				#endif
+
+				#if defined(REQUIRES_VERTEX_SHADOW_COORD_INTERPOLATOR) && defined(ASE_NEEDS_FRAG_SHADOWCOORDS)
+					o.shadowCoord = GetShadowCoord( vertexInput );
+				#endif
 
 				o.positionCS = vertexInput.positionCS;
 				o.clipPosV = vertexInput.positionCS;
@@ -420,7 +423,7 @@ Shader "Water"
 			{
 				UNITY_SETUP_INSTANCE_ID( IN );
 				UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX( IN );
-				return IN.clipPosV;
+
 				#if defined(ASE_NEEDS_FRAG_WORLD_POSITION)
 					float3 WorldPosition = IN.positionWS;
 				#endif
@@ -440,10 +443,11 @@ Shader "Water"
 
 				float4 ase_grabScreenPos = ASE_ComputeGrabScreenPos( ScreenPos );
 				float4 ase_grabScreenPosNorm = ase_grabScreenPos / ase_grabScreenPos.w;
+				float4 fetchOpaqueVal323 = float4( SHADERGRAPH_SAMPLE_SCENE_COLOR( ( ase_grabScreenPosNorm + float4( ( half3(0,0,0) * _UnderWaterDistort * 0.01 ) , 0.0 ) ).xy ), 1.0 );
 				
 				float3 BakedAlbedo = 0;
 				float3 BakedEmission = 0;
-				float3 Color = ase_grabScreenPosNorm.xyz;
+				float3 Color = fetchOpaqueVal323.rgb;
 				float Alpha = 1;
 				float AlphaClipThreshold = 0.5;
 				float AlphaClipThresholdShadow = 0.5;
@@ -546,7 +550,8 @@ Shader "Water"
 			};
 
 			CBUFFER_START(UnityPerMaterial)
-						#ifdef ASE_TESSELLATION
+			float _UnderWaterDistort;
+			#ifdef ASE_TESSELLATION
 				float _TessPhongStrength;
 				float _TessValue;
 				float _TessMin;
@@ -810,7 +815,8 @@ Shader "Water"
 			};
 
 			CBUFFER_START(UnityPerMaterial)
-						#ifdef ASE_TESSELLATION
+			float _UnderWaterDistort;
+			#ifdef ASE_TESSELLATION
 				float _TessPhongStrength;
 				float _TessValue;
 				float _TessMin;
@@ -1057,7 +1063,8 @@ Shader "Water"
 			};
 
 			CBUFFER_START(UnityPerMaterial)
-						#ifdef ASE_TESSELLATION
+			float _UnderWaterDistort;
+			#ifdef ASE_TESSELLATION
 				float _TessPhongStrength;
 				float _TessValue;
 				float _TessMin;
@@ -1295,7 +1302,8 @@ Shader "Water"
 			};
 
 			CBUFFER_START(UnityPerMaterial)
-						#ifdef ASE_TESSELLATION
+			float _UnderWaterDistort;
+			#ifdef ASE_TESSELLATION
 				float _TessPhongStrength;
 				float _TessValue;
 				float _TessMin;
@@ -1543,7 +1551,8 @@ Shader "Water"
 			};
 
 			CBUFFER_START(UnityPerMaterial)
-						#ifdef ASE_TESSELLATION
+			float _UnderWaterDistort;
+			#ifdef ASE_TESSELLATION
 				float _TessPhongStrength;
 				float _TessValue;
 				float _TessMin;
@@ -1761,6 +1770,6 @@ WireConnection;365;0;363;0
 WireConnection;365;1;366;0
 WireConnection;363;0;323;0
 WireConnection;324;0;365;0
-WireConnection;416;2;317;0
+WireConnection;416;2;323;0
 ASEEND*/
-//CHKSM=00B4FBD0B222E4251B83777889C3E6375EDCC728
+//CHKSM=B107D72EF42655BAAB21D8F24466E027ABBBAB49
