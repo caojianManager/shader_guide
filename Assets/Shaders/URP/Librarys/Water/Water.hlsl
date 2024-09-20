@@ -42,7 +42,7 @@ struct Varyings
     float4 tangentWS       : TEXCOORD4;
     float3 viewDirectionTS : TEXCOORD5;
     float3 color           : TEXCOORD6;
-
+    float4 clipPosition    : TEXCOORD7;
 	UNITY_VERTEX_INPUT_INSTANCE_ID
     UNITY_VERTEX_OUTPUT_STEREO
 };
@@ -142,6 +142,14 @@ float3 GetReflection(float3 viewDirectionWS, float3 normalWS,float3 positionWS)
 //                     UnderWaterColor                                       //
 ///////////////////////////////////////////////////////////////////////////////
 
+float4 UnderWaterColor(float3 surfaceNormal,float4 clipPosition)
+{
+    float4 grabScreenPosition = ComputeGrabScreenPos(ComputeScreenPos(clipPosition)); //
+    grabScreenPosition = grabScreenPosition / grabScreenPosition.w;
+    float3 normalDistort = surfaceNormal*_UnderWaterDistort*0.01;
+    float4 underWaterColor = float4(Co_SampleSceneColor((grabScreenPosition + normalDistort).xy),1);
+    return underWaterColor;
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 //                      Vertex                                               //
@@ -153,12 +161,12 @@ Varyings Vert(Attributes IN)
     UNITY_SETUP_INSTANCE_ID(IN);
     UNITY_TRANSFER_INSTANCE_ID(IN, OUT);
     UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(OUT);
-
     VertexPositionInputs position_inputs = GetVertexPositionInputs(IN.positionOS);
     OUT.positionWS = position_inputs.positionWS;
     OUT.normalWS = TransformObjectToWorldNormal(IN.normalOS);
     OUT.normalWS = normalize(OUT.normalWS);
     OUT.positionHCS = position_inputs.positionCS;
+    OUT.clipPosition = position_inputs.positionCS;      //注意SV_POSITION,TEXCOORD寄存器存储的值(PositionCS)不一致。
     OUT.uv = IN.uv;
     OUT.viewDirectionWS = (GetWorldSpaceViewDir(OUT.positionWS));
 
@@ -186,9 +194,10 @@ void InitializeMaterialData(Varyings IN,out MaterialData mat)
     float4 waterColor = WaterColor(IN.normalWS,IN.viewDirectionWS,IN.positionHCS,IN.positionWS);
     float2 normalUV = IN.uv * _NormalMap_ST.xy + _NormalMap_ST.zw;
     float3 normalTS = SurfaceNormal(normalUV);
+    float4 underWater = UnderWaterColor(normalTS,IN.positionHCS);
     normalTS = ReflectNormalLerp(normalTS);
     normalTS = normalize(normalTS);
-
+   
     mat.albedoAlpha = waterColor;
     mat.normalTS = normalTS;
 }
@@ -208,7 +217,6 @@ float4 Frag(Varyings IN) : SV_TARGET
 {
     UNITY_SETUP_INSTANCE_ID(IN);  // --- 仅当要在片元着色器中访问任何实例化属性时才需要
     UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(IN);
-    
     #ifdef LOD_FADE_CROSSFADE
         LODFadeCrossFade(IN.positionHCS);
     #endif
@@ -232,17 +240,12 @@ float4 Frag(Varyings IN) : SV_TARGET
     // Albedo
     float3 albedo = mat.albedoAlpha.rgb;
     
-    // BRDF
-    BRDF brdf;
-    brdf.diffuse = 0;
-    brdf.specular = 0;
-    brdf.subsurface = float3(0,0,0);
-    
-    brdf.diffuse += mainLight.color * albedo * saturate(dot(IN.normalWS,mainLight.direction)); //漫反射光照
-    brdf.specular += GetReflection(IN.viewDirectionWS,IN.normalWS,IN.positionWS);
-    
-    float3 color = brdf.diffuse + brdf.specular;
-    return float4(color, mat.albedoAlpha.a);
+    float3 indirectSpecular = GetReflection(IN.viewDirectionWS,IN.normalWS,IN.positionWS);
+    float4 underWater = UnderWaterColor(IN.normalWS,IN.clipPosition);
+    float3 color = lerp(albedo + indirectSpecular,underWater,1 - mat.albedoAlpha.a);
+
+    return underWater;
+    return float4(color,mat.albedoAlpha.a);
 }
 
 #endif

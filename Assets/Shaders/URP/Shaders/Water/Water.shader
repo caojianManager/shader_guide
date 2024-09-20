@@ -19,6 +19,8 @@
         _ReflectDistortion("Reflect Distortion",Range(0,1)) = 1
         _ReflectPower("Reflect Power",Float) = 1
         _ReflectIntensity("Reflect Intensity",Float) = 1
+        
+        _UnderWaterDistort("UnderWater Distort",Float) = 1
 
     }
     SubShader

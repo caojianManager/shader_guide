@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 #if UNITY_EDITOR
 using UnityEditor;
@@ -55,7 +56,7 @@ public class DrawNormal : MonoBehaviour
 
     void OnDrawGizmosSelected()
     {
-        EditorUtility.SetSelectedWireframeHidden(GetComponent<Renderer>(), !_displayWireframe);
+        EditorUtility.SetSelectedWireframeHidden(GetComponent<Renderer>(), false);
         OnDrawNormals(true);
     }
 

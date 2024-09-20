@@ -8,7 +8,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Water 1
-  m_Shader: {fileID: 4800000, guid: ebdc7ae06a239fe42a3c9d14ad65329c, type: 3}
+  m_Shader: {fileID: 4800000, guid: b5ab4cdb028f047499bac79b440279a2, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -196,7 +196,7 @@ Material:
     - _Cull: 2
     - _CullMode: 2
     - _Cutoff: 0.5
-    - _DeepRange: 1
+    - _DeepRange: 8.07
     - _DepthEnd: -1.66
     - _DepthStart: 8.89
     - _DetailAlbedoMapScale: 1
@@ -235,7 +235,7 @@ Material:
     - _FogIntensity: 1
     - _FogPosition: 0
     - _FogSmoothness: 1
-    - _FresnelPower: 1
+    - _FresnelPower: 0.59
     - _GlossMapScale: 0
     - _Glossiness: 0
     - _GlossyReflections: 0
@@ -313,7 +313,7 @@ Material:
     - _Color: {r: 0.056484986, g: 0.7031442, b: 0.8553459, a: 1}
     - _Color0: {r: 1, g: 1, b: 1, a: 1}
     - _CubemapTintColor: {r: 1, g: 1, b: 1, a: 1}
-    - _DeepColor: {r: 0.041358035, g: 0.034966815, b: 0.8553459, a: 1}
+    - _DeepColor: {r: 0.009569168, g: 0, b: 1, a: 1}
     - _DepthColor: {r: 0.20705765, g: 0.3973522, b: 0.4433962, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _FlowTiling: {r: 1, g: 1, b: 0, a: 0}
@@ -339,7 +339,7 @@ Material:
     - _RefractionKey7: {r: -1, g: -1, b: -1, a: -1}
     - _RefractionKey8: {r: -1, g: -1, b: -1, a: -1}
     - _ScatteringColor: {r: 1, g: 1, b: 1, a: 1}
-    - _ShallowColor: {r: 0.10935082, g: 0.61006284, b: 0.5295288, a: 1}
+    - _ShallowColor: {r: 1, g: 0.008840945, b: 0, a: 1}
     - _ShoreColor: {r: 1, g: 1, b: 1, a: 1}
     - _SpecColor: {r: 1, g: 1, b: 1, a: 1}
     - _SpecTint: {r: 1, g: 1, b: 1, a: 0}

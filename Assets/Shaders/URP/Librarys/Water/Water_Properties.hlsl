@@ -8,6 +8,7 @@ CBUFFER_START(UnityPerMaterial)
     float _ReflectDistortion;
     float _ReflectPower;
     float _ReflectIntensity;
+    float _UnderWaterDistort;
     float4 _NormalSpeed;
     float4 _DeepColor;
     float4 _ShallowColor;

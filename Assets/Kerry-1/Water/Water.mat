@@ -203,7 +203,7 @@ Material:
     - _Cull: 2
     - _CullMode: 2
     - _Cutoff: 0.5
-    - _DeepRange: 1
+    - _DeepRange: 2
     - _DepthEnd: -8.52
     - _DepthStart: 0.79
     - _DetailAlbedoMapScale: 1
@@ -347,7 +347,7 @@ Material:
     - _RefractionKey7: {r: -1, g: -1, b: -1, a: -1}
     - _RefractionKey8: {r: -1, g: -1, b: -1, a: -1}
     - _ScatteringColor: {r: 1, g: 1, b: 1, a: 1}
-    - _ShallowColor: {r: 0, g: 0.3899369, b: 0.22746307, a: 0.043137256}
+    - _ShallowColor: {r: 0, g: 0.38993677, b: 0.22746295, a: 1}
     - _ShoreColor: {r: 1, g: 1, b: 1, a: 1}
     - _SpecColor: {r: 1, g: 1, b: 1, a: 1}
     - _SpecTint: {r: 1, g: 1, b: 1, a: 0}
