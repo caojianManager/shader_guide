@@ -189,9 +189,9 @@ Material:
     - _CausticsDirectionMask: 0
     - _CausticsDistortion: 0.1
     - _CausticsEnd: 1
-    - _CausticsIntensity: 5.5
+    - _CausticsIntensity: 3.42
     - _CausticsMode: 1
-    - _CausticsRange: 100
+    - _CausticsRange: 85.5
     - _CausticsScale: 8
     - _CausticsStart: 0
     - _CausticsTiling3D: 0.5
@@ -203,7 +203,7 @@ Material:
     - _Cull: 2
     - _CullMode: 2
     - _Cutoff: 0.5
-    - _DeepRange: 0.3
+    - _DeepRange: 1.4
     - _DepthEnd: -8.52
     - _DepthStart: 0.79
     - _DetailAlbedoMapScale: 1
