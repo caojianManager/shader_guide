@@ -134,8 +134,8 @@ float FragmentDepthOnly(Varyings IN) : SV_Target
     UNITY_SETUP_INSTANCE_ID(IN);
     UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(IN);
     
-    // float alpha = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, IN.uv.xy).a * _BaseColor.a;
-    // AlphaDiscard(alpha, _AlphaClip);
+    float alpha = SAMPLE_TEXTURE2D(_Layer1_BaseMap, sampler_Layer1_BaseMap, IN.uv.xy).a * _Layer1_BaseColor.a;
+    AlphaDiscard(alpha, 1);
 
     #ifdef LOD_FADE_CROSSFADE
         LODFadeCrossFade(IN.positionHCS);

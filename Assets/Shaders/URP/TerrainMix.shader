@@ -128,6 +128,32 @@ Shader "CURP/TerrainMix"
 
             ENDHLSL
         }
+
+              Pass
+        {
+            Name "DepthOnly"
+            
+            Tags {"LightMode" = "DepthOnly"}
+            Cull [_Culling]
+            ZWrite On
+            ZTest LEqual
+            ZClip Off
+            
+            
+            HLSLPROGRAM
+
+            #pragma shader_feature_local_fragment _ALPHATEST_ON
+            #pragma multi_compile_instancing
+            #pragma multi_compile _ DOTS_INSTANCING_ON
+            #pragma multi_compile_fragment _ LOD_FADE_CROSSFADE
+            
+            #pragma vertex Vert
+            #pragma fragment FragmentDepthOnly
+            
+            #include "./Librarys/TerrainMix/TerrainMix.hlsl"
+            
+            ENDHLSL
+        }
     }
     CustomEditor "URPShaderEditor.TerrainMixEditorGUI"
 }
