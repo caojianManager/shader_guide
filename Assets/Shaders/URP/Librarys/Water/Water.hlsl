@@ -2,7 +2,7 @@
 #define WATER_INCLUDED
 
 #include "../../Librarys/Common/Common.hlsl"
-#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/DeclareDepthTexture.hlsl"
+
 #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
 #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
 #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/ParallaxMapping.hlsl"
@@ -58,52 +58,6 @@ struct BRDF
 ////////////////////////////////////////////////////////////////////////////////////////////
 ///                                 Water Color                                         ///
 ///////////////////////////////////////////////////////////////////////////////////////////
-
-//从深度纹理重建像素的世界空间位置
-//https://docs.unity3d.com/Packages/com.unity.render-pipelines.universal@11.0/manual/writing-shaders-urp-reconstruct-world-position.html
-float3 ReconstructWorldPositionFromDepth(Varyings IN)
-{
-    if(1)
-    {
-        float4 screenPos = ComputeScreenPos(IN.clipPosition);
-        float3 ndcPos = screenPos.xyz / screenPos.w;
-        float2 screenUV = ndcPos.xy;
-        float zDepth = ndcPos.z;
-        float rawDepth = SampleSceneDepth(screenUV);
-        // Adjust z to match NDC for OpenGL
-        //View to world position
-        float4 viewPos = float4((screenPos.xy/screenPos.w) * 2.0 - 1.0, rawDepth, 1.0);
-        float4x4 viewToWorld = UNITY_MATRIX_I_VP;
-        #if UNITY_REVERSED_Z //Wrecked since 7.3.1 "fix" and causes warping, invert second row https://issuetracker.unity3d.com/issues/shadergraph-inverse-view-projection-transformation-matrix-is-not-the-inverse-of-view-projection-transformation-matrix
-        //Commit https://github.com/Unity-Technologies/Graphics/pull/374/files
-        viewToWorld._12_22_32_42 = -viewToWorld._12_22_32_42;              
-        #endif
-        float4 viewWorld = mul(viewToWorld, viewPos);
-        float3 viewWorldPos = viewWorld.xyz / viewWorld.w;
-        float eyeDepth = LinearEyeDepth(rawDepth,_ZBufferParams);
-        //Projection to world position
-        float3 camPos = GetCurrentViewPosition().xyz;
-        float3 worldPos = eyeDepth * (IN.viewDirectionWS/screenPos.w) - camPos;
-        float3 perspWorldPos = -worldPos;
-        return lerp(perspWorldPos, viewWorldPos, unity_OrthoParams.w);
-    }
-
-    float4 screenPos = ComputeScreenPos(IN.clipPosition);
-    float3 ndcPos = screenPos.xyz / screenPos.w;
-    float2 screenUV = ndcPos.xy;
-    float zDepth = ndcPos.z;
-    
-    #if UNITY_REVERSED_Z
-    real depth = SampleSceneDepth(screenUV);
-    // depth = Linear01Depth(depth, _ZBufferParams);
-    #else
-    real depth = lerp(UNITY_NEAR_CLIP_VALUE, 1, SampleSceneDepth(UV));
-    #endif
-
-    
-    return ComputeWorldSpacePosition(screenUV, depth, UNITY_MATRIX_I_VP);
-
-}
 
 float GetWaterDepth(float positionWS_Y, float reconstructPositionWS_Y_FromDepth)
 {
@@ -241,7 +195,7 @@ struct MaterialData
 
 void InitializeMaterialData(Varyings IN,out MaterialData mat)
 {
-    float3 reconstructPositionWSFromDepth = ReconstructWorldPositionFromDepth(IN);
+    float3 reconstructPositionWSFromDepth = ReconstructWorldPositionFromDepth(IN.clipPosition,IN.viewDirectionWS);
     //计算WaterColor
     float4 waterColor = WaterColor(IN.normalWS,IN.viewDirectionWS,IN.positionHCS,IN.positionWS,reconstructPositionWSFromDepth);
     mat.albedoAlpha = waterColor;
@@ -258,8 +212,7 @@ void InitializeMaterialData(Varyings IN,out MaterialData mat)
     float3 reflectNormal = ReflectNormalLerp(normalTS);
     reflectNormal = normalize(normalTS);
     mat.normalTS = reflectNormal;
-
-    // mat.underWaterColor = float4(reconstructPositionWSFromDepth,1);
+    
 }
 
 float2 GetBlendFactors(float height1, float a1, float height2, float a2)

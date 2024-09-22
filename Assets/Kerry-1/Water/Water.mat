@@ -191,8 +191,8 @@ Material:
     - _CausticsEnd: 1
     - _CausticsIntensity: 3.42
     - _CausticsMode: 1
-    - _CausticsRange: 85.5
-    - _CausticsScale: 8
+    - _CausticsRange: 71
+    - _CausticsScale: 25.08
     - _CausticsStart: 0
     - _CausticsTiling3D: 0.5
     - _ClearCoatMask: 0
@@ -347,7 +347,7 @@ Material:
     - _RefractionKey7: {r: -1, g: -1, b: -1, a: -1}
     - _RefractionKey8: {r: -1, g: -1, b: -1, a: -1}
     - _ScatteringColor: {r: 1, g: 1, b: 1, a: 1}
-    - _ShallowColor: {r: 0.10412953, g: 0.509434, b: 0.3963258, a: 0.74509805}
+    - _ShallowColor: {r: 0.034116436, g: 0.72327036, b: 0.5292367, a: 0.74509805}
     - _ShoreColor: {r: 1, g: 1, b: 1, a: 1}
     - _SpecColor: {r: 1, g: 1, b: 1, a: 1}
     - _SpecTint: {r: 1, g: 1, b: 1, a: 0}

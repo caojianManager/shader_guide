@@ -1,6 +1,7 @@
 #ifndef COMMON_INCLUDED
 #define COMMON_INCLUDED
 
+#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/DeclareDepthTexture.hlsl"
 #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
 #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/SpaceTransforms.hlsl"
 #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
@@ -95,7 +96,7 @@ Light GetMainLightData(float3 PositionWS, float4 shadowMask)
     return light;
 }
 
-//增强屏幕坐标曲率
+//根据pos计算屏幕坐标曲率
 float4 ComputeGrabScreenPos(float4 pos)
 {
     #if UNITY_UV_STARTS_AT_TOP
@@ -109,21 +110,46 @@ float4 ComputeGrabScreenPos(float4 pos)
     return o;
 }
 
-float Co_SampleSceneDepth(float2 uv)
+//根据深度重建世界空间坐标(Depth/从深度纹理重建像素的世界空间位置) --计算水的深度可以用到，将裁剪空间的坐标重新转换到世界空间(依据Depth)
+//https://docs.unity3d.com/Packages/com.unity.render-pipelines.universal@11.0/manual/writing-shaders-urp-reconstruct-world-position.html
+float3 ReconstructWorldPositionFromDepth(float4 clipPosition,float3 viewDierectionWS)
 {
-    #if defined(REQUIRE_DEPTH_TEXTURE)
-    return SampleSceneDepth(uv);
+    float4 screenPos = ComputeScreenPos(clipPosition);
+    float3 ndcPos = screenPos.xyz / screenPos.w;
+    float2 screenUV = ndcPos.xy;
+    float depthRaw = SampleSceneDepth(screenUV);
+    float depthEye = LinearEyeDepth(depthRaw,_ZBufferParams);
+    
+    #if UNITY_REVERSED_Z
+    real rawDepth = depthRaw;
     #else
-    return 0;
+    // Adjust z to match NDC for OpenGL
+    real rawDepth = lerp(UNITY_NEAR_CLIP_VALUE, 1, depthRaw);
     #endif
-}
-
-float3 Co_SampleSceneColor(float2 uv)
-{
-    #if defined(REQUIRE_OPAQUE_TEXTURE)
-    return SampleSceneColor(uv);
+    
+    //return ComputeWorldSpacePosition(screenPos.xy / screenPos.w, rawDepth, UNITY_MATRIX_I_VP);
+    
+    #if defined(ORTHOGRAPHIC_SUPPORT)
+    //View to world position
+    float4 viewPos = float4((screenPos.xy/screenPos.w) * 2.0 - 1.0, rawDepth, 1.0);
+    float4x4 viewToWorld = UNITY_MATRIX_I_VP;
+    #if UNITY_REVERSED_Z //Wrecked since 7.3.1 "fix" and causes warping, invert second row https://issuetracker.unity3d.com/issues/shadergraph-inverse-view-projection-transformation-matrix-is-not-the-inverse-of-view-projection-transformation-matrix
+    //Commit https://github.com/Unity-Technologies/Graphics/pull/374/files
+    viewToWorld._12_22_32_42 = -viewToWorld._12_22_32_42;              
+    #endif
+    float4 viewWorld = mul(viewToWorld, viewPos);
+    float3 viewWorldPos = viewWorld.xyz / viewWorld.w;
+    #endif
+    
+    //Projection to world position
+    float3 camPos = GetCurrentViewPosition().xyz;
+    float3 worldPos = depthEye * (viewDierectionWS/screenPos.w) - camPos;
+    float3 perspWorldPos = -worldPos;
+    
+    #if defined(ORTHOGRAPHIC_SUPPORT)
+    return lerp(perspWorldPos, viewWorldPos, unity_OrthoParams.w);
     #else
-    return 0;
+    return perspWorldPos;
     #endif
 }
 
