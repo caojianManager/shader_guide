@@ -19,6 +19,7 @@ Material:
   - _DISPLACEMENTMODE_OFF
   - _NORMALSMODE_SINGLE
   - _REFLECTIONMODE_PROBES
+  - _WaveEnable
   - _ZWRITE_ON
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
@@ -313,7 +314,7 @@ Material:
     - _WaveAmplitude: 0.02
     - _WaveCount: 1
     - _WaveEffectsBoost: 0
-    - _WaveEnable: 0
+    - _WaveEnable: 1
     - _WaveEndDistance: 1000
     - _WaveLength: 1
     - _WaveNormal: 1
