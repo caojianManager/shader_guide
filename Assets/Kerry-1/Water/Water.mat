@@ -281,9 +281,9 @@ Material:
     - _ScatteringIntensity: 1
     - _ScatteringRangeMax: 1
     - _ScatteringRangeMin: 0
-    - _ShoreEdgeIntensity: 1
-    - _ShoreEdgeWidth: 0.135
-    - _ShoreRange: 1
+    - _ShoreEdgeIntensity: 3.6
+    - _ShoreEdgeWidth: 0.42
+    - _ShoreRange: 0.285
     - _Smoothness: 0.5
     - _SmoothnessTextureChannel: 0
     - _SpecEnd: 200
@@ -349,7 +349,7 @@ Material:
     - _RefractionKey7: {r: -1, g: -1, b: -1, a: -1}
     - _RefractionKey8: {r: -1, g: -1, b: -1, a: -1}
     - _ScatteringColor: {r: 1, g: 1, b: 1, a: 1}
-    - _ShallowColor: {r: 0.034116436, g: 0.72327036, b: 0.5292367, a: 0.56078434}
+    - _ShallowColor: {r: 0.034116436, g: 0.72327036, b: 0.5292367, a: 0.09411765}
     - _ShoreColor: {r: 1, g: 1, b: 1, a: 1}
     - _SpecColor: {r: 1, g: 1, b: 1, a: 1}
     - _SpecTint: {r: 1, g: 1, b: 1, a: 0}

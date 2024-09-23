@@ -27,7 +27,12 @@
         _CausticsSpeed("Caustics Speed",Vector) = (0,0,0,0)
         _CausticsIntensity("Caustics Intensity",Float) = 1
         _CausticsRange("Caustics Range",Range(0,100)) = 1
-
+        
+        //Shore岸边
+        _ShoreColor("Shore Color",Color) = (1,1,1,1)
+        _ShoreRange("Shore Range",Range(0.1,1)) = 1
+        _ShoreEdgeWidth("Shore Edge Width",Range(0,1)) = 1
+        _ShoreEdgeIntensity("Shore Edge Intensity",Range(0,10)) = 1
     }
     SubShader
     {

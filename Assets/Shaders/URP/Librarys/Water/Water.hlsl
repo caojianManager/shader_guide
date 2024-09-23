@@ -141,7 +141,6 @@ float4 UnderWaterColor(float3 surfaceNormal,float4 clipPosition)
 ///////////////////////////////////////////////////////////////////////////////
 //                     Caustics Color                                       //
 ///////////////////////////////////////////////////////////////////////////////
-
 float4 CausticsColor(float3 reconstructPositionWSFromDepth,float3 positionWS)
 {
     float waterDepth = GetWaterDepth(positionWS.y,reconstructPositionWSFromDepth.y);
@@ -153,6 +152,25 @@ float4 CausticsColor(float3 reconstructPositionWSFromDepth,float3 positionWS)
     float4 causticsMap = min(causticsMap1,causticsMap2) * _CausticsIntensity;
     float causticsMask = clamp(exp(-waterDepth/_CausticsRange),0,1);
     return causticsMap * causticsMask;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+//                     Water Shore                                          //
+///////////////////////////////////////////////////////////////////////////////
+
+float WaterShore(float waterDepth)
+{
+    return saturate(exp(-waterDepth/_ShoreRange));
+}
+
+float ShoreEdge(float waterShore)
+{
+    return smoothstep((1 - _ShoreEdgeWidth),1,waterShore) * _ShoreEdgeIntensity;
+}
+
+float3 GetShoreColor(float3 waterColor,float waterShore,float shoreEdge)
+{
+   return max(lerp(waterColor,_ShoreColor,waterShore) + shoreEdge,0);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -191,6 +209,8 @@ struct MaterialData
     float4 albedoAlpha;             //水的基础颜色
     float4 underWaterColor;         //水底颜色
     float3 normalTS;
+    float waterShore;
+    float shoreEdge;
 };
 
 void InitializeMaterialData(Varyings IN,out MaterialData mat)
@@ -210,7 +230,10 @@ void InitializeMaterialData(Varyings IN,out MaterialData mat)
     //焦散
     float4 causticsColor = CausticsColor(reconstructPositionWSFromDepth,IN.positionWS);
     mat.underWaterColor += causticsColor;
-    
+
+    float waterDepth = GetWaterDepth(IN.positionWS.y,reconstructPositionWSFromDepth.y);
+    mat.waterShore = WaterShore(waterDepth);
+    mat.shoreEdge = ShoreEdge(mat.waterShore);
 }
 
 float2 GetBlendFactors(float height1, float a1, float height2, float a2)
@@ -246,6 +269,8 @@ float4 Frag(Varyings IN) : SV_TARGET
     float3 specular = GetEnvironmentReflection(IN.viewDirectionWS,IN.normalWS,IN.positionWS);
     specular += GetLightSpecular(float3(1,1,1),mainLight,IN.viewDirectionWS,IN.normalWS,_GlossPower*10);
     float3 color = lerp(mat.albedoAlpha + specular,mat.underWaterColor,1 - mat.albedoAlpha.a);
+    //add shore
+    color = GetShoreColor(color,mat.waterShore,mat.shoreEdge);
     return float4(color,mat.albedoAlpha.a);
 }
 

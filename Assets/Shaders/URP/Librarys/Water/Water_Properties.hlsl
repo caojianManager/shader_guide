@@ -13,6 +13,10 @@ CBUFFER_START(UnityPerMaterial)
     float _CausticsIntensity;
     float _CausticsRange;
     float _GlossPower;
+    float _ShoreRange;
+    float _ShoreEdgeWidth;
+    float _ShoreEdgeIntensity;
+    float4 _ShoreColor;
     float4 _CausticsSpeed;
     float4 _NormalSpeed;
     float4 _DeepColor;

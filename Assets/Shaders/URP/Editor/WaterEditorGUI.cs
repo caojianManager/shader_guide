@@ -12,6 +12,7 @@ namespace URPShaderEditor
         private bool showNormalOptions = true;
         private bool showReflectionOptions = true;
         private bool shwoCausticsOptions = true;
+        private bool showShoreOptions = true;
         
         public override void OnGUI(MaterialEditor materialEditor, MaterialProperty[] properties)
         {
@@ -40,11 +41,17 @@ namespace URPShaderEditor
             MaterialProperty _CausticsIntensity = FindProperty("_CausticsIntensity", properties);
             MaterialProperty _CausticsRange = FindProperty("_CausticsRange", properties);
             MaterialProperty _CausticsSpeed = FindProperty("_CausticsSpeed", properties);
+            //Shore
+            MaterialProperty _ShoreColor = FindProperty("_ShoreColor", properties);
+            MaterialProperty _ShoreRange = FindProperty("_ShoreRange", properties);
+            MaterialProperty _ShoreEdgeWidth = FindProperty("_ShoreEdgeWidth", properties);
+            MaterialProperty _ShoreEdgeIntensity = FindProperty("_ShoreEdgeIntensity", properties);
             
             DrawBaseOptions();
             DrawNormalOptions();
             DrawReflectionOptions();
             DrawCausticsOptions();
+            DrawShoreOptions();
 
             void DrawBaseOptions()
             {
@@ -99,6 +106,19 @@ namespace URPShaderEditor
                     materialEditor.ShaderProperty(_CausticsIntensity,new GUIContent("Caustics Intensity"));
                     materialEditor.ShaderProperty(_CausticsRange,new GUIContent("Caustics Range"));
                     _CausticsSpeed.vectorValue = CommonEditorGUI.DrawVector2(_CausticsSpeed.vectorValue, new GUIContent("Caustics Speed"));
+                }
+                EditorGUILayout.EndFoldoutHeaderGroup();
+            }
+
+            void DrawShoreOptions()
+            {
+                showShoreOptions = EditorGUILayout.BeginFoldoutHeaderGroup(showShoreOptions, "Shore Options");
+                if (shwoCausticsOptions)
+                {
+                    materialEditor.ShaderProperty(_ShoreColor,new GUIContent("Shore Color"));
+                    materialEditor.ShaderProperty(_ShoreRange,new GUIContent("Shore Range"));
+                    materialEditor.ShaderProperty(_ShoreEdgeWidth,new GUIContent("Edge Width"));
+                    materialEditor.ShaderProperty(_ShoreEdgeIntensity,new GUIContent("Edge Intensity"));
                     EditorGUI.indentLevel--;
                 }
                 EditorGUILayout.EndFoldoutHeaderGroup();
