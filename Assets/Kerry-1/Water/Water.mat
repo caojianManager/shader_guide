@@ -241,8 +241,9 @@ Material:
     - _FogIntensity: 1
     - _FogPosition: 0
     - _FogSmoothness: 1
-    - _FresnelPower: 10
+    - _FresnelPower: 5.52
     - _GlossMapScale: 0
+    - _GlossPow: 7.26
     - _Glossiness: 0
     - _GlossyReflections: 0
     - _Metallic: 0
@@ -265,7 +266,7 @@ Material:
     - _ReflectDistort: 1
     - _ReflectDistortion: 0.42
     - _ReflectIntensity: 1
-    - _ReflectPower: 1.41
+    - _ReflectPower: 1.86
     - _ReflectionDistortion: 0.5
     - _ReflectionFresnel: 4
     - _ReflectionFresnelNormal: 0.25

@@ -2,6 +2,7 @@
 #define WATER_INCLUDED
 
 #include "../../Librarys/Common/Common.hlsl"
+#include "../../Librarys/Common/Lighting.hlsl"
 
 #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
 #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
@@ -116,7 +117,7 @@ float GetOcclusion(float3 normalWS,float3 viewDir)
     return clamp(_ReflectIntensity*fresnel,0,1);
 }
 
-float3 GetReflection(float3 viewDirectionWS, float3 normalWS,float3 positionWS)
+float3 GetEnvironmentReflection(float3 viewDirectionWS, float3 normalWS,float3 positionWS)
 {
     float occulsion = GetOcclusion(normalWS,viewDirectionWS);
     float3 reflection = reflect(-viewDirectionWS, normalWS);
@@ -196,22 +197,20 @@ struct MaterialData
 void InitializeMaterialData(Varyings IN,out MaterialData mat)
 {
     float3 reconstructPositionWSFromDepth = ReconstructWorldPositionFromDepth(IN.clipPosition,IN.viewDirectionWS);
+    
     //计算WaterColor
     float4 waterColor = WaterColor(IN.normalWS,IN.viewDirectionWS,IN.positionHCS,IN.positionWS,reconstructPositionWSFromDepth);
     mat.albedoAlpha = waterColor;
     float2 normalUV = IN.uv * _NormalMap_ST.xy + _NormalMap_ST.zw;
     float3 normalTS = SurfaceNormal(normalUV);
-    
+    mat.normalTS = ReflectNormalLerp(normalTS);
+
+    //水底
     float4 underWater = UnderWaterColor(normalTS,IN.clipPosition);
     mat.underWaterColor = underWater;
-
     //焦散
     float4 causticsColor = CausticsColor(reconstructPositionWSFromDepth,IN.positionWS);
     mat.underWaterColor += causticsColor;
-    
-    float3 reflectNormal = ReflectNormalLerp(normalTS);
-    reflectNormal = normalize(normalTS);
-    mat.normalTS = reflectNormal;
     
 }
 
@@ -238,18 +237,16 @@ float4 Frag(Varyings IN) : SV_TARGET
     // Setup Normals
     IN.normalWS = TranformNormalTangentToWorld(mat.normalTS, IN.normalWS, IN.tangentWS);
     IN.normalWS = normalize(IN.normalWS);
-    
     // Setup View direction
     IN.viewDirectionWS = normalize(IN.viewDirectionWS);
-    float2 normalizedScreenSpaceUV = GetNormalizedScreenSpaceUV(IN.positionHCS);
     
     //Lighting
     Light mainLight;
     float4 shadowMask = SAMPLE_SHADOWMASK(IN.staticLightmapUV);
     mainLight = GetMainLightData(IN.positionWS, shadowMask);
-    
-    float3 indirectSpecular = GetReflection(IN.viewDirectionWS,IN.normalWS,IN.positionWS);
-    float3 color = lerp(mat.albedoAlpha + indirectSpecular,mat.underWaterColor,1 - mat.albedoAlpha.a);
+    float3 specular = GetEnvironmentReflection(IN.viewDirectionWS,IN.normalWS,IN.positionWS);
+    specular += GetLightSpecular(float3(1,1,1),mainLight,IN.viewDirectionWS,IN.normalWS,_GlossPow*10);
+    float3 color = lerp(mat.albedoAlpha + specular,mat.underWaterColor,1 - mat.albedoAlpha.a);
     return float4(color,mat.albedoAlpha.a);
 }
 
