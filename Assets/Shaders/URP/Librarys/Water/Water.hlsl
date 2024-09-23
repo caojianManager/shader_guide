@@ -68,7 +68,7 @@ float GetWaterDepth(float positionWS_Y, float reconstructPositionWS_Y_FromDepth)
 float4 WaterColor(float3 normalWS, float3 viewDirectionWS,float4 positionHCS,float3 positionWS,float3 reconstructPositionWSFromDepth)
 {
     float waterDepth = GetWaterDepth(positionWS.y,reconstructPositionWSFromDepth.y);
-    float depthLerp = clamp(exp(-waterDepth/_DeepRange),0,1);
+    float depthLerp = clamp(exp(-waterDepth/(_DeepRange * 0.2)),0,1);
     float4 waterColor = lerp(_DeepColor, _ShallowColor,depthLerp);
     float fresnelLerp = Fresnel(normalWS,normalize(viewDirectionWS),_FresnelPower);//菲尼系数-水平面颜色
     waterColor = lerp(waterColor, _FresnelColor,fresnelLerp);
@@ -93,7 +93,7 @@ float3 NormalBlendReoriented(float3 A, float3 B)
 
 float3 SurfaceNormal(float2 uv)
 {
-    float2 normalSpeedXY = float2(_NormalSpeed.x - 10,_NormalSpeed.y);
+    float2 normalSpeedXY = float2(_NormalSpeed.x,_NormalSpeed.y);
     float2 normalMapUV1 = uv + normalSpeedXY * _Time.y * 0.01;
     float2 normalMapUV2 = uv*2 - 0.5 * normalSpeedXY * _Time.y * 0.01;
     float4 normalMap1 = SAMPLE_TEXTURE2D(_NormalMap,sampler_NormalMap,normalMapUV1);
@@ -178,7 +178,6 @@ Varyings Vert(Attributes IN)
     OUT.viewDirectionTS = GetViewDirectionTangentSpace(OUT.tangentWS, OUT.normalWS, OUT.viewDirectionWS);
     
     OUT.color = IN.color;
-    
     return OUT;
 }
 
@@ -245,7 +244,7 @@ float4 Frag(Varyings IN) : SV_TARGET
     float4 shadowMask = SAMPLE_SHADOWMASK(IN.staticLightmapUV);
     mainLight = GetMainLightData(IN.positionWS, shadowMask);
     float3 specular = GetEnvironmentReflection(IN.viewDirectionWS,IN.normalWS,IN.positionWS);
-    specular += GetLightSpecular(float3(1,1,1),mainLight,IN.viewDirectionWS,IN.normalWS,_GlossPow*10);
+    specular += GetLightSpecular(float3(1,1,1),mainLight,IN.viewDirectionWS,IN.normalWS,_GlossPower*10);
     float3 color = lerp(mat.albedoAlpha + specular,mat.underWaterColor,1 - mat.albedoAlpha.a);
     return float4(color,mat.albedoAlpha.a);
 }

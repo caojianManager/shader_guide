@@ -12,7 +12,7 @@ CBUFFER_START(UnityPerMaterial)
     float _CausticsScale;
     float _CausticsIntensity;
     float _CausticsRange;
-    float _GlossPow;
+    float _GlossPower;
     float4 _CausticsSpeed;
     float4 _NormalSpeed;
     float4 _DeepColor;

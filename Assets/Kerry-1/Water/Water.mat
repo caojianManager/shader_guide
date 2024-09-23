@@ -203,7 +203,7 @@ Material:
     - _Cull: 2
     - _CullMode: 2
     - _Cutoff: 0.5
-    - _DeepRange: 1.4
+    - _DeepRange: 4
     - _DepthEnd: -8.52
     - _DepthStart: 0.79
     - _DetailAlbedoMapScale: 1
@@ -241,9 +241,10 @@ Material:
     - _FogIntensity: 1
     - _FogPosition: 0
     - _FogSmoothness: 1
-    - _FresnelPower: 5.52
+    - _FresnelPower: 3.32
     - _GlossMapScale: 0
     - _GlossPow: 7.26
+    - _GlossPower: 45.4
     - _Glossiness: 0
     - _GlossyReflections: 0
     - _Metallic: 0
@@ -253,7 +254,7 @@ Material:
     - _NormalMapAIntensity: 1
     - _NormalMapBIntensity: 0.605
     - _NormalMapFarIntensity: 1
-    - _NormalScale: 1
+    - _NormalScale: 1.38
     - _NormalSpeed: 1
     - _NormalTilling: 8
     - _NormalsMode: 0
@@ -294,7 +295,7 @@ Material:
     - _SrcBlend: 1
     - _SrcBlendAlpha: 1
     - _Surface: 0
-    - _UnderWaterDistort: 5.11
+    - _UnderWaterDistort: 10
     - _UnderWaterTilling: 1
     - _WaterDepth: -1
     - _WaterNoise: 6.32
@@ -328,7 +329,7 @@ Material:
     - _FlowTiling: {r: 1, g: 1, b: 0, a: 0}
     - _FoamColor: {r: 1, g: 1, b: 1, a: 1}
     - _FoamTiling: {r: 1, g: 1, b: 1, a: 1}
-    - _FresnelColor: {r: 0, g: 0.53996986, b: 0.91194963, a: 1}
+    - _FresnelColor: {r: 0, g: 0.69874847, b: 0.8805031, a: 1}
     - _MatcapColor: {r: 1, g: 1, b: 1, a: 1}
     - _Norma1lSpeed: {r: 0, g: 0, b: 0, a: 0}
     - _NormaSpeed: {r: 10, g: 0, b: 0, a: 0}
@@ -338,7 +339,7 @@ Material:
     - _NormalMapBTilings: {r: 1, g: 1, b: 1, a: 1}
     - _NormalMapFarSpeeds: {r: 1, g: 1, b: 1, a: 1}
     - _NormalMapFarTilings: {r: 1, g: 1, b: 0.5, a: 0.5}
-    - _NormalSpeed: {r: 20, g: 0, b: 0, a: 0}
+    - _NormalSpeed: {r: 10, g: 0, b: 0, a: 0}
     - _RefractionKey1: {r: -1, g: -1, b: -1, a: -1}
     - _RefractionKey2: {r: -1, g: -1, b: -1, a: -1}
     - _RefractionKey3: {r: -1, g: -1, b: -1, a: -1}
@@ -348,7 +349,7 @@ Material:
     - _RefractionKey7: {r: -1, g: -1, b: -1, a: -1}
     - _RefractionKey8: {r: -1, g: -1, b: -1, a: -1}
     - _ScatteringColor: {r: 1, g: 1, b: 1, a: 1}
-    - _ShallowColor: {r: 0.034116436, g: 0.72327036, b: 0.5292367, a: 0.74509805}
+    - _ShallowColor: {r: 0.034116436, g: 0.72327036, b: 0.5292367, a: 0.56078434}
     - _ShoreColor: {r: 1, g: 1, b: 1, a: 1}
     - _SpecColor: {r: 1, g: 1, b: 1, a: 1}
     - _SpecTint: {r: 1, g: 1, b: 1, a: 0}

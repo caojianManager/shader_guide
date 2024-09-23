@@ -116,6 +116,14 @@ namespace URPShaderEditor
             }
             EditorGUI.showMixedValue = false;
         }
+
+        public static Vector4 DrawVector2(Vector4 vector,GUIContent content)
+        {
+            Vector2 tmpVector2 = new Vector2(x: vector.x, vector.y);
+            tmpVector2 = EditorGUILayout.Vector2Field(new GUIContent(content), tmpVector2);
+            vector = new Vector4(tmpVector2.x, tmpVector2.y, 0, 0);
+            return vector;
+        }
         
     }
 }
