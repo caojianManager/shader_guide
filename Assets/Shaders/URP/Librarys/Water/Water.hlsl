@@ -65,7 +65,7 @@ float GetWaterDepth(float positionWS_Y, float reconstructPositionWS_Y_FromDepth)
     return positionWS_Y - reconstructPositionWS_Y_FromDepth;
 }
 
-float4 WaterColor(float3 normalWS, float3 viewDirectionWS,float4 positionHCS,float3 positionWS,float3 reconstructPositionWSFromDepth)
+float4 WaterColor(float3 normalWS, float3 viewDirectionWS,float3 positionWS,float3 reconstructPositionWSFromDepth)
 {
     float waterDepth = GetWaterDepth(positionWS.y,reconstructPositionWSFromDepth.y);
     float depthLerp = clamp(exp(-waterDepth/(_DeepRange * 0.2)),0,1);
@@ -174,11 +174,26 @@ float3 GetShoreColor(float3 waterColor,float waterShore,float shoreEdge)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+//                     Water Shore                                          //
+///////////////////////////////////////////////////////////////////////////////
+
+float3 GetWaveVertex(float3 vertex,float waveSpeed,float waveLength,float waveAmplitude)
+{
+    float arg = 2 * PI / waveLength;
+    vertex.y = waveAmplitude *  sin(arg*(vertex.y - waveSpeed * _Time.y));
+    return vertex;
+}
+
+///////////////////////////////////////////////////////////////////////////////
 //                      Vertex                                               //
 ///////////////////////////////////////////////////////////////////////////////
 
 Varyings Vert(Attributes IN)
 {
+    if(_WaveEnable)
+    {
+        IN.positionOS.xyz = GetWaveVertex(IN.positionOS,_WaveSpeed,_WaveLength,_WaveAmplitude);
+    }
     Varyings OUT = (Varyings)0;
     UNITY_SETUP_INSTANCE_ID(IN);
     UNITY_TRANSFER_INSTANCE_ID(IN, OUT);
@@ -218,7 +233,7 @@ void InitializeMaterialData(Varyings IN,out MaterialData mat)
     float3 reconstructPositionWSFromDepth = ReconstructWorldPositionFromDepth(IN.clipPosition,IN.viewDirectionWS);
     
     //计算WaterColor
-    float4 waterColor = WaterColor(IN.normalWS,IN.viewDirectionWS,IN.positionHCS,IN.positionWS,reconstructPositionWSFromDepth);
+    float4 waterColor = WaterColor(IN.normalWS,IN.viewDirectionWS,IN.positionWS,reconstructPositionWSFromDepth);
     mat.albedoAlpha = waterColor;
     float2 normalUV = IN.uv * _NormalMap_ST.xy + _NormalMap_ST.zw;
     float3 normalTS = SurfaceNormal(normalUV);

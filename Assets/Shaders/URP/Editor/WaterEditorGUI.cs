@@ -13,6 +13,7 @@ namespace URPShaderEditor
         private bool showReflectionOptions = true;
         private bool shwoCausticsOptions = true;
         private bool showShoreOptions = true;
+        private bool showWaveOptions = true;
         
         public override void OnGUI(MaterialEditor materialEditor, MaterialProperty[] properties)
         {
@@ -46,12 +47,18 @@ namespace URPShaderEditor
             MaterialProperty _ShoreRange = FindProperty("_ShoreRange", properties);
             MaterialProperty _ShoreEdgeWidth = FindProperty("_ShoreEdgeWidth", properties);
             MaterialProperty _ShoreEdgeIntensity = FindProperty("_ShoreEdgeIntensity", properties);
+            //Wave
+            MaterialProperty _WaveAmplitude = FindProperty("_WaveAmplitude", properties);
+            MaterialProperty _WaveLength = FindProperty("_WaveLength", properties);
+            MaterialProperty _WaveSpeed = FindProperty("_WaveSpeed", properties);
+            MaterialProperty _WaveEnable = FindProperty("_WaveEnable", properties);
             
             DrawBaseOptions();
             DrawNormalOptions();
             DrawReflectionOptions();
             DrawCausticsOptions();
             DrawShoreOptions();
+            DrawWaveOptions();
 
             void DrawBaseOptions()
             {
@@ -113,12 +120,25 @@ namespace URPShaderEditor
             void DrawShoreOptions()
             {
                 showShoreOptions = EditorGUILayout.BeginFoldoutHeaderGroup(showShoreOptions, "Shore Options");
-                if (shwoCausticsOptions)
+                if (showShoreOptions)
                 {
                     materialEditor.ShaderProperty(_ShoreColor,new GUIContent("Shore Color"));
                     materialEditor.ShaderProperty(_ShoreRange,new GUIContent("Shore Range"));
                     materialEditor.ShaderProperty(_ShoreEdgeWidth,new GUIContent("Edge Width"));
                     materialEditor.ShaderProperty(_ShoreEdgeIntensity,new GUIContent("Edge Intensity"));
+                }
+                EditorGUILayout.EndFoldoutHeaderGroup();
+            }
+
+            void DrawWaveOptions()
+            {
+                showWaveOptions = EditorGUILayout.BeginFoldoutHeaderGroup(showWaveOptions, "Wave Options");
+                if (showWaveOptions)
+                {
+                    materialEditor.ShaderProperty(_WaveEnable,new GUIContent("Enable"));
+                    materialEditor.ShaderProperty(_WaveAmplitude,new GUIContent("Wave Amplitude"));
+                    materialEditor.ShaderProperty(_WaveLength,new GUIContent("Wave Length"));
+                    materialEditor.ShaderProperty(_WaveSpeed,new GUIContent("Wave Speed"));
                     EditorGUI.indentLevel--;
                 }
                 EditorGUILayout.EndFoldoutHeaderGroup();

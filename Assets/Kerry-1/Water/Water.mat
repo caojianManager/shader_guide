@@ -82,6 +82,10 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _FoamMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _FoamTex:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -189,7 +193,7 @@ Material:
     - _CausticsDirectionMask: 0
     - _CausticsDistortion: 0.1
     - _CausticsEnd: 1
-    - _CausticsIntensity: 3.42
+    - _CausticsIntensity: 0.54
     - _CausticsMode: 1
     - _CausticsRange: 71
     - _CausticsScale: 25.08
@@ -203,7 +207,7 @@ Material:
     - _Cull: 2
     - _CullMode: 2
     - _Cutoff: 0.5
-    - _DeepRange: 4
+    - _DeepRange: 11.3
     - _DepthEnd: -8.52
     - _DepthStart: 0.79
     - _DetailAlbedoMapScale: 1
@@ -228,12 +232,17 @@ Material:
     - _FoamCapsIntensity: 1
     - _FoamCapsRangeMax: 1
     - _FoamCapsRangeMin: 0
+    - _FoamContrast: 0
     - _FoamDistortion: 0.1
+    - _FoamFastSpeed: 1
+    - _FoamFrequency: 1
+    - _FoamRange: 1
     - _FoamRippleDistance: 1
     - _FoamRippleSize: 1
     - _FoamRippleSpeed: 0.1
     - _FoamRipples: 0
     - _FoamSize: 0.1
+    - _FoamSpeed: 1
     - _FoamWhiteCaps: 0
     - _FogEnable: 0
     - _FogFill: 1
@@ -281,9 +290,9 @@ Material:
     - _ScatteringIntensity: 1
     - _ScatteringRangeMax: 1
     - _ScatteringRangeMin: 0
-    - _ShoreEdgeIntensity: 3.6
-    - _ShoreEdgeWidth: 0.42
-    - _ShoreRange: 0.285
+    - _ShoreEdgeIntensity: 0
+    - _ShoreEdgeWidth: 0.16
+    - _ShoreRange: 0.1
     - _Smoothness: 0.5
     - _SmoothnessTextureChannel: 0
     - _SpecEnd: 200
@@ -301,13 +310,14 @@ Material:
     - _WaterNoise: 6.32
     - _WaterSpeed: 0.7
     - _WaterTilling: 6
-    - _WaveAmplitude: 1
+    - _WaveAmplitude: 0.02
     - _WaveCount: 1
     - _WaveEffectsBoost: 0
+    - _WaveEnable: 0
     - _WaveEndDistance: 1000
-    - _WaveLength: 8
+    - _WaveLength: 1
     - _WaveNormal: 1
-    - _WaveSpeed: 10
+    - _WaveSpeed: 0.08
     - _WaveStartDistance: 0
     - _WaveSteepness: 0.5
     - _WorkflowMode: 1
@@ -328,6 +338,7 @@ Material:
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _FlowTiling: {r: 1, g: 1, b: 0, a: 0}
     - _FoamColor: {r: 1, g: 1, b: 1, a: 1}
+    - _FoamDirection: {r: 1, g: 1, b: 1, a: 1}
     - _FoamTiling: {r: 1, g: 1, b: 1, a: 1}
     - _FresnelColor: {r: 0, g: 0.69874847, b: 0.8805031, a: 1}
     - _MatcapColor: {r: 1, g: 1, b: 1, a: 1}
@@ -349,7 +360,7 @@ Material:
     - _RefractionKey7: {r: -1, g: -1, b: -1, a: -1}
     - _RefractionKey8: {r: -1, g: -1, b: -1, a: -1}
     - _ScatteringColor: {r: 1, g: 1, b: 1, a: 1}
-    - _ShallowColor: {r: 0.034116436, g: 0.72327036, b: 0.5292367, a: 0.09411765}
+    - _ShallowColor: {r: 0.034116436, g: 0.72327036, b: 0.5292367, a: 0}
     - _ShoreColor: {r: 1, g: 1, b: 1, a: 1}
     - _SpecColor: {r: 1, g: 1, b: 1, a: 1}
     - _SpecTint: {r: 1, g: 1, b: 1, a: 0}
