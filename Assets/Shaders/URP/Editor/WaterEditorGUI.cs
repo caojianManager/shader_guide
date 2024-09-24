@@ -43,6 +43,7 @@ namespace URPShaderEditor
             MaterialProperty _CausticsRange = FindProperty("_CausticsRange", properties);
             MaterialProperty _CausticsSpeed = FindProperty("_CausticsSpeed", properties);
             //Shore
+            MaterialProperty _ShoreEnable = FindProperty("_ShoreEnable", properties);
             MaterialProperty _ShoreColor = FindProperty("_ShoreColor", properties);
             MaterialProperty _ShoreRange = FindProperty("_ShoreRange", properties);
             MaterialProperty _ShoreEdgeWidth = FindProperty("_ShoreEdgeWidth", properties);
@@ -122,6 +123,7 @@ namespace URPShaderEditor
                 showShoreOptions = EditorGUILayout.BeginFoldoutHeaderGroup(showShoreOptions, "Shore Options");
                 if (showShoreOptions)
                 {
+                    materialEditor.ShaderProperty(_ShoreEnable,new GUIContent("Shore Enable"));
                     materialEditor.ShaderProperty(_ShoreColor,new GUIContent("Shore Color"));
                     materialEditor.ShaderProperty(_ShoreRange,new GUIContent("Shore Range"));
                     materialEditor.ShaderProperty(_ShoreEdgeWidth,new GUIContent("Edge Width"));

@@ -29,6 +29,7 @@
         _CausticsRange("Caustics Range",Range(0,100)) = 1
         
         //Shore岸边
+        [Toggle(_ShoreEnable)]_ShoreEnable("Shore Enable",Float) = 1
         _ShoreColor("Shore Color",Color) = (1,1,1,1)
         _ShoreRange("Shore Range",Range(0,1)) = 1
         _ShoreEdgeWidth("Shore Edge Width",Range(0,1)) = 1

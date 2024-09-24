@@ -20,6 +20,7 @@ CBUFFER_START(UnityPerMaterial)
     float _WaveLength;
     float _WaveSpeed;
     float _WaveEnable;
+    float _ShoreEnable;
     float4 _ShoreColor;
     float4 _CausticsSpeed;
     float4 _NormalSpeed;

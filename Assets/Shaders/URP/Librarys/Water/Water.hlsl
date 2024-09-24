@@ -285,7 +285,10 @@ float4 Frag(Varyings IN) : SV_TARGET
     specular += GetLightSpecular(float3(1,1,1),mainLight,IN.viewDirectionWS,IN.normalWS,_GlossPower*10);
     float3 color = lerp(mat.albedoAlpha + specular,mat.underWaterColor,1 - mat.albedoAlpha.a);
     //add shore
-    color = GetShoreColor(color,mat.waterShore,mat.shoreEdge);
+    if(_ShoreEnable)
+    {
+        color = GetShoreColor(color,mat.waterShore,mat.shoreEdge);
+    }
     return float4(color,mat.albedoAlpha.a);
 }
 
