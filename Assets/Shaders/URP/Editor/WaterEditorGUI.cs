@@ -14,6 +14,7 @@ namespace URPShaderEditor
         private bool shwoCausticsOptions = true;
         private bool showShoreOptions = true;
         private bool showWaveOptions = true;
+        private bool showFoamOptions = true;
         
         public override void OnGUI(MaterialEditor materialEditor, MaterialProperty[] properties)
         {
@@ -53,6 +54,15 @@ namespace URPShaderEditor
             MaterialProperty _WaveLength = FindProperty("_WaveLength", properties);
             MaterialProperty _WaveSpeed = FindProperty("_WaveSpeed", properties);
             MaterialProperty _WaveEnable = FindProperty("_WaveEnable", properties);
+            //Foam
+            MaterialProperty _FoamEnable = FindProperty("_FoamEnable", properties);
+            MaterialProperty _FoamMap = FindProperty("_FoamMap", properties);
+            MaterialProperty _FoamColor = FindProperty("_FoamColor", properties);
+            MaterialProperty _FoamDirection = FindProperty("_FoamDirection", properties);
+            MaterialProperty _FoamSpeed = FindProperty("_FoamSpeed", properties);
+            MaterialProperty _FoamFastSpeed = FindProperty("_FoamFastSpeed", properties);
+            MaterialProperty _FoamContrast = FindProperty("_FoamContrast", properties);
+            MaterialProperty _FoamRange = FindProperty("_FoamRange", properties);
             
             DrawBaseOptions();
             DrawNormalOptions();
@@ -60,6 +70,7 @@ namespace URPShaderEditor
             DrawCausticsOptions();
             DrawShoreOptions();
             DrawWaveOptions();
+            DrawFoamOptions();
 
             void DrawBaseOptions()
             {
@@ -141,6 +152,23 @@ namespace URPShaderEditor
                     materialEditor.ShaderProperty(_WaveAmplitude,new GUIContent("Wave Amplitude"));
                     materialEditor.ShaderProperty(_WaveLength,new GUIContent("Wave Length"));
                     materialEditor.ShaderProperty(_WaveSpeed,new GUIContent("Wave Speed"));
+                }
+                EditorGUILayout.EndFoldoutHeaderGroup();
+            }
+
+            void DrawFoamOptions()
+            {
+                showFoamOptions = EditorGUILayout.BeginFoldoutHeaderGroup(showFoamOptions, "Foam Options");
+                if (showFoamOptions)
+                {
+                    materialEditor.ShaderProperty(_FoamEnable,new GUIContent("Foam Enable"));
+                    CommonEditorGUI.DrawConditionalTextureProperty(materialEditor,new GUIContent("Foam Map"),_FoamMap,_FoamColor);
+                    _FoamDirection.vectorValue =
+                        CommonEditorGUI.DrawVector2(_FoamDirection.vectorValue, new GUIContent("Foam Direction"));
+                    materialEditor.ShaderProperty(_FoamSpeed,new GUIContent("Foam Speed"));
+                    materialEditor.ShaderProperty(_FoamFastSpeed,new GUIContent("Foam Fast Speed"));
+                    materialEditor.ShaderProperty(_FoamContrast,new GUIContent("Foam Contrast"));
+                    materialEditor.ShaderProperty(_FoamRange,new GUIContent("Foam Range"));
                     EditorGUI.indentLevel--;
                 }
                 EditorGUILayout.EndFoldoutHeaderGroup();

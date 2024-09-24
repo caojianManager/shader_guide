@@ -21,6 +21,14 @@ CBUFFER_START(UnityPerMaterial)
     float _WaveSpeed;
     float _WaveEnable;
     float _ShoreEnable;
+    float _FoamSpeed;
+    float _FoamFastSpeed;
+    float _FoamContrast;
+    float _FoamRange;
+    float _FoamEnable;
+    float4 _FoamMap_ST;
+    float4 _FoamColor;
+    float4 _FoamDirection;
     float4 _ShoreColor;
     float4 _CausticsSpeed;
     float4 _NormalSpeed;

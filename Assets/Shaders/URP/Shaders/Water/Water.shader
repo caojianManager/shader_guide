@@ -36,12 +36,14 @@
         _ShoreEdgeIntensity("Shore Edge Intensity",Range(0,10)) = 1
         
         //FoamColor 泡沫
+        [Toggle(_FoamEnable)]_FoamEnable("Foam Enable",Float) = 1
         _FoamMap("Foam Map",2D) = "white" {}
         _FoamColor("Foam Color",Color) = (1,1,1,1)
-        _FoamFrequency("Foam Frequency",Float) = 1
+        _FoamDirection("Foam Direction",Vector) = (1,1,1,1)
         _FoamSpeed("Foam Speed",Float) = 1
-        _FoamRange("Foam Range",Range(0,1)) = 1
+        _FoamFastSpeed("Foam Fast Speed",Float) = 1
         _FoamContrast("Foam Contrast",Float) = 0
+        _FoamRange("Foam Range",Float) = 1
         
         //Water Wave 波浪
         [Toggle(_WaveEnable)]_WaveEnable("Wave Enable",Float) = 1

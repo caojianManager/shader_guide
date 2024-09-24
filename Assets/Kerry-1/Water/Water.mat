@@ -17,8 +17,10 @@ Material:
   - _CAUSTICS_ON
   - _COLORMODE_COLORS
   - _DISPLACEMENTMODE_OFF
+  - _FoamEnable
   - _NORMALSMODE_SINGLE
   - _REFLECTIONMODE_PROBES
+  - _ShoreEnable
   - _WaveEnable
   - _ZWRITE_ON
   m_LightmapFlags: 4
@@ -84,7 +86,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _FoamMap:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: 31e68d75d2651c148b4a9a296306d21c, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _FoamTex:
@@ -194,7 +196,7 @@ Material:
     - _CausticsDirectionMask: 0
     - _CausticsDistortion: 0.1
     - _CausticsEnd: 1
-    - _CausticsIntensity: 0.54
+    - _CausticsIntensity: 1.48
     - _CausticsMode: 1
     - _CausticsRange: 71
     - _CausticsScale: 25.08
@@ -233,17 +235,18 @@ Material:
     - _FoamCapsIntensity: 1
     - _FoamCapsRangeMax: 1
     - _FoamCapsRangeMin: 0
-    - _FoamContrast: 0
+    - _FoamContrast: 0.42
     - _FoamDistortion: 0.1
+    - _FoamEnable: 1
     - _FoamFastSpeed: 1
     - _FoamFrequency: 1
-    - _FoamRange: 1
+    - _FoamRange: 1.32
     - _FoamRippleDistance: 1
     - _FoamRippleSize: 1
     - _FoamRippleSpeed: 0.1
     - _FoamRipples: 0
     - _FoamSize: 0.1
-    - _FoamSpeed: 1
+    - _FoamSpeed: 0.3
     - _FoamWhiteCaps: 0
     - _FogEnable: 0
     - _FogFill: 1
@@ -292,8 +295,9 @@ Material:
     - _ScatteringRangeMax: 1
     - _ScatteringRangeMin: 0
     - _ShoreEdgeIntensity: 0
-    - _ShoreEdgeWidth: 0.16
-    - _ShoreRange: 0.1
+    - _ShoreEdgeWidth: 0.99
+    - _ShoreEnable: 1
+    - _ShoreRange: 0.53
     - _Smoothness: 0.5
     - _SmoothnessTextureChannel: 0
     - _SpecEnd: 200
@@ -339,7 +343,7 @@ Material:
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _FlowTiling: {r: 1, g: 1, b: 0, a: 0}
     - _FoamColor: {r: 1, g: 1, b: 1, a: 1}
-    - _FoamDirection: {r: 1, g: 1, b: 1, a: 1}
+    - _FoamDirection: {r: 0, g: 1.33, b: 0, a: 0}
     - _FoamTiling: {r: 1, g: 1, b: 1, a: 1}
     - _FresnelColor: {r: 0, g: 0.69874847, b: 0.8805031, a: 1}
     - _MatcapColor: {r: 1, g: 1, b: 1, a: 1}
@@ -361,7 +365,7 @@ Material:
     - _RefractionKey7: {r: -1, g: -1, b: -1, a: -1}
     - _RefractionKey8: {r: -1, g: -1, b: -1, a: -1}
     - _ScatteringColor: {r: 1, g: 1, b: 1, a: 1}
-    - _ShallowColor: {r: 0.034116436, g: 0.72327036, b: 0.5292367, a: 0}
+    - _ShallowColor: {r: 0.034116436, g: 0.72327036, b: 0.5292367, a: 0.36862746}
     - _ShoreColor: {r: 1, g: 1, b: 1, a: 1}
     - _SpecColor: {r: 1, g: 1, b: 1, a: 1}
     - _SpecTint: {r: 1, g: 1, b: 1, a: 0}

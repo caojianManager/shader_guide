@@ -168,13 +168,13 @@ float ShoreEdge(float waterShore)
     return smoothstep((1 - _ShoreEdgeWidth),1,waterShore) * _ShoreEdgeIntensity;
 }
 
-float3 GetShoreColor(float3 waterColor,float waterShore,float shoreEdge)
+float3 GetShoreColor(float3 waterColor,float waterShore)
 {
-   return max(lerp(waterColor,_ShoreColor,waterShore) + shoreEdge,0);
+   return lerp(waterColor,_ShoreColor,waterShore);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-//                     Water Shore                                          //
+//                     Water Wave Animation                                 //
 ///////////////////////////////////////////////////////////////////////////////
 
 float3 GetWaveVertex(float3 vertex,float waveSpeed,float waveLength,float waveAmplitude)
@@ -182,6 +182,22 @@ float3 GetWaveVertex(float3 vertex,float waveSpeed,float waveLength,float waveAm
     float arg = 2 * PI / waveLength;
     vertex.y = waveAmplitude *  sin(arg*(vertex.y - waveSpeed * _Time.y));
     return vertex;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+//                     Water Wave Animation                                 //
+///////////////////////////////////////////////////////////////////////////////
+
+float4 FoamColor(Varyings IN,float waterDepth)
+{
+    float2 foamUV = IN.uv *_FoamMap_ST.xy + _FoamMap_ST.zw;
+    float2 foamMapUV1 = (_Time.y * _FoamFastSpeed)*_FoamDirection + foamUV;
+    float2 foamMapUV2 = (_Time.y * _FoamSpeed)*_FoamDirection + foamUV;
+    float4 foamMap1 = SAMPLE_TEXTURE2D(_FoamMap,sampler_FoamMap,foamMapUV1);
+    float4 foamMap2 = SAMPLE_TEXTURE2D(_FoamMap,sampler_FoamMap,foamMapUV2);
+    float foamMap = lerp(foamMap1.r,foamMap2.r,IN.color.r);
+    foamMap = _FoamColor * lerp(clamp(clamp(exp(-waterDepth/_FoamRange),0,1)*IN.color.g,0,1), foamMap,_FoamContrast);
+    return foamMap;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -226,6 +242,7 @@ struct MaterialData
     float3 normalTS;
     float waterShore;
     float shoreEdge;
+    float4 foamColor;
 };
 
 void InitializeMaterialData(Varyings IN,out MaterialData mat)
@@ -249,6 +266,8 @@ void InitializeMaterialData(Varyings IN,out MaterialData mat)
     float waterDepth = GetWaterDepth(IN.positionWS.y,reconstructPositionWSFromDepth.y);
     mat.waterShore = WaterShore(waterDepth);
     mat.shoreEdge = ShoreEdge(mat.waterShore);
+
+    mat.foamColor = FoamColor(IN,waterDepth);
 }
 
 float2 GetBlendFactors(float height1, float a1, float height2, float a2)
@@ -276,7 +295,6 @@ float4 Frag(Varyings IN) : SV_TARGET
     IN.normalWS = normalize(IN.normalWS);
     // Setup View direction
     IN.viewDirectionWS = normalize(IN.viewDirectionWS);
-    
     //Lighting
     Light mainLight;
     float4 shadowMask = SAMPLE_SHADOWMASK(IN.staticLightmapUV);
@@ -284,11 +302,17 @@ float4 Frag(Varyings IN) : SV_TARGET
     float3 specular = GetEnvironmentReflection(IN.viewDirectionWS,IN.normalWS,IN.positionWS);
     specular += GetLightSpecular(float3(1,1,1),mainLight,IN.viewDirectionWS,IN.normalWS,_GlossPower*10);
     float3 color = lerp(mat.albedoAlpha + specular,mat.underWaterColor,1 - mat.albedoAlpha.a);
+    
     //add shore
     if(_ShoreEnable)
     {
-        color = GetShoreColor(color,mat.waterShore,mat.shoreEdge);
+        color = GetShoreColor(color,mat.waterShore) + mat.shoreEdge;
     }
+    if(_FoamEnable)
+    {
+        color = lerp(color,color+mat.foamColor.rgb,mat.foamColor.a);
+    }
+    color = max(color,0);
     return float4(color,mat.albedoAlpha.a);
 }
 
