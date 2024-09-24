@@ -125,6 +125,7 @@ namespace URPShaderEditor
                     materialEditor.ShaderProperty(_CausticsIntensity,new GUIContent("Caustics Intensity"));
                     materialEditor.ShaderProperty(_CausticsRange,new GUIContent("Caustics Range"));
                     _CausticsSpeed.vectorValue = CommonEditorGUI.DrawVector2(_CausticsSpeed.vectorValue, new GUIContent("Caustics Speed"));
+                    materialEditor.TextureScaleOffsetProperty(_CausticsMap);
                 }
                 EditorGUILayout.EndFoldoutHeaderGroup();
             }
@@ -169,6 +170,7 @@ namespace URPShaderEditor
                     materialEditor.ShaderProperty(_FoamFastSpeed,new GUIContent("Foam Fast Speed"));
                     materialEditor.ShaderProperty(_FoamContrast,new GUIContent("Foam Contrast"));
                     materialEditor.ShaderProperty(_FoamRange,new GUIContent("Foam Range"));
+                    materialEditor.TextureScaleOffsetProperty(_FoamMap);
                     EditorGUI.indentLevel--;
                 }
                 EditorGUILayout.EndFoldoutHeaderGroup();
