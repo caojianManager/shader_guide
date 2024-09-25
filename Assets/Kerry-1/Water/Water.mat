@@ -210,7 +210,7 @@ Material:
     - _Cull: 2
     - _CullMode: 2
     - _Cutoff: 0.5
-    - _DeepRange: 11.3
+    - _DeepRange: 4
     - _DepthEnd: -8.52
     - _DepthStart: 0.79
     - _DetailAlbedoMapScale: 1
