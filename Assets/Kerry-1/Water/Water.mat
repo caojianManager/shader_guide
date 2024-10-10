@@ -235,18 +235,18 @@ Material:
     - _FoamCapsIntensity: 1
     - _FoamCapsRangeMax: 1
     - _FoamCapsRangeMin: 0
-    - _FoamContrast: 0.42
+    - _FoamContrast: 0.26
     - _FoamDistortion: 0.1
     - _FoamEnable: 1
     - _FoamFastSpeed: 1
     - _FoamFrequency: 1
-    - _FoamRange: 1.32
+    - _FoamRange: 0.2
     - _FoamRippleDistance: 1
     - _FoamRippleSize: 1
     - _FoamRippleSpeed: 0.1
     - _FoamRipples: 0
     - _FoamSize: 0.1
-    - _FoamSpeed: 0.3
+    - _FoamSpeed: 1
     - _FoamWhiteCaps: 0
     - _FogEnable: 0
     - _FogFill: 1
