@@ -1,58 +1,119 @@
-Shader "Unlit/GlassRefractionShader"
+Shader "ShaderLab_Learning/GlassRefractionShader"
 {
     Properties
     {
-        _MainTex ("Texture", 2D) = "white" {}
+        _MainTex ("Main Tex", 2D) = "white" {}
+		_BumpMap ("Normal Map", 2D) = "bump" {}
+		_Cubemap ("Environment Cubemap", Cube) = "_Skybox" {}
+		_Distortion ("Distortion", Range(0, 100)) = 10
+		_RefractAmount ("Refract Amount", Range(0.0, 1.0)) = 1.0
+
     }
     SubShader
     {
-        Tags { "RenderType"="Opaque" }
-        LOD 100
-
+        Tags { "RenderPipeline"="UniversalPipeline"  "Queue"="Transparent"  "RenderType"="Opaque" }
+        
+        
         Pass
         {
-            CGPROGRAM
-            #pragma vertex vert
-            #pragma fragment frag
-            // make fog work
-            #pragma multi_compile_fog
+            Tags {"LightMode" = "UniversalForward"}
+            
+            HLSLPROGRAM
 
-            #include "UnityCG.cginc"
+            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/DeclareOpaqueTexture.hlsl"
+            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
+            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
+            
+            TEXTURE2D(_MainTex);
+            SAMPLER(sampler_MainTex);
+            
+            TEXTURE2D(_BumpMap);
+            SAMPLER(sampler_BumpMap);
+            
+            TEXTURECUBE(_Cubemap);
+            SAMPLER(sampler_Cubemap);
+            
+            
+            CBUFFER_START(UnityPerMaterial)
+                float _Distortion;
+                float _RefractAmount;
+                float4 _MainTex_ST;
+                float4 _BumpMap_ST;
+                float4 _CameraOpaqueTexture_TexelSize;
+            CBUFFER_END
 
-            struct appdata
+            #pragma vertex Vert;
+            #pragma fragment Frag;
+
+            struct Attributes
             {
-                float4 vertex : POSITION;
-                float2 uv : TEXCOORD0;
+                float4 positionOS: POSITION;
+                float3 normalOS : NORMAL;
+                float4 tangentOS : TANGENT;
+                float4 uv : TEXCOORD0;
             };
 
-            struct v2f
+            struct Varyings
             {
-                float2 uv : TEXCOORD0;
-                UNITY_FOG_COORDS(1)
-                float4 vertex : SV_POSITION;
+                float4 positionCS:SV_POSITION;
+                float4 uv : TEXCOORD0;
+                float4 TtoW0 : TEXCOORD1;
+                float4 TtoW1 : TEXCOORD2;
+                float4 TtoW2 : TEXCOORD3;
             };
 
-            sampler2D _MainTex;
-            float4 _MainTex_ST;
-
-            v2f vert (appdata v)
+            Varyings Vert(Attributes IN)
             {
-                v2f o;
-                o.vertex = UnityObjectToClipPos(v.vertex);
-                o.uv = TRANSFORM_TEX(v.uv, _MainTex);
-                UNITY_TRANSFER_FOG(o,o.vertex);
-                return o;
+                Varyings OUT;
+                OUT.positionCS = TransformObjectToHClip(IN.positionOS);
+                OUT.uv.xy = TRANSFORM_TEX(IN.uv,_MainTex);
+                OUT.uv.zw = TRANSFORM_TEX(IN.uv,_BumpMap);
+                
+                //世界坐标
+                float3 positionWS = TransformObjectToWorld(IN.positionOS);
+                 //世界空间的法线
+                float3 normalWS = TransformObjectToWorldNormal(IN.normalOS);
+                //世界空间的切线
+                float3 tangentWS = TransformObjectToWorldDir(IN.tangentOS.xyz);
+                //世界空间的副切线
+                float3 bitangentWS = cross(normalWS, tangentWS) * IN.tangentOS.w;
+
+                OUT.TtoW0 = float4(tangentWS.x,bitangentWS.x,normalWS.x, positionWS.x);
+                OUT.TtoW1 = float4(tangentWS.y,bitangentWS.y,normalWS.y, positionWS.y);
+                OUT.TtoW2 = float4(tangentWS.z,bitangentWS.z,normalWS.z, positionWS.z);
+                return OUT;
             }
 
-            fixed4 frag (v2f i) : SV_Target
+            half4 Frag(Varyings IN):SV_Target
             {
-                // sample the texture
-                fixed4 col = tex2D(_MainTex, i.uv);
-                // apply fog
-                UNITY_APPLY_FOG(i.fogCoord, col);
-                return col;
+                float3 positionWS = float3(IN.TtoW0.w,IN.TtoW1.w,IN.TtoW2.w);
+                float3 viewDirWS =   normalize(GetWorldSpaceViewDir(positionWS));
+
+                // Get the normal in tangent space
+                float4 normalMap = SAMPLE_TEXTURE2D(_BumpMap,sampler_BumpMap,IN.uv.zw);
+                float3 normalTS = UnpackNormal(normalMap); //等同于 (normalMap.xy * 2 - 1)
+                float3 normalWS = normalize(half3(dot(IN.TtoW0.xyz,normalTS),dot(IN.TtoW1.xyz,normalTS),dot(IN.TtoW2.xyz,normalTS)));
+                
+                // Compute the offset in tangent space
+                float2 offset = normalTS.xy * _Distortion * _CameraOpaqueTexture_TexelSize.xy;
+
+                //获取屏幕uv,另一种方法
+                float2 srcUV = GetNormalizedScreenSpaceUV(IN.positionCS);
+                srcUV = srcUV + offset;
+                float3 refrCol = SampleSceneColor(srcUV);
+
+                // 反射
+                half3 reflDir = reflect(-viewDirWS, normalWS);
+                half3 texColor = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex,IN.uv.xy);
+                half3 reflCol = SAMPLE_TEXTURECUBE(_Cubemap, sampler_Cubemap, reflDir).rgb * texColor.rgb;
+ 
+                half3 finalColor = refrCol * _RefractAmount + reflCol * (1 - _RefractAmount);
+                return half4(finalColor,0.5f);
             }
-            ENDCG
+
+            ENDHLSL
         }
+      
     }
+    FallBack "Diffuse"
 }
