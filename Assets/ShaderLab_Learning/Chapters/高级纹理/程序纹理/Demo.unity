@@ -296,7 +296,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   material: {fileID: 2100000, guid: c004a90c08edbed4687b5e0b60d3f62e, type: 2}
   m_textureWidth: 512
-  m_backgroundColor: {r: 0.71184665, g: 0.7169812, b: 0.59861165, a: 1}
+  m_backgroundColor: {r: 0.6709386, g: 0.8301887, b: 0.6886622, a: 1}
   m_circleColor: {r: 0.8207547, g: 0.13550194, b: 0.14892173, a: 1}
   m_blurFactor: 2
 --- !u!23 &953876185
