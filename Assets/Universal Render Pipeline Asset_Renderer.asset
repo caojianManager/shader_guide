@@ -20,6 +20,22 @@ MonoBehaviour:
     enable: 0
     range: 500
     cellSize: 0.25
+--- !u!114 &-4761021712257076202
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ebdea01fec86474c88b9aedf56a04bfc, type: 3}
+  m_Name: OutlinePass
+  m_EditorClassIdentifier: 
+  m_Active: 1
+  settings:
+    material: {fileID: 0}
+    renderPassEvent: 550
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -38,7 +54,8 @@ MonoBehaviour:
   m_RendererFeatures:
   - {fileID: -6676447115835960656}
   - {fileID: 3009784470364309671}
-  m_RendererFeatureMap: a7488d7e07e7c429
+  - {fileID: -4761021712257076202}
+  m_RendererFeatureMap: a7488d7e07e7c42916b4fe48fa73edbd
   m_UseNativeRenderPass: 0
   postProcessData: {fileID: 11400000, guid: 41439944d30ece34e96484bdb6645b55, type: 2}
   xrSystemData: {fileID: 11400000, guid: 60e1133243b97e347b653163a8c01b64, type: 2}
@@ -89,5 +106,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6d45b3f34ed883647951ae9053241c18, type: 3}
   m_Name: BSC
   m_EditorClassIdentifier: 
-  m_Active: 1
+  m_Active: 0
   shader: {fileID: 4800000, guid: 3e9a6ee6cc91fb84889d79bbd0407e7e, type: 3}

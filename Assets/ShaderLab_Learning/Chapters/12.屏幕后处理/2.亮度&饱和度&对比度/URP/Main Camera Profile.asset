@@ -121,10 +121,10 @@ MonoBehaviour:
     m_Value: 1
   brightness:
     m_OverrideState: 1
-    m_Value: 0.91
+    m_Value: 0.79
   saturation:
     m_OverrideState: 1
-    m_Value: 2.01
+    m_Value: 1.98
   contrast:
     m_OverrideState: 1
     m_Value: 1.16
