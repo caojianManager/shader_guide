@@ -281,7 +281,7 @@ namespace UnityEditor
 				EditorGUILayout.LabelField( "Render queue", ShaderUtilEx.GetRenderQueue( shader ).ToString( System.Globalization.CultureInfo.InvariantCulture ), new GUILayoutOption[ 0 ] );
 				EditorGUILayout.LabelField( "LOD", ShaderUtilEx.GetLOD( shader ).ToString( System.Globalization.CultureInfo.InvariantCulture ), new GUILayoutOption[ 0 ] );
 				EditorGUILayout.LabelField( "Ignore projector", ( !ShaderUtilEx.DoesIgnoreProjector( shader ) ) ? "no" : "yes", new GUILayoutOption[ 0 ] );
-				string label;
+				string label; 
 				switch ( ShaderEx.GetDisableBatching( shader ) )
 				{
 					case DisableBatchingType.False:

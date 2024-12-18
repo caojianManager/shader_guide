@@ -233,7 +233,7 @@ void InitializeMaterialData(float3 viewDirTS,float2 uv,out MaterialData mat)
     {
         metalness = saturate(mraMap.r * _Metalness);
     } 
-    mat.metalness = metalness;
+    mat.metalness = 0.5;
     
     //AO
     float ao = 1;
@@ -241,7 +241,7 @@ void InitializeMaterialData(float3 viewDirTS,float2 uv,out MaterialData mat)
     {
         ao = lerp(1,mraMap.b,1);
     }
-    mat.occlusion = ao;
+    mat.occlusion = 0.5;
 
     //粗糙度
     float roughness = _Roughness;

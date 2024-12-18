@@ -171,6 +171,7 @@ namespace URPShaderEditor
                     materialEditor.ShaderProperty(_FoamContrast,new GUIContent("Foam Contrast"));
                     materialEditor.ShaderProperty(_FoamRange,new GUIContent("Foam Range"));
                     materialEditor.TextureScaleOffsetProperty(_FoamMap);
+                    mat.renderQueue = EditorGUILayout.IntField("Render Queue", mat.renderQueue);
                     EditorGUI.indentLevel--;
                 }
                 EditorGUILayout.EndFoldoutHeaderGroup();
