@@ -12,142 +12,46 @@ namespace Tools.DataToModel
 
         private void Awake()
         {
-          CreateRoom();
+          
         }
 
         public void CreateRoom()
         {
             var room = Data.GetTextAssetContent<Room>(_textAsset);
-            //顶点数组
-            Vector3[] _vertices =
+            List<Vector3> point3Ds = new List<Vector3>();
+            for (int i = 0; i < room.room.x.Count; i++)
             {
-                // front
-                new Vector3(-5.0f, 10.0f, -5.0f),
-                new Vector3(-5.0f, 0.0f, -5.0f),
-                new Vector3(5.0f, 0.0f, -5.0f),
-                new Vector3(5.0f, 10.0f, -5.0f),
+                var point = new Vector3(room.room.x[i],room.room.y[i],room.room.z[i]);
+                point3Ds.Add(point);
+            }
+        }
 
-
-                // left
-                new Vector3(-5.0f, 10.0f, -5.0f),
-                new Vector3(-5.0f, 0.0f, -5.0f),
-                new Vector3(-5.0f, 0.0f, 5.0f),//
-                new Vector3(-5.0f, 10.0f, 5.0f),
-
-                // back
-                new Vector3(-5.0f, 10.0f, 5.0f),
-                new Vector3(-5.0f, 0.0f, 5.0f),
-                new Vector3(5.0f, 0.0f, 5.0f),
-                new Vector3(5.0f, 10.0f, 5.0f),
-
-
-                // right
-                new Vector3(5.0f, 10.0f, 5.0f),
-                new Vector3(5.0f, 0.0f, 5.0f),
-                new Vector3(5.0f, 0.0f, -5.0f),
-                new Vector3(5.0f, 10.0f, -5.0f),
-
-
-                // Top
-                new Vector3(-5.0f, 10.0f, 5.0f),
-                new Vector3(5.0f, 10.0f, 5.0f),
-                new Vector3(5.0f, 10.0f, -5.0f),
-                new Vector3(-5.0f, 10.0f, -5.0f),
-
-                // Bottom
-                new Vector3(-5.0f, 0.0f, 5.0f),
-                new Vector3(5.0f, 0.0f, 5.0f),
-                new Vector3(5.0f, 0.0f, -5.0f),
-                new Vector3(-5.0f, 0.0f, -5.0f),
-
-            };
-            
-            //索引数组
-            int[] _triangles =
+        void OnDrawGizmosSelected()
+        {
+            Gizmos.color = Color.red;
+            var room = Data.GetTextAssetContent<Room>(_textAsset);
+            for (int i = 0; i < room.room.x.Count; i++)
             {
-                //front
-                2,1,0,
-                0,3,2,
-                //left
-                4,5,6,
-                4,6,7,
-                //back
-                9,11,8,
-                9,10,11,
-                //right
-                12,13,14,
-                12,14,15,
-                ////up
-                //16,17,18,
-                //16,18,19,
-                ////buttom
-                //21,23,22,
-                //21,20,23,
-
-                //不可跳跃设置索引值（否则会提示一些索引超出边界顶点   15直接20不可，要连续15-16）
-                17,19,18,
-                17,16,19,
-            };
-            
-            //UV数组
-            Vector2[] uvs =
-            {
-                // Front
-                new Vector2(1.0f, 0.0f),
-                new Vector2(1.0f, 1.0f),
-                new Vector2(1.0f, 0.0f),
-                new Vector2(0.0f, 0.0f),
-
-
-                // Left
-                new Vector2(1.0f, 1.0f),
-                new Vector2(0.0f, 1.0f),
-                new Vector2(0.0f, 0.0f),
-                new Vector2(1.0f, 0.0f),
-
-
-                // Back
-                new Vector2(1.0f, 0.0f),
-                new Vector2(1.0f, 1.0f),
-                new Vector2(1.0f, 0.0f),
-                new Vector2(0.0f, 0.0f),
-
-
-                // Right
-                new Vector2(1.0f, 1.0f),
-                new Vector2(0.0f, 1.0f),
-                new Vector2(0.0f, 0.0f),
-                new Vector2(1.0f, 0.0f),
-
-                //// Top
-                //new Vector2(0.0f, 0.0f),
-                //new Vector2(1.0f, 0.0f),
-                //new Vector2(1.0f, 1.0f),
-                //new Vector2(0.0f, 1.0f),
-
-
-                // Bottom
-                new Vector2(0.0f, 0.0f),
-                new Vector2(1.0f, 0.0f),
-                new Vector2(1.0f, 1.0f),
-                new Vector2(0.0f, 1.0f),
-
-            };
-            CreateMeshWithData("room",_vertices,_triangles,uvs,_material);
+                var startPoint = new Vector3(room.room.x[i],room.room.y[i],room.room.z[i]);
+                var endPoint = new Vector3(room.room.x[0],room.room.y[0],room.room.z[0]);
+                if (i+1 < room.room.x.Count)
+                {
+                    endPoint = new Vector3(room.room.x[i+1],room.room.y[i+1],room.room.z[i+1]);
+                }
+                Gizmos.DrawLine(startPoint,endPoint);
+            }
         }
 
         #region Private Method
 
-        private void CreateMeshWithData(string name,Vector3[] vertices,int[] triangles,Vector2[] uv,Material material = null)
+        private void CreateMeshWithData(string name,Vector3[] vertices,Material material = null)
         {
             GameObject meshObj = new GameObject(name);
             meshObj.transform.position = Vector3.zero;
             meshObj.transform.SetParent(null);
             Mesh mesh = new Mesh();
             mesh.vertices = vertices;
-            mesh.triangles = triangles;
-            mesh.uv = uv;
-            mesh.RecalculateNormals();
+            
             meshObj.AddComponent<MeshFilter>().mesh = mesh;
             meshObj.AddComponent<MeshRenderer>().material = material;
         }

@@ -9,7 +9,6 @@ namespace Tools.DataToModel
         public static T GetTextAssetContent<T>(TextAsset asset)
         {
             string content = asset.text;
-            Debug.LogError(content);
             return JsonUtility.FromJson<T>(content);
         }
     }
