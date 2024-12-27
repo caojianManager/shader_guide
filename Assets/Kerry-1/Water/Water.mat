@@ -17,7 +17,6 @@ Material:
   - _CAUSTICS_ON
   - _COLORMODE_COLORS
   - _DISPLACEMENTMODE_OFF
-  - _FoamEnable
   - _NORMALSMODE_SINGLE
   - _REFLECTIONMODE_PROBES
   - _ShoreEnable
@@ -237,7 +236,7 @@ Material:
     - _FoamCapsRangeMin: 0
     - _FoamContrast: 0.26
     - _FoamDistortion: 0.1
-    - _FoamEnable: 1
+    - _FoamEnable: 0
     - _FoamFastSpeed: 1
     - _FoamFrequency: 1
     - _FoamRange: 0.2
@@ -297,7 +296,7 @@ Material:
     - _ShoreEdgeIntensity: 0
     - _ShoreEdgeWidth: 0.99
     - _ShoreEnable: 1
-    - _ShoreRange: 0.53
+    - _ShoreRange: 0.039
     - _Smoothness: 0.5
     - _SmoothnessTextureChannel: 0
     - _SpecEnd: 200
