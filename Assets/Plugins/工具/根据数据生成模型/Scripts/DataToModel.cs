@@ -17,10 +17,11 @@ namespace Tools.DataToModel
         
         void OnDrawGizmosSelected()
         {
+            Gizmos.color = Color.cyan;
             var roomData = GetRoomData();
             var airMeshInfo = GetAirWallMeshInfo(roomData);
             airMeshInfo.RecalculateNormals();
-            Gizmos.DrawMesh(airMeshInfo,Vector3.zero,Quaternion.identity);
+            Gizmos.DrawWireMesh(airMeshInfo,Vector3.zero,Quaternion.identity);
         }
 
         #region CreateRoomMesh
