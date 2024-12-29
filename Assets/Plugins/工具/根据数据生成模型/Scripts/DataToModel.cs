@@ -53,6 +53,7 @@ namespace Tools.DataToModel
             mesh.RecalculateNormals();
             meshObj.AddComponent<MeshFilter>().mesh = mesh;
             meshObj.AddComponent<MeshRenderer>().material = material;
+            DontDestroyOnLoad(meshObj);
             return;
         } 
         
