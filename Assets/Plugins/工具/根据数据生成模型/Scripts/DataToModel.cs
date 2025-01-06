@@ -25,7 +25,7 @@ namespace Tools.DataToModel
 
         private void Awake()
         { 
-            CreateRoomWallMesh();
+            CreateRoomWallMesh(_material);
             DontDestroyOnLoad(this);
         }
         
