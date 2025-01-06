@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using NUnit.Framework;
+using UnityEditor;
 using UnityEngine;
 
 namespace Tools.DataToModel
@@ -89,7 +90,6 @@ namespace Tools.DataToModel
             var uvList = new List<Vector2>();
             var trianglesList = new List<int>();
             
-            var uvDis = 0.0f;
             int pointIndex = 0;
             foreach (var wallMeshData in wallMeshDatas)
             {
@@ -102,7 +102,7 @@ namespace Tools.DataToModel
                     isClockWise = Vector3.Cross(dirOne, dirTwo).z < 0;
                 }
                 isClockWise = wallMeshData.IsReversalColockWise ? !isClockWise : isClockWise;
-
+                
                 for (int i = 0; i < wallMeshData.VerticesList.Count; i++)
                 {
                     //顶点数据
@@ -112,13 +112,13 @@ namespace Tools.DataToModel
                     var pointFour = pointTwo + Vector3.up * height;
                     verticesList.AddRange(new[] { pointOne, pointTwo, pointThree, pointFour });
                     //uv数据
-                    uvDis += Vector3.Distance(pointOne, pointTwo);
+                    var uvDis = Vector3.Distance(pointOne, pointTwo);
                     uvList.AddRange(new[]
                     {
                         new Vector2(0, 0),
                         new Vector2(uvDis, 0),
-                        new Vector2(0, pointThree.z),
-                        new Vector2(uvDis, pointFour.z)
+                        new Vector2(0, height),
+                        new Vector2(uvDis, height)
                     });
                     //三角面
                     trianglesList.AddRange(new[]
@@ -138,6 +138,7 @@ namespace Tools.DataToModel
             meshInfo.vertices = verticesList.ToArray();
             meshInfo.uv = uvList.ToArray();
             meshInfo.triangles = trianglesList.ToArray();
+
             return meshInfo;
         }
          
