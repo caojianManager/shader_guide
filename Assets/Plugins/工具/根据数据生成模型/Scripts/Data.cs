@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 
 namespace Tools.DataToModel
@@ -15,7 +16,31 @@ namespace Tools.DataToModel
             }
             return Data.GetTextAssetContent<Room>(textAsset);
 #else
- #endif
+            return JsonUtility.FromJson<Room>(ReadRoomData());
+#endif
+        }
+        
+        private static string ReadRoomData(string direct = "data/calf/",string key = "Boundary")
+        {
+            string rootPath = Path.GetFullPath(Application.persistentDataPath + "/../../../../../../../");
+            string resourcesDirect = Path.Combine(rootPath, direct);
+            string content = "";
+            if (Directory.Exists(resourcesDirect))
+            {
+                DirectoryInfo directory = new DirectoryInfo(resourcesDirect);
+                foreach (FileInfo file in directory.GetFiles())
+                {
+                    if (file.Name.Contains(key))
+                    {
+                        FileStream fileStream = new FileStream(file.FullName, FileMode.Open, FileAccess.Read);
+                        StreamReader streamReader = new StreamReader(fileStream);
+                        content = streamReader.ReadToEnd();
+                        streamReader.Close();
+                        break;
+                    }
+                }
+            }
+            return content;
         }
     }
     
